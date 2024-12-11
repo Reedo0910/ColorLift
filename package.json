@@ -1,0 +1,19 @@
+{
+  "name": "colorlift",
+  "version": "1.0.0",
+  "description": "describing colors using plain text",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zeee",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "fast-average-color-node": "^3.1.0"
+  }
+}

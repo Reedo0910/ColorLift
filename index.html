@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px 15px;
+            min-height: 350px;
+            background: rgba(255, 255, 255, 0.65);
+            font-family: Arial, sans-serif;
+            user-select: none;
+            text-align: center;
+        }
+
+        #color-display {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #ccc;
+
+            margin-bottom: 10px;
+            border-radius: 50%;
+        }
+
+        #image-display {
+            width: 10px;
+            height: 10px;
+        }
+
+        #hex-value {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #chatgpt-response {
+            font-size: 14px;
+            /* font-style: italic; */
+            text-align: center;
+            padding: 10px;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div id="color-display"></div>
+        <p id="hex-value">#FFFFFF</p>
+        <!-- <img id="image-display" alt="Generated Image"
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVQokWN8/eQ8A27AhEduBEsDADOzArIBQ6UdAAAAAElFTkSuQmCC" /> -->
+        <div id="chatgpt-response"></div>
+    </div>
+
+    <script>
+        const colorDisplay = document.getElementById('color-display');
+        const hexValue = document.getElementById('hex-value');
+        const imageDisplay = document.getElementById('image-display');
+        const chatGPTResponse = document.getElementById('chatgpt-response');
+
+        window.electronAPI.onUpdateColor((hex) => {
+            colorDisplay.style.backgroundColor = hex;
+            hexValue.textContent = hex;
+
+            chatGPTResponse.textContent = '';
+        });
+
+        window.electronAPI.onUpdateImg((base64Data) => {
+            imageDisplay.src = base64Data;
+        });
+
+        window.electronAPI.onChatGPTResponse((message) => {
+            chatGPTResponse.textContent = message;
+        });
+    </script>
+</body>
+
+</html>
