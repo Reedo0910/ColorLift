@@ -3,6 +3,7 @@ const { getAverageColor } = require('fast-average-color-node')
 const path = require('path');
 
 let mainWindow;
+let isPickingColor = false; // 取色模式状态
 
 require('dotenv').config()
 
@@ -10,11 +11,13 @@ app.on('ready', () => {
     // 创建悬浮窗口
     mainWindow = new BrowserWindow({
         width: 320,
-        height: 350,
+        height: 380,
         transparent: true, // 窗口透明
         vibrancy: 'fullscreen-ui',
+        titleBarStyle: 'hiddenInset',
+        frame: false,
+        fullscreenable: false,
         backgroundMaterial: 'acrylic',
-        frame: false, // 无边框
         alwaysOnTop: true, // 悬浮在所有窗口之上
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -24,6 +27,13 @@ app.on('ready', () => {
 
     mainWindow.loadFile('index.html');
     mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
+
+    mainWindow.on('close', (event) => {
+        // 检查平台
+        if (process.platform === 'darwin' || process.platform === 'linux') {
+            app.quit(); // macOS 和 Linux 上完全退出
+        }
+    });
 
     // 注册全局快捷键
     globalShortcut.register('Alt+C', captureColor);
@@ -38,6 +48,28 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
+});
+
+
+
+// 开启取色模式
+ipcMain.on('start-capture', () => {
+    isPickingColor = true; // 标记进入取色模式
+    mainWindow.webContents.send('update-status', 'active');
+});
+
+// 全局鼠标点击事件监听
+app.on('browser-window-focus', () => {
+    const clickListener = () => {
+        if (isPickingColor) {
+            captureColor().then(() => {
+                isPickingColor = false; // 退出取色模式
+                mainWindow.webContents.send('update-status', 'inactive');
+            });
+        }
+    };
+
+    app.once('browser-window-blur', clickListener);
 });
 
 // 捕获颜色
