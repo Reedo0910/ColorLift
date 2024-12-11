@@ -10,7 +10,7 @@ app.on('ready', () => {
     // 创建悬浮窗口
     mainWindow = new BrowserWindow({
         width: 320,
-        height: 320,
+        height: 350,
         transparent: true, // 窗口透明
         vibrancy: 'fullscreen-ui',
         backgroundMaterial: 'acrylic',
@@ -121,7 +121,7 @@ const chatGPTCommunicator = async (hex) => {
         body: JSON.stringify({
             model: 'gpt-4o-mini',
             messages: [
-                { role: 'system', content: '请描述一下这个Hex所代表的颜色。输出在一个段落中。不超过130字。示例：我提供：hex 你回答：这是xxx色，它更接近xxx色，给人一种xxx的感觉，等等。' },
+                { role: 'system', content: '请描述一下这个Hex所代表的颜色。输出在一个段落中。不超过130字。示例：我提供：hex 你回答：这是（一种）xxx色，它更接近xxx色，给人一种xxx的感觉，等等。' },
                 { role: 'user', content: `${hex}` },
             ],
         }),

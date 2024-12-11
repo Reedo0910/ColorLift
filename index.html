@@ -10,19 +10,22 @@
             margin: 0;
             padding: 20px 15px;
             min-height: 350px;
-            background: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.85);
             font-family: Arial, sans-serif;
-            user-select: none;
+            cursor: default;
             text-align: center;
+        }
+
+        .visible {
+            visibility: visible;
         }
 
         #color-display {
             display: inline-block;
             width: 80px;
             height: 80px;
-            border: 2px solid #ccc;
-
-            margin-bottom: 10px;
+            box-shadow: 0.1em 0.1em .8em rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
             border-radius: 50%;
         }
 
@@ -33,17 +36,49 @@
 
         #hex-value {
             text-align: center;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 20px;
+            color: #222;
+            letter-spacing: 0.1px;
+        }
+
+        .color-description {
+            padding: 5px;
+            position: relative;
+            min-width: 100px;
+            min-height: 100px;
         }
 
         #chatgpt-response {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
             font-size: 14px;
-            /* font-style: italic; */
+            font-style: italic;
             text-align: center;
-            padding: 10px;
             max-width: 300px;
-            line-height: 1.5;
+            line-height: 1.75;
+        }
+
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0 auto;
+            z-index: 2;
+            height: 100px;
+            width: 100px;
+            text-align: center;
+            display: inline-block;
+            vertical-align: top;
+            visibility: hidden;
+        }
+
+        svg path,
+        svg rect {
+            fill: #FF6700;
         }
     </style>
 </head>
@@ -51,10 +86,25 @@
 <body>
     <div>
         <div id="color-display"></div>
-        <p id="hex-value">#FFFFFF</p>
+        <p id="hex-value">#ffffff</p>
         <!-- <img id="image-display" alt="Generated Image"
             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFUlEQVQokWN8/eQ8A27AhEduBEsDADOzArIBQ6UdAAAAAElFTkSuQmCC" /> -->
-        <div id="chatgpt-response"></div>
+
+        <div class="color-description">
+            <div id="loader" class="loader">
+                <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px"
+                    viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+                    <path fill="#000"
+                        d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z">
+                        <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25"
+                            to="360 25 25" dur="0.7s" repeatCount="indefinite" />
+                    </path>
+                </svg>
+            </div>
+
+            <div id="chatgpt-response"></div>
+        </div>
     </div>
 
     <script>
@@ -62,12 +112,14 @@
         const hexValue = document.getElementById('hex-value');
         const imageDisplay = document.getElementById('image-display');
         const chatGPTResponse = document.getElementById('chatgpt-response');
+        const loaderDiv = document.getElementById('loader');
 
         window.electronAPI.onUpdateColor((hex) => {
             colorDisplay.style.backgroundColor = hex;
             hexValue.textContent = hex;
 
             chatGPTResponse.textContent = '';
+            loaderDiv.classList.add('visible');
         });
 
         window.electronAPI.onUpdateImg((base64Data) => {
@@ -75,6 +127,8 @@
         });
 
         window.electronAPI.onChatGPTResponse((message) => {
+            loaderDiv.classList.remove('visible');
+
             chatGPTResponse.textContent = message;
         });
     </script>
