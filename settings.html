@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+</head>
+
+<body>
+    <style>
+        button {
+            display: inline-block;
+            background-color: transparent;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-group {
+            position: absolute;
+            bottom: 0;
+            padding-left: 10px;
+        }
+
+        #save-btn {
+            background-color: #eee;
+        }
+
+        #close-btn {
+            margin-left: 8px;
+        }
+
+        .btn-group button:hover {
+            background-color: #d8d8d8 !important;
+        }
+
+        form {
+            position: relative;
+            width: calc(100% - 20px);
+            height: 280px;
+            padding: 5px 10px;
+        }
+
+        .text-input {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .description {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        input,
+        select {
+            width: calc(100% - 10px);
+            padding: 3px;
+            box-sizing: border-box;
+            border: #eee 2px solid;
+            border-radius: 3px;
+            opacity: 0.7;
+        }
+
+        input:focus,
+        select:focus {
+            opacity: 1;
+            border-color: #888;
+        }
+
+        .input-wrapper {
+            margin-left: 10px;
+        }
+
+        h1 {
+            color: #222;
+            font-size: 14px;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+
+        button svg {
+            width: 10px;
+            height: 10px;
+            opacity: .9;
+        }
+
+        .api-input-label-block {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        #toggle-visibility-btn {
+            position: relative;
+            top: -2px;
+            margin-left: 4px;
+            background: none;
+            border: none;
+            padding: 3px;
+            opacity: .7;
+        }
+
+        #toggle-visibility-btn:hover {
+            opacity: 1;
+        }
+
+        #toggle-visibility-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .text-italic {
+            font-style: italic;
+        }
+    </style>
+
+    <div>
+        <h1>设置</h1>
+        <form id="settings-form">
+            <div class="text-input">
+                <div class="api-input-label-block">
+                    <label for="api-key-input">
+                        OpenAI API 密钥
+                    </label>
+                    <div class="input-wrapper">
+                        <button id="toggle-visibility-btn" type="button" aria-label="Toggle visibility" title="显示密钥">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+                                <path fill-rule="evenodd"
+                                    d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <input type="password" id="api-key-input" autocomplete="off" spellcheck="false" autocorrect="off" />
+            </div>
+            <div class="text-input">
+                <label for="gpt-model-select">当前使用的 GPT 模型</label>
+                <div class="input-wrapper">
+                    <select id="gpt-model-select">
+                        <option value="gpt-4o-mini">GPT-4o mini (默认)</option>
+                        <option value="gpt-4o">GPT-4o</option>
+                        <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                    </select>
+                    <div class="description">
+                        通常参数较少的语言模型响应速度会更快，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。
+                        <br>
+                        <span class="text-italic">注意：不同模型间的资费会有差异。</span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button id="save-btn" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm3.844-8.791a.75.75 0 0 0-1.188-.918l-3.7 4.79-1.649-1.833a.75.75 0 1 0-1.114 1.004l2.25 2.5a.75.75 0 0 0 1.15-.043l4.25-5.5Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    保存</button>
+                <button id="close-btn" type="button">关闭</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const closeBtn = document.getElementById('close-btn');
+        const settingsForm = document.getElementById('settings-form');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const gptModelSelect = document.getElementById('gpt-model-select');
+
+        const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
+
+        let isPasswordVisible = false; // 密钥是否可见
+
+        // 加载当前设置
+        window.electronAPI.getSettings().then((settings) => {
+            apiKeyInput.value = settings.apiKey || '';
+            gptModelSelect.value = settings.gptModel || 'gpt-4o-mini';
+        });
+
+        // 保存新的设置
+        settingsForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const settings = {
+                apiKey: apiKeyInput.value.trim(),
+                gptModel: gptModelSelect.value,
+            };
+
+            window.electronAPI.saveSettings(settings);
+
+            // 关闭设置窗口
+            window.close();
+        });
+
+        // 关闭按钮事件
+        closeBtn.addEventListener('click', () => {
+            window.close();
+        });
+
+        // 切换密钥可见性
+        toggleVisibilityBtn.addEventListener('click', () => {
+            isPasswordVisible = !isPasswordVisible;
+
+            if (isPasswordVisible) {
+                apiKeyInput.type = 'text'; // 显示密钥
+
+                toggleVisibilityBtn.title = '隐藏密钥';
+                toggleVisibilityBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l10.5 10.5a.75.75 0 1 0 1.06-1.06l-1.322-1.323a7.012 7.012 0 0 0 2.16-3.11.87.87 0 0 0 0-.567A7.003 7.003 0 0 0 4.82 3.76l-1.54-1.54Zm3.196 3.195 1.135 1.136A1.502 1.502 0 0 1 9.45 8.389l1.136 1.135a3 3 0 0 0-4.109-4.109Z" clip-rule="evenodd" /><path d="m7.812 10.994 1.816 1.816A7.003 7.003 0 0 1 1.38 8.28a.87.87 0 0 1 0-.566 6.985 6.985 0 0 1 1.113-2.039l2.513 2.513a3 3 0 0 0 2.806 2.806Z" /></svg>`;
+            } else {
+                apiKeyInput.type = 'password'; // 隐藏密钥
+
+                toggleVisibilityBtn.title = '显示密钥';
+                toggleVisibilityBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /><path fill-rule="evenodd" d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" /></svg>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

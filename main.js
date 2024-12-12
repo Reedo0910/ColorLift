@@ -1,11 +1,24 @@
-const { app, BrowserWindow, ipcMain, desktopCapturer, screen, globalShortcut, net } = require('electron');
-const { getAverageColor } = require('fast-average-color-node')
-const path = require('path');
+import { app, BrowserWindow, ipcMain, desktopCapturer, screen, globalShortcut, net } from 'electron';
+import { getAverageColor } from 'fast-average-color-node';
+import Store from 'electron-store';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// 创建 __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let mainWindow;
+let settingsWindow;
 let isPickingColor = false; // 取色模式状态
 
-require('dotenv').config()
+// 初始化 electron-store
+const store = new Store({
+    defaults: {
+        openaiApiKey: '', // 默认存储 OpenAI API Key
+        gptModel: 'gpt-4o-mini', // 默认 GPT 模型
+    },
+});
 
 app.on('ready', () => {
     // 创建悬浮窗口
@@ -41,6 +54,59 @@ app.on('ready', () => {
     // 确保全局快捷键在退出时释放
     app.on('will-quit', () => {
         globalShortcut.unregisterAll();
+    });
+
+
+    // 创建设置窗口
+    ipcMain.on('open-settings', () => {
+        if (!settingsWindow) {
+            settingsWindow = new BrowserWindow({
+                width: 400,
+                height: 400,
+                parent: mainWindow, // 设置为主窗口的子窗口
+                modal: true, // 模态窗口
+                show: false, // 初始隐藏
+                vibrancy: 'fullscreen-ui',
+                titleBarStyle: 'hidden',
+                frame: false,
+                backgroundMaterial: 'acrylic',
+                backgroundColor: 'white',
+                webPreferences: {
+                    preload: path.join(__dirname, 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
+                    contextIsolation: true,
+                },
+            });
+
+            settingsWindow.loadFile('settings.html');
+
+            // 在窗口准备好时显示
+            settingsWindow.once('ready-to-show', () => {
+                settingsWindow.show();
+            });
+
+            // 窗口关闭时清理引用
+            settingsWindow.on('closed', () => {
+                settingsWindow = null;
+            });
+        }
+    });
+
+    // 获取当前存储的设置
+    ipcMain.handle('get-settings', () => {
+        return {
+            apiKey: store.get('openaiApiKey'),
+            gptModel: store.get('gptModel'),
+        };
+    });
+
+    // 保存新的设置
+    ipcMain.on('save-settings', (event, settings) => {
+        store.set('openaiApiKey', settings.apiKey);
+        store.set('gptModel', settings.gptModel);
+        console.log('Settings saved:', settings);
+
+        // 通知主窗口设置已更新
+        mainWindow.webContents.send('settings-updated', settings);
     });
 });
 
@@ -115,7 +181,7 @@ const captureColor = async () => {
             throw new Error('Cursor position is out of thumbnail bounds');
         }
 
-        const img = thumbnail.crop({ x, y, width: 3, height: 3 });
+        const img = thumbnail.crop({ x, y, width: 1, height: 1 });
         const pixelData = img.toPNG();
 
         if (!pixelData || pixelData.length < 3) {
@@ -148,10 +214,10 @@ const chatGPTCommunicator = async (hex) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            Authorization: `Bearer ${store.get('openaiApiKey')}`,
         },
         body: JSON.stringify({
-            model: 'gpt-4o-mini',
+            model: store.get('gptModel'),
             messages: [
                 { role: 'system', content: '请描述一下这个Hex所代表的颜色。输出在一个段落中。不超过130字。示例：我提供：hex 你回答：这是（一种）xxx色，它更接近xxx色，给人一种xxx的感觉，等等。' },
                 { role: 'user', content: `${hex}` },
