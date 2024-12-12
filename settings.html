@@ -40,7 +40,7 @@
         form {
             position: relative;
             width: calc(100% - 20px);
-            height: 280px;
+            height: 340px;
             padding: 5px 10px;
         }
 
@@ -125,12 +125,14 @@
     </style>
 
     <div>
-        <h1>设置</h1>
+        <h1 id="window-title">
+            <!-- 设置 -->
+        </h1>
         <form id="settings-form">
             <div class="text-input">
                 <div class="api-input-label-block">
-                    <label for="api-key-input">
-                        OpenAI API 密钥
+                    <label id="api-key-label" for="api-key-input">
+                        <!-- OpenAI API 密钥 -->
                     </label>
                     <button id="toggle-visibility-btn" type="button" aria-label="Toggle visibility" title="显示密钥">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
@@ -143,22 +145,36 @@
                 </div>
                 <div class="input-wrapper">
                     <input type="password" id="api-key-input" autocomplete="off" spellcheck="false" autocorrect="off" />
-                    <div class="description">
-                        您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。
+                    <div class="description" id="api-key-note">
+                        <!-- 您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。 -->
                     </div>
                 </div>
             </div>
             <div class="text-input">
-                <label for="gpt-model-select">当前使用的 GPT 模型</label>
+                <label id="gpt-model-label" for="gpt-model-select">
+                    <!-- 当前使用的 GPT 模型 -->
+                </label>
                 <div class="input-wrapper">
                     <select id="gpt-model-select">
-                        <option value="gpt-4o-mini">GPT-4o mini (默认)</option>
+                        <option value="gpt-4o-mini">GPT-4o mini</option>
                         <option value="gpt-4o">GPT-4o</option>
                         <option value="gpt-4-turbo">GPT-4 Turbo</option>
                     </select>
-                    <div class="description">
-                        通常参数较少的语言模型响应速度会更快且更经济，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。
+                    <div class="description" id="gpt-model-description">
+                        <!-- 通常参数较少的语言模型响应速度会更快且更经济，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。 -->
                     </div>
+                </div>
+            </div>
+            <div class="text-input">
+                <label id="language-label" for="language-select">
+                    <!-- 语言 -->
+                </label>
+                <div class="input-wrapper">
+                    <select id="language-select">
+                        <option value="en">English</option>
+                        <option value="zh-CN">简体中文</option>
+                        <option value="zh-TW">繁体中文</option>
+                    </select>
                 </div>
             </div>
             <div class="btn-group">
@@ -168,35 +184,65 @@
                             d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm3.844-8.791a.75.75 0 0 0-1.188-.918l-3.7 4.79-1.649-1.833a.75.75 0 1 0-1.114 1.004l2.25 2.5a.75.75 0 0 0 1.15-.043l4.25-5.5Z"
                             clip-rule="evenodd" />
                     </svg>
-                    保存</button>
+                    <span id="save-btn-text">保存</span></button>
                 <button id="close-btn" type="button">关闭</button>
             </div>
         </form>
     </div>
 
     <script>
+        const windowTitle = document.getElementById('window-title');
+        const apiKeyLabel = document.getElementById('api-key-label');
+        const apiKeyNote = document.getElementById('api-key-note');
+        const gptModelLabel = document.getElementById('gpt-model-label');
+        const gptModelDescription = document.getElementById('gpt-model-description');
+        const languageLabel = document.getElementById('language-label');
+        const saveButtonTxt = document.getElementById('save-btn-text');
         const closeBtn = document.getElementById('close-btn');
         const settingsForm = document.getElementById('settings-form');
-        const apiKeyInput = document.getElementById('api-key-input');
         const gptModelSelect = document.getElementById('gpt-model-select');
+        const languageSelect = document.getElementById('language-select');
+
+        const apiKeyInput = document.getElementById('api-key-input');
 
         const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
 
         let isPasswordVisible = false; // 密钥是否可见
 
+        const myCurrentLanguage = '';
+
+        const translations = window.electronAPI.getInitialTranslations();
+        
+        windowTitle.textContent = translations['setting_window_title'];
+        apiKeyLabel.textContent = translations['api_key_label'];
+        apiKeyNote.textContent = translations['api_key_note'];
+        gptModelLabel.textContent = translations['gpt_model_label'];
+        gptModelDescription.textContent = translations['gpt_model_description'];
+        languageLabel.textContent = translations['language_label'];
+        saveButtonTxt.textContent = translations['save_button'];
+        closeBtn.textContent = translations['close_button'];
+
         // 加载当前设置
         window.electronAPI.getSettings().then((settings) => {
             apiKeyInput.value = settings.apiKey || '';
             gptModelSelect.value = settings.gptModel || 'gpt-4o-mini';
+            languageSelect.value = settings.language || 'en';
+
+            myCurrentLanguage = settings.language || 'en';
         });
 
         // 保存新的设置
-        settingsForm.addEventListener('submit', (event) => {
+        settingsForm.addEventListener('submit', async (event) => {
             event.preventDefault();
+
+            if (languageSelect.value !== myCurrentLanguage) {
+                await window.electronAPI.setLanguage(languageSelect.value);
+            }
 
             const settings = {
                 apiKey: apiKeyInput.value.trim(),
                 gptModel: gptModelSelect.value,
+                language: languageSelect.value
             };
 
             window.electronAPI.saveSettings(settings);

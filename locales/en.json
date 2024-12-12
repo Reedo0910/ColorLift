@@ -1,0 +1,10 @@
+{
+    "setting_window_title": "Settings",
+    "api_key_label": "OpenAI API Key",
+    "api_key_note": "Your API Key will only be stored on the local device and will not be uploaded to any server or external system. Please keep your API Key safe.",
+    "gpt_model_label": "Current GPT Model",
+    "gpt_model_description": "Models with fewer parameters are generally faster and more cost-effective, while models with more parameters provide more realistic results and expressive responses.",
+    "save_button": "Save",
+    "close_button": "Close",
+    "language_label": "Language"
+}

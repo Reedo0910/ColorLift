@@ -218,6 +218,14 @@
             }
         });
 
+        window.electronAPI.onSettingsUpdated((status) => {
+            const myHex = '#FFFFFF';
+            
+            colorDisplay.style.backgroundColor = myHex;
+            hexValue.textContent = myHex;
+            chatGPTResponse.textContent = '';
+        });
+
         // 打开设置窗口
         openSettingsBtn.addEventListener('click', () => {
             window.electronAPI.openSettings();

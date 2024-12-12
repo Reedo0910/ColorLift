@@ -11,4 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openSettings: () => ipcRenderer.send('open-settings'),
     getSettings: () => ipcRenderer.invoke('get-settings'),
     onSettingsUpdated: (callback) => ipcRenderer.on('settings-updated', (_, settings) => callback(settings)),
+    // Translations
+    getLanguage: () => ipcRenderer.invoke('get-language'),
+    setLanguage: (lang) => ipcRenderer.send('set-language', lang),
 });

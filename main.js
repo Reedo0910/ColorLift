@@ -3,6 +3,7 @@ import { getAverageColor } from 'fast-average-color-node';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { setLanguage, getLanguage, getResourceBundle } from './i18n.js';
 
 // 创建 __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -17,8 +18,11 @@ const store = new Store({
     defaults: {
         openaiApiKey: '', // 默认存储 OpenAI API Key
         gptModel: 'gpt-4o-mini', // 默认 GPT 模型
+        language: 'en',
     },
 });
+
+let translations = getResourceBundle(store.get('language'));
 
 app.on('ready', () => {
     // 创建悬浮窗口
@@ -39,7 +43,22 @@ app.on('ready', () => {
     });
 
     mainWindow.loadFile('index.html');
+
+    // mainWindow.webContents.openDevTools();
+    
     mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
+
+    setLanguage(store.get('language')); // 设置默认语言
+
+    // 提供翻译功能给渲染进程
+    ipcMain.handle('get-language', () => {
+        return getLanguage();
+    });
+
+    ipcMain.on('set-language', (event, lang) => {
+        setLanguage(lang);
+        translations = getResourceBundle(lang);
+    });
 
     mainWindow.on('close', (event) => {
         // 检查平台
@@ -62,7 +81,7 @@ app.on('ready', () => {
         if (!settingsWindow) {
             settingsWindow = new BrowserWindow({
                 width: 400,
-                height: 400,
+                height: 450,
                 parent: mainWindow, // 设置为主窗口的子窗口
                 modal: true, // 模态窗口
                 show: false, // 初始隐藏
@@ -74,6 +93,7 @@ app.on('ready', () => {
                 webPreferences: {
                     preload: path.join(__dirname, 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
                     contextIsolation: true,
+                    additionalArguments: [JSON.stringify(translations)],
                 },
             });
 
@@ -96,6 +116,7 @@ app.on('ready', () => {
         return {
             apiKey: store.get('openaiApiKey'),
             gptModel: store.get('gptModel'),
+            language: store.get('language'),
         };
     });
 
@@ -103,6 +124,7 @@ app.on('ready', () => {
     ipcMain.on('save-settings', (event, settings) => {
         store.set('openaiApiKey', settings.apiKey);
         store.set('gptModel', settings.gptModel);
+        store.set('language', settings.language);
         console.log('Settings saved:', settings);
 
         // 通知主窗口设置已更新
@@ -219,7 +241,7 @@ const chatGPTCommunicator = async (hex) => {
         body: JSON.stringify({
             model: store.get('gptModel'),
             messages: [
-                { role: 'system', content: '请描述一下这个Hex所代表的颜色。输出在一个段落中。不超过130字。示例：我提供：hex 你回答：这是（一种）xxx色，它更接近xxx色，给人一种xxx的感觉，等等。' },
+                { role: 'system', content: `请描述一下这个Hex所代表的颜色。输出在一个段落中。不超过100字。示例：我提供：hex 你回答：这是（一种）xxx色，它更接近xxx色，给人一种xxx的感觉，等等。注意：请使用${getLanguage()}进行描述。` },
                 { role: 'user', content: `${hex}` },
             ],
         }),
