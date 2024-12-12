@@ -8,5 +8,5 @@
     "save_button": "保存",
     "close_button": "关闭",
     "language_label": "语言",
-    "language_note": "部分设置需要再重启后才能生效。"
+    "language_note": "部分设置需要在重启后才能生效。"
 }
