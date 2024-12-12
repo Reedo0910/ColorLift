@@ -132,18 +132,21 @@
                     <label for="api-key-input">
                         OpenAI API 密钥
                     </label>
-                    <div class="input-wrapper">
-                        <button id="toggle-visibility-btn" type="button" aria-label="Toggle visibility" title="显示密钥">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
-                                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
-                                <path fill-rule="evenodd"
-                                    d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </button>
+                    <button id="toggle-visibility-btn" type="button" aria-label="Toggle visibility" title="显示密钥">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+                            <path fill-rule="evenodd"
+                                d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="input-wrapper">
+                    <input type="password" id="api-key-input" autocomplete="off" spellcheck="false" autocorrect="off" />
+                    <div class="description">
+                        您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。
                     </div>
                 </div>
-                <input type="password" id="api-key-input" autocomplete="off" spellcheck="false" autocorrect="off" />
             </div>
             <div class="text-input">
                 <label for="gpt-model-select">当前使用的 GPT 模型</label>
@@ -154,9 +157,7 @@
                         <option value="gpt-4-turbo">GPT-4 Turbo</option>
                     </select>
                     <div class="description">
-                        通常参数较少的语言模型响应速度会更快，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。
-                        <br>
-                        <span class="text-italic">注意：不同模型间的资费会有差异。</span>
+                        通常参数较少的语言模型响应速度会更快且更经济，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。
                     </div>
                 </div>
             </div>
