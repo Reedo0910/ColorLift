@@ -39,13 +39,14 @@ app.on('ready', () => {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
+            additionalArguments: [JSON.stringify(translations)],
         },
     });
 
     mainWindow.loadFile('index.html');
 
     // mainWindow.webContents.openDevTools();
-    
+
     mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
 
     setLanguage(store.get('language')); // 设置默认语言

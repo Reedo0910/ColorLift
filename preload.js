@@ -1,5 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+const translations = JSON.parse(process.argv.find((arg) => arg.startsWith('{')) || '{}');
+
 contextBridge.exposeInMainWorld('electronAPI', {
     // Main Window
     startCapture: () => ipcRenderer.send('start-capture'),
@@ -12,6 +14,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSettings: () => ipcRenderer.invoke('get-settings'),
     onSettingsUpdated: (callback) => ipcRenderer.on('settings-updated', (_, settings) => callback(settings)),
     // Translations
+    getInitialTranslations: () => translations,
     getLanguage: () => ipcRenderer.invoke('get-language'),
     setLanguage: (lang) => ipcRenderer.send('set-language', lang),
 });

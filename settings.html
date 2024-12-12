@@ -196,6 +196,9 @@
                             <option value="zh-TW">繁体中文</option>
                         </select>
                     </div>
+                    <div class="description" id="language-note">
+                        <!-- 部分设置需要再重启后才能生效。 -->
+                    </div>
                 </div>
             </div>
             <div class="btn-group">
@@ -218,6 +221,7 @@
         const gptModelLabel = document.getElementById('gpt-model-label');
         const gptModelDescription = document.getElementById('gpt-model-description');
         const languageLabel = document.getElementById('language-label');
+        const languageNote = document.getElementById('language-note');
         const saveButtonTxt = document.getElementById('save-btn-text');
         const closeBtn = document.getElementById('close-btn');
         const settingsForm = document.getElementById('settings-form');
@@ -234,12 +238,15 @@
 
         const translations = window.electronAPI.getInitialTranslations();
 
+        document.title = translations['setting_window_title'];
+
         windowTitle.textContent = translations['setting_window_title'];
         apiKeyLabel.textContent = translations['api_key_label'];
         apiKeyNote.textContent = translations['api_key_note'];
         gptModelLabel.textContent = translations['gpt_model_label'];
         gptModelDescription.textContent = translations['gpt_model_description'];
         languageLabel.textContent = translations['language_label'];
+        languageNote.textContent = translations['language_note'];
         saveButtonTxt.textContent = translations['save_button'];
         closeBtn.textContent = translations['close_button'];
 
