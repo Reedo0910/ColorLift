@@ -9,6 +9,19 @@
 
 <body>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: rgba(255, 255, 255, 0.85);
+            font-family: Arial, sans-serif;
+            cursor: default;
+            overflow: hidden;
+        }
+
         button {
             display: inline-block;
             background-color: transparent;
@@ -39,9 +52,15 @@
 
         form {
             position: relative;
-            width: calc(100% - 20px);
-            height: 340px;
+            height: calc(100vh - 60px);
             padding: 5px 10px;
+        }
+
+        .form-main {
+            overflow: auto;
+            width: 100%;
+            height: calc(100% - 30px);
+            padding: 0 15px 0 10px;
         }
 
         .text-input {
@@ -65,7 +84,6 @@
         select {
             width: calc(100% - 10px);
             padding: 3px;
-            box-sizing: border-box;
             border: #eee 2px solid;
             border-radius: 3px;
             opacity: 0.7;
@@ -84,7 +102,7 @@
         h1 {
             color: #222;
             font-size: 14px;
-            padding: 5px;
+            padding: 5px 10px;
             margin-bottom: 5px;
         }
 
@@ -129,52 +147,55 @@
             <!-- 设置 -->
         </h1>
         <form id="settings-form">
-            <div class="text-input">
-                <div class="api-input-label-block">
-                    <label id="api-key-label" for="api-key-input">
-                        <!-- OpenAI API 密钥 -->
+            <div class="form-main">
+                <div class="text-input">
+                    <div class="api-input-label-block">
+                        <label id="api-key-label" for="api-key-input">
+                            <!-- OpenAI API 密钥 -->
+                        </label>
+                        <button id="toggle-visibility-btn" type="button" aria-label="Toggle visibility" title="显示密钥">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+                                <path fill-rule="evenodd"
+                                    d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="password" id="api-key-input" autocomplete="off" spellcheck="false"
+                            autocorrect="off" />
+                        <div class="description" id="api-key-note">
+                            <!-- 您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="text-input">
+                    <label id="gpt-model-label" for="gpt-model-select">
+                        <!-- 当前使用的 GPT 模型 -->
                     </label>
-                    <button id="toggle-visibility-btn" type="button" aria-label="Toggle visibility" title="显示密钥">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
-                            <path fill-rule="evenodd"
-                                d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="input-wrapper">
-                    <input type="password" id="api-key-input" autocomplete="off" spellcheck="false" autocorrect="off" />
-                    <div class="description" id="api-key-note">
-                        <!-- 您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。 -->
+                    <div class="input-wrapper">
+                        <select id="gpt-model-select">
+                            <option value="gpt-4o-mini">GPT-4o mini</option>
+                            <option value="gpt-4o">GPT-4o</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                        </select>
+                        <div class="description" id="gpt-model-description">
+                            <!-- 通常参数较少的语言模型响应速度会更快且更经济，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。 -->
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-input">
-                <label id="gpt-model-label" for="gpt-model-select">
-                    <!-- 当前使用的 GPT 模型 -->
-                </label>
-                <div class="input-wrapper">
-                    <select id="gpt-model-select">
-                        <option value="gpt-4o-mini">GPT-4o mini</option>
-                        <option value="gpt-4o">GPT-4o</option>
-                        <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                    </select>
-                    <div class="description" id="gpt-model-description">
-                        <!-- 通常参数较少的语言模型响应速度会更快且更经济，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。 -->
+                <div class="text-input">
+                    <label id="language-label" for="language-select">
+                        <!-- 语言 -->
+                    </label>
+                    <div class="input-wrapper">
+                        <select id="language-select">
+                            <option value="en">English</option>
+                            <option value="zh-CN">简体中文</option>
+                            <option value="zh-TW">繁体中文</option>
+                        </select>
                     </div>
-                </div>
-            </div>
-            <div class="text-input">
-                <label id="language-label" for="language-select">
-                    <!-- 语言 -->
-                </label>
-                <div class="input-wrapper">
-                    <select id="language-select">
-                        <option value="en">English</option>
-                        <option value="zh-CN">简体中文</option>
-                        <option value="zh-TW">繁体中文</option>
-                    </select>
                 </div>
             </div>
             <div class="btn-group">
@@ -212,7 +233,7 @@
         const myCurrentLanguage = '';
 
         const translations = window.electronAPI.getInitialTranslations();
-        
+
         windowTitle.textContent = translations['setting_window_title'];
         apiKeyLabel.textContent = translations['api_key_label'];
         apiKeyNote.textContent = translations['api_key_note'];

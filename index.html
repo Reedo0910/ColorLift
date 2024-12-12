@@ -6,14 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Color Picker</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            position: relative;
             margin: 0;
-            padding: 30px 15px;
-            max-height: 380px;
+            padding: 0;
             background: rgba(255, 255, 255, 0.85);
             font-family: Arial, sans-serif;
             cursor: default;
+        }
+
+        .body-main {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 30px);
+            padding: 30px 15px;
             text-align: center;
         }
 
@@ -44,10 +53,10 @@
         }
 
         .color-description {
-            padding: 5px;
             position: relative;
-            min-width: 100px;
-            min-height: 120px;
+            padding: 5px;
+            width: 100%;
+            height: calc(100% - 135px);
         }
 
         #chatgpt-response {
@@ -56,13 +65,16 @@
             left: 0;
             bottom: 0;
             right: 0;
-            z-index: 1;
+            margin: 0 auto;
             font-size: 14px;
             font-style: italic;
             text-align: center;
             max-width: 260px;
-            margin: 0 auto;
+            height: 100%;
+            overflow: auto;
             line-height: 1.75;
+            -webkit-app-region: no-drag;
+            z-index: 1;
         }
 
         .loader {
@@ -140,7 +152,7 @@
 </head>
 
 <bod style="-webkit-app-region: drag" y>
-    <div>
+    <div class="body-main">
         <button id="capture-btn" class="neumorphic-btn">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000">
                 <path fill-rule="evenodd"
@@ -220,7 +232,7 @@
 
         window.electronAPI.onSettingsUpdated((status) => {
             const myHex = '#FFFFFF';
-            
+
             colorDisplay.style.backgroundColor = myHex;
             hexValue.textContent = myHex;
             chatGPTResponse.textContent = '';
