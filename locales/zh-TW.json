@@ -2,11 +2,12 @@
     "app_name": "拾彩",
     "setting_window_title": "設定",
     "api_key_label": "OpenAI API 金鑰",
-    "api_key_note": "您的 API 金鑰僅會存儲於本地設備中，不會上傳至任何伺服器或外部系統。請妥善保管您的 API 金鑰。",
-    "gpt_model_label": "GPT 模型",
-    "gpt_model_description": "通常參數較少的語言模型響應速度更快且更經濟，而參數較多的語言模型則會有更貼近真實的結果與更生動的表述。",
-    "save_button": "保存",
-    "close_button": "關閉",
+    "api_key_note": "您的 API 金鑰僅會儲存於本地裝置，不會上傳至任何伺服器或外部系統。請妥善保管您的 API 金鑰。",
+    "gpt_model_label": "目前使用的 GPT 模型",
+    "gpt_model_description": "通常參數較少的語言模型回應速度較快且更具經濟效益，參數較多的語言模型則可提供更接近真實的結果與更生動的表述。",
+    "word_limit_label": "輸出字數上限",
     "language_label": "語言",
-    "language_note": "部分設定需要在重新啟動後才能生效。"
+    "language_note": "部分設定需要重新啟動後才能生效。",
+    "save_button": "儲存",
+    "close_button": "關閉"
 }

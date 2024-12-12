@@ -19,6 +19,7 @@ const store = new Store({
         openaiApiKey: '', // 默认存储 OpenAI API Key
         gptModel: 'gpt-4o-mini', // 默认 GPT 模型
         language: 'en',
+        wordLimit: '120',
     },
 });
 
@@ -118,6 +119,7 @@ app.on('ready', () => {
             apiKey: store.get('openaiApiKey'),
             gptModel: store.get('gptModel'),
             language: store.get('language'),
+            wordLimit: store.get('wordLimit'),
         };
     });
 
@@ -126,6 +128,7 @@ app.on('ready', () => {
         store.set('openaiApiKey', settings.apiKey);
         store.set('gptModel', settings.gptModel);
         store.set('language', settings.language);
+        store.set('wordLimit', settings.wordLimit);
         console.log('Settings saved:', settings);
 
         // 通知主窗口设置已更新
@@ -242,7 +245,7 @@ const chatGPTCommunicator = async (hex) => {
         body: JSON.stringify({
             model: store.get('gptModel'),
             messages: [
-                { role: 'system', content: `请描述一下这个Hex所代表的颜色。输出在一个段落中。不超过100字。示例：我提供：hex 你回答：这是（一种）xxx色，它更接近xxx色，给人一种xxx的感觉，等等。注意：请使用${getLanguage()}进行描述。` },
+                { role: 'system', content: `请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：hex 你回答：这是（一种）xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，给人一种什么的感觉，有什么应用，等等。（优先提供模版靠前面的信息，重要程度依次递减。）注意：请使用${getLanguage()}进行描述。不超过${store.get('wordLimit')}个字或单词。` },
                 { role: 'user', content: `${hex}` },
             ],
         }),
