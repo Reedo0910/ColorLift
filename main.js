@@ -15,17 +15,24 @@ let mainWindow;
 let settingsWindow;
 let isPickingColor = false; // 取色模式状态
 
+// 默认语言
+const appLocale = getAppLocale();
+
 // 初始化 electron-store
 const store = new Store({
     defaults: {
         openaiApiKey: '', // 默认存储 OpenAI API Key
         gptModel: 'gpt-4o-mini', // 默认 GPT 模型
-        language: 'en',
+        language: appLocale,
         wordLimit: '120',
     },
 });
 
 let translations = getResourceBundle(store.get('language'));
+
+if (translations['app_name']) {
+    app.setName(translations['app_name'])
+}
 
 app.on('ready', () => {
     // 创建悬浮窗口
@@ -207,6 +214,24 @@ async function cropOnePixel(imageBuffer, x, y) {
         console.error("Crop failed:", err.message);
         throw err;
     }
+}
+
+function getAppLocale() {
+    const supportedLocales = {
+        'zh-CN': 'zh-CN', // 简体中文
+        'zh-TW': 'zh-TW', // 繁体中文
+        'en': 'en',       // 英文
+    };
+
+    const defaultLocale = 'en';
+
+    const systemLocale = app.getLocale(); // 获取系统语言
+
+    if (systemLocale.startsWith('zh-')) {
+        return systemLocale === 'zh-CN' ? 'zh-CN' : 'zh-TW';
+    }
+
+    return supportedLocales[systemLocale] || defaultLocale;
 }
 
 const chatGPTCommunicator = async (hex) => {

@@ -1,5 +1,6 @@
 {
   "name": "colorlift",
+  "productName": "ColorLift",
   "version": "1.0.0",
   "description": "describing colors using plain text",
   "main": "main.js",
