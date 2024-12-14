@@ -1,8 +1,12 @@
 {
   "name": "colorlift",
   "productName": "ColorLift",
-  "version": "1.0.0",
-  "description": "describing colors using plain text",
+  "version": "0.1.0",
+  "description": "Turning colors into vivid words.",
+  "repository": {
+    "url": "https://github.com/Reedo0910/ColorLift",
+    "type": "git"
+  },
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
