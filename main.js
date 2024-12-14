@@ -1,10 +1,11 @@
-import sharp from 'sharp';
 import { app, BrowserWindow, ipcMain, screen, globalShortcut, net } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { setLanguage, getLanguage, getResourceBundle } from './i18n.js';
+import sharp from 'sharp';
 import screenshot from 'screenshot-desktop';
+import { getAverageColor } from 'fast-average-color-node';
+import { setLanguage, getLanguage, getResourceBundle } from './i18n.js';
 
 // 创建 __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -47,7 +48,7 @@ app.on('ready', () => {
 
     mainWindow.loadFile('index.html');
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools(); // Open DevTools
 
     mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
 
@@ -171,7 +172,15 @@ const captureColor = async () => {
         const cursorPos = screen.getCursorScreenPoint(); // 获取鼠标位置
         const imgBuffer = await screenshot({ format: 'png' });
         const croppedImageBuffer = await cropOnePixel(imgBuffer, cursorPos.x, cursorPos.y);
-        mainWindow.webContents.send('update-img', `data:image/png;base64,${croppedImageBuffer.toString('base64')}`);
+        // mainWindow.webContents.send('update-img', `data:image/png;base64,${croppedImageBuffer.toString('base64')}`);
+
+        const color = await getAverageColor(croppedImageBuffer);
+        const hex = color.hex;
+
+        // console.log('Picked Color:', hex);
+        mainWindow.webContents.send('update-color', hex);
+
+        chatGPTCommunicator(hex);
     } catch (error) {
         console.error('Error capturing color:', error);
     }
@@ -200,12 +209,7 @@ async function cropOnePixel(imageBuffer, x, y) {
     }
 }
 
-ipcMain.on('get-color', (event, hex) => {
-    chatGPTCommunicator(hex)
-});
-
 const chatGPTCommunicator = async (hex) => {
-    // 发送 HEX 到 ChatGPT API
     const response = await net.fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -215,7 +219,7 @@ const chatGPTCommunicator = async (hex) => {
         body: JSON.stringify({
             model: store.get('gptModel'),
             messages: [
-                { role: 'system', content: `7请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：hex 你回答：这是xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，有什么应用，等等。注意：请使用${getLanguage()}进行描述。回答不能超过${store.get('wordLimit')}个字或单词。` },
+                { role: 'system', content: `请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：hex 你回答：这是xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，有什么应用，等等。注意：请使用${getLanguage()}进行描述。回答不超过${store.get('wordLimit')}个字或单词。` },
                 { role: 'user', content: `${hex}` },
             ],
         }),
@@ -225,7 +229,7 @@ const chatGPTCommunicator = async (hex) => {
     // console.log('ChatGPT Response:', data);
 
     if (response.ok) {
-        const message = data.choices[0]?.message?.content || '无响应';
+        const message = data.choices[0]?.message?.content || 'No Response';
         // console.log('ChatGPT interpretation:', message);
         mainWindow.webContents.send('chatgpt-response', message);
     } else {

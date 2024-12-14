@@ -210,54 +210,17 @@
             window.electronAPI.startCapture();
         });
 
-        window.electronAPI.onUpdateImg((base64Data) => {
-            // Source: https://gist.github.com/jawdatls/465d82f2158e1c4ce161
-            let image = new Image();
-            image.onload = function () {
-                let canvas = document.createElement('canvas');
-                canvas.width = image.width;
-                canvas.height = image.height;
+        window.electronAPI.onUpdateColor(hex => {
+            colorDisplay.style.backgroundColor = hex;
+            hexValue.textContent = hex;
 
-                let context = canvas.getContext('2d');
-                context.drawImage(image, 0, 0);
-
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-                // Now you can access pixel data from imageData.data.
-                // It's a one-dimensional array of RGBA values.
-                // Here's an example of how to get a pixel's color at (x,y)
-                // var index = (y * imageData.width + x) * 4;
-                const red = imageData.data[0];
-                const green = imageData.data[1];
-                const blue = imageData.data[2];
-                // var alpha = imageData.data[3];
-
-                const hex = rgbToHex(red, green, blue);
-
-                window.electronAPI.getColor(hex);
-
-                colorDisplay.style.backgroundColor = hex;
-                hexValue.textContent = hex;
-
-                chatGPTResponse.textContent = '';
-                loaderDiv.classList.add('visible');
-            };
-
-            image.src = base64Data;
-
-            // imageDisplay.src = base64Data;
+            chatGPTResponse.textContent = '';
+            loaderDiv.classList.add('visible');
         });
 
-        function rgbToHex(r, g, b) {
-            if ([r, g, b].some(value => value < 0 || value > 255 || !Number.isInteger(value))) {
-                throw new Error('The RGB components must be integers between 0 and 255.');
-            }
-
-            // 转换为十六进制字符串，并确保是两位
-            const toHex = (value) => value.toString(16).padStart(2, '0').toUpperCase();
-
-            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-        }
+        // window.electronAPI.onUpdateImg((base64Data) => {
+        //     imageDisplay.src = base64Data;
+        // });
 
         window.electronAPI.onChatGPTResponse((message) => {
             loaderDiv.classList.remove('visible');
