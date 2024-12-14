@@ -1,5 +1,5 @@
-import { app, BrowserWindow, ipcMain, desktopCapturer, screen, globalShortcut, net } from 'electron';
 import { getAverageColor } from 'fast-average-color-node';
+import { app, BrowserWindow, ipcMain, desktopCapturer, screen, globalShortcut, net } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
