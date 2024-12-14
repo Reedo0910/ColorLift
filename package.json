@@ -7,7 +7,7 @@
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "rm -rf ./out && electron-forge make"
   },
   "type": "module",
   "author": "Zeee",
