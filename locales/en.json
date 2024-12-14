@@ -1,12 +1,17 @@
 {
     "app_name": "ColorLift",
     "setting_window_title": "Settings",
-    "api_key_label": "OpenAI API Key",
-    "api_key_note": "Your API key will only be stored locally on your device and will not be uploaded to any server or external system. Please keep your API key secure.",
-    "gpt_model_label": "Current GPT Model",
-    "gpt_model_description": "Models with fewer parameters typically respond faster and are more cost-effective, while models with more parameters provide more realistic results and vivid expressions.",
-    "language_label": "Language",
-    "language_note": "Some settings will take effect only after restarting.",
+    "api_key_label": "Language Model API Key",
+    "api_key_note": "Your API key will only be stored on your local device and will not be uploaded to any servers or external systems. Please keep your API key safe.",
+    "show_api_key_button_tooltip": "Show Key",
+    "hide_api_key_button_tooltip": "Hide Key",
+    "gpt_model_label": "Current Language Model",
+    "gpt_model_description": "Language models with fewer parameters usually respond faster and are more economical, while models with more parameters provide more vivid expressions.",
+    "language_label": "App Language",
+    "language_note": "Some settings may require a restart to take effect.",
+    "color_pick_shortcut_label": "Screen Color Picker Shortcut",
+    "color_pick_shortcut_description": "The shortcut must include at least Alt, Cmd/Ctrl, or Shift. Press Backspace to clear settings.",
+    "color_pick_shortcut_alert": "Color pick shortcut is already in use by the system. Please reassign it.",
     "save_button": "Save",
     "close_button": "Close"
 }

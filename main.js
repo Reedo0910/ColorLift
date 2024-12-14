@@ -23,7 +23,8 @@ const store = new Store({
     defaults: {
         openaiApiKey: '', // 默认存储 OpenAI API Key
         gptModel: 'gpt-4o-mini', // 默认 GPT 模型
-        language: appLocale
+        language: appLocale,
+        colorPickShortcut: 'Alt+C'
     },
 });
 
@@ -78,17 +79,26 @@ app.on('ready', () => {
     });
 
     // 注册全局快捷键
-    globalShortcut.register('Alt+C', captureColor);
+    if (store.get('colorPickShortcut') !== '' && !globalShortcut.isRegistered(store.get('colorPickShortcut'))) {
+        globalShortcut.register(store.get('colorPickShortcut'), captureColor);
+    }
+
 
     // 确保全局快捷键在退出时释放
     app.on('will-quit', () => {
         globalShortcut.unregisterAll();
     });
 
+    let hasColorPickShortcutUpdated = false;
 
     // 创建设置窗口
     ipcMain.on('open-settings', () => {
         if (!settingsWindow) {
+
+            if (store.get('colorPickShortcut') !== '') {
+                globalShortcut.unregister(store.get('colorPickShortcut'));
+            }
+
             settingsWindow = new BrowserWindow({
                 width: 400,
                 height: 450,
@@ -117,6 +127,14 @@ app.on('ready', () => {
             // 窗口关闭时清理引用
             settingsWindow.on('closed', () => {
                 settingsWindow = null;
+
+                if (!hasColorPickShortcutUpdated) {
+                    if (store.get('colorPickShortcut') !== '') {
+                        globalShortcut.register(store.get('colorPickShortcut'), captureColor);
+                    }
+                }
+
+                hasColorPickShortcutUpdated = false;
             });
         }
     });
@@ -127,6 +145,7 @@ app.on('ready', () => {
             apiKey: store.get('openaiApiKey'),
             gptModel: store.get('gptModel'),
             language: store.get('language'),
+            colorPickShortcut: store.get('colorPickShortcut'),
         };
     });
 
@@ -135,10 +154,31 @@ app.on('ready', () => {
         store.set('openaiApiKey', settings.apiKey);
         store.set('gptModel', settings.gptModel);
         store.set('language', settings.language);
+        store.set('colorPickShortcut', settings.colorPickShortcut);
         console.log('Settings saved:', settings);
 
         // 通知主窗口设置已更新
         mainWindow.webContents.send('settings-updated', settings);
+    });
+
+    ipcMain.handle('set-color-pick-shortcut', (event, shortcut) => {
+        // 注销以前的快捷键
+        if (store.get('colorPickShortcut') !== '') {
+            globalShortcut.unregister(store.get('colorPickShortcut'));
+        }
+
+        if (shortcut !== '') {
+            // 注册新的快捷键
+            if (!globalShortcut.isRegistered(shortcut)) {
+                globalShortcut.register(shortcut, captureColor);
+
+                hasColorPickShortcutUpdated = true;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     });
 });
 

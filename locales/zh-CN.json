@@ -1,12 +1,17 @@
 {
     "app_name": "拾彩",
     "setting_window_title": "设置",
-    "api_key_label": "OpenAI API 密钥",
+    "api_key_label": "语言模型 API 密钥",
     "api_key_note": "您的 API 密钥将仅存储在本地设备中，不会上传到任何服务器或外部系统。请妥善保管您的 API 密钥。",
-    "gpt_model_label": "当前使用的 GPT 模型",
-    "gpt_model_description": "通常参数较少的语言模型响应速度会更快且更经济，参数较多的语言模型则会有更贴近真实的结果与更生动的表述。",
-    "language_label": "语言",
+    "show_api_key_button_tooltip": "显示密钥",
+    "hide_api_key_button_tooltip": "隐藏密钥",
+    "gpt_model_label": "当前使用的语言模型",
+    "gpt_model_description": "通常参数较少的语言模型响应速度会更快且更经济，参数较多的语言模型则会有更生动的表述。",
+    "language_label": "应用语言",
     "language_note": "部分设置需要在重启后才能生效。",
+    "color_pick_shortcut_label": "屏幕取色快捷键",
+    "color_pick_shortcut_description": "组合键必须至少包含 Alt、Cmd/Ctrl或Shift 键，按退格键可清除设置。",
+    "color_pick_shortcut_alert": "该组合键已被系统占用，请重新设置",
     "save_button": "保存",
     "close_button": "关闭"
 }
