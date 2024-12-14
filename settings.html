@@ -186,15 +186,6 @@
                     </div>
                 </div>
                 <div class="text-input">
-                    <label id="word-limit-label" for="word-limit-input">
-                        <!-- 输出字数上限 -->
-                    </label>
-                    <div class="input-wrapper">
-                        <input type="number" placeholder="120" id="word-limit-input" autocomplete="off" spellcheck="false"
-                            autocorrect="off" />
-                    </div>
-                </div>
-                <div class="text-input">
                     <label id="language-label" for="language-select">
                         <!-- 语言 -->
                     </label>
@@ -232,8 +223,6 @@
         const gptModelLabel = document.getElementById('gpt-model-label');
         const gptModelDescription = document.getElementById('gpt-model-description');
 
-        const wordLimitLabel = document.getElementById('word-limit-label');
-
         const languageLabel = document.getElementById('language-label');
         const languageNote = document.getElementById('language-note');
 
@@ -245,7 +234,6 @@
         const languageSelect = document.getElementById('language-select');
 
         const apiKeyInput = document.getElementById('api-key-input');
-        const wordLimitInput = document.getElementById('word-limit-input');
 
         const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
 
@@ -262,7 +250,6 @@
         apiKeyNote.textContent = translations['api_key_note'];
         gptModelLabel.textContent = translations['gpt_model_label'];
         gptModelDescription.textContent = translations['gpt_model_description'];
-        wordLimitLabel.textContent = translations['word_limit_label'];
         languageLabel.textContent = translations['language_label'];
         languageNote.textContent = translations['language_note'];
         saveButtonTxt.textContent = translations['save_button'];
@@ -272,7 +259,6 @@
         window.electronAPI.getSettings().then((settings) => {
             apiKeyInput.value = settings.apiKey || '';
             gptModelSelect.value = settings.gptModel || 'gpt-4o-mini';
-            wordLimitInput.value = settings.wordLimit || '120';
             languageSelect.value = settings.language || 'en';
 
             myCurrentLanguage = settings.language || 'en';
@@ -289,7 +275,6 @@
             const settings = {
                 apiKey: apiKeyInput.value.trim(),
                 gptModel: gptModelSelect.value,
-                wordLimit: wordLimitInput.value,
                 language: languageSelect.value
             };
 
