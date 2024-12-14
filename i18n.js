@@ -1,6 +1,11 @@
 import i18next from 'i18next';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// 创建 __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 初始化 i18next
 await i18next.init({
@@ -11,7 +16,7 @@ await i18next.init({
 
 // 加载语言文件
 export const loadLanguageFiles = () => {
-    const localesDir = path.resolve('./locales');
+    const localesDir = path.resolve(__dirname, 'locales');
     const languages = fs.readdirSync(localesDir);
 
     languages.forEach((file) => {

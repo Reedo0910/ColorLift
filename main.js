@@ -1,9 +1,10 @@
-import { getAverageColor } from 'fast-average-color-node';
-import { app, BrowserWindow, ipcMain, desktopCapturer, screen, globalShortcut, net } from 'electron';
+import sharp from 'sharp';
+import { app, BrowserWindow, ipcMain, screen, globalShortcut, net } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { setLanguage, getLanguage, getResourceBundle } from './i18n.js';
+import screenshot from 'screenshot-desktop';
 
 // 创建 __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -46,7 +47,7 @@ app.on('ready', () => {
 
     mainWindow.loadFile('index.html');
 
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
 
@@ -168,71 +169,40 @@ app.on('browser-window-focus', () => {
 const captureColor = async () => {
     try {
         const cursorPos = screen.getCursorScreenPoint(); // 获取鼠标位置
-        const display = screen.getDisplayNearestPoint(cursorPos); // 找到鼠标所在的屏幕
-        const { x: displayX, y: displayY, width, height } = display.bounds;
-        const scaleFactor = display.scaleFactor;
-
-        // console.log('Cursor Position:', cursorPos);
-        // console.log('Display Bounds:', display.bounds);
-        // console.log('Display ScaleFactor:', scaleFactor);
-
-        const sources = await desktopCapturer.getSources(
-            {
-                types: ['screen'],
-                thumbnailSize: {
-                    width: width,
-                    height: height
-                }
-            }
-        );
-
-        const thumbnail = sources[0].thumbnail;
-
-        if (!thumbnail || thumbnail.isEmpty()) {
-            throw new Error('Invalid thumbnail data');
-        }
-
-        const thumbnailSize = thumbnail.getSize();
-        // console.log('Thumbnail Size:', thumbnailSize);
-
-        const thumbnailScaleX = thumbnailSize.width / (width * scaleFactor);
-        const thumbnailScaleY = thumbnailSize.height / (height * scaleFactor);
-
-        let x = Math.round((cursorPos.x - displayX) * thumbnailScaleX);
-        let y = Math.round((cursorPos.y - displayY) * thumbnailScaleY);
-
-        // console.log('Scaled Cursor Position:', { x, y });
-
-        if (x < 0 || y < 0 || x >= thumbnailSize.width || y >= thumbnailSize.height) {
-            throw new Error('Cursor position is out of thumbnail bounds');
-        }
-
-        const img = thumbnail.crop({ x, y, width: 1, height: 1 });
-        const pixelData = img.toPNG();
-
-        if (!pixelData || pixelData.length < 3) {
-            throw new Error('Invalid pixel data retrieved');
-        }
-
-        const base64Data = pixelData.toString('base64');
-        mainWindow.webContents.send('update-img', `data:image/png;base64,${base64Data}`);
-
-        getAverageColor(pixelData)
-            .then(color => {
-
-                const hex = color.hex;
-
-                // console.log('Picked Color:', hex);
-                mainWindow.webContents.send('update-color', hex);
-
-                chatGPTCommunicator(hex);
-            })
-            .catch(err => { throw new Error(err); })
+        const imgBuffer = await screenshot({ format: 'png' });
+        const croppedImageBuffer = await cropOnePixel(imgBuffer, cursorPos.x, cursorPos.y);
+        mainWindow.webContents.send('update-img', `data:image/png;base64,${croppedImageBuffer.toString('base64')}`);
     } catch (error) {
         console.error('Error capturing color:', error);
     }
 };
 
+async function cropOnePixel(imageBuffer, x, y) {
+    try {
+        const metadata = await sharp(imageBuffer).metadata();
+
+        if (x < 0 || y < 0 || x >= metadata.width || y >= metadata.height) {
+            throw new Error('Cursor position is out of screenshot bounds');
+        }
+
+        const cropX = Math.max(0, x);
+        const cropY = Math.max(0, y);
+
+        const croppedBuffer = await sharp(imageBuffer)
+            .extract({ left: cropX, top: cropY, width: 1, height: 1 })
+            .png()
+            .toBuffer();
+
+        return croppedBuffer;
+    } catch (err) {
+        console.error("Crop failed:", err.message);
+        throw err;
+    }
+}
+
+ipcMain.on('get-color', (event, hex) => {
+    chatGPTCommunicator(hex)
+});
 
 const chatGPTCommunicator = async (hex) => {
     // 发送 HEX 到 ChatGPT API

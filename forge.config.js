@@ -2,11 +2,7 @@ import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
 export const packagerConfig = {
-  asar: true,
-  "asarUnpack": [
-    "**/node_modules/sharp/**/*",
-    "**/node_modules/@img/**/*"
-  ]
+  asar: { unpack: "**/node_modules/{sharp,@img}/**/*" },
 };
 export const rebuildConfig = {};
 export const makers = [

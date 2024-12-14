@@ -5,7 +5,7 @@ const translations = JSON.parse(process.argv.find((arg) => arg.startsWith('{')) 
 contextBridge.exposeInMainWorld('electronAPI', {
     // Main Window
     startCapture: () => ipcRenderer.send('start-capture'),
-    onUpdateColor: (callback) => ipcRenderer.on('update-color', (_, hex) => callback(hex)),
+    getColor: (hex) => ipcRenderer.send('get-color', hex),
     onUpdateImg: (callback) => ipcRenderer.on('update-img', (_, img) => callback(img)),
     onChatGPTResponse: (callback) => ipcRenderer.on('chatgpt-response', (_, message) => callback(message)),
     onUpdateStatus: (callback) => ipcRenderer.on('update-status', (_, status) => callback(status)),
