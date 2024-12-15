@@ -180,6 +180,14 @@ app.on('ready', () => {
 
         return true;
     });
+
+    globalShortcut.register('Esc', () => {
+        // 退出取色模式
+        if (isPickingColor) {
+            isPickingColor = false;
+            mainWindow.webContents.send('update-status', 'inactive');
+        }
+    });
 });
 
 app.on('window-all-closed', () => {
@@ -203,12 +211,11 @@ ipcMain.on('start-capture', () => {
 
 // 全局鼠标点击事件监听
 app.on('browser-window-focus', () => {
-    const clickListener = () => {
+    const clickListener = async () => {
         if (isPickingColor) {
-            captureColor().then(() => {
-                isPickingColor = false; // 退出取色模式
-                mainWindow.webContents.send('update-status', 'inactive');
-            });
+            await captureColor();
+            isPickingColor = false; // 退出取色模式
+            mainWindow.webContents.send('update-status', 'inactive');
         }
     };
 
