@@ -17,4 +17,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getInitialTranslations: () => translations,
     getLanguage: () => ipcRenderer.invoke('get-language'),
     setLanguage: (lang) => ipcRenderer.send('set-language', lang),
+    // Clipboard APIs
+    copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text),
+    onCopySuccess: (callback) => ipcRenderer.on('copy-success', (_, message) => callback(message))
 });

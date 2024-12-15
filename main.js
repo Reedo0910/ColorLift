@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, screen, globalShortcut, net } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -37,8 +37,8 @@ if (translations['app_name']) {
 app.on('ready', () => {
     // 创建悬浮窗口
     mainWindow = new BrowserWindow({
-        width: 320,
-        height: 380,
+        width: 345,
+        height: 480,
         transparent: true, // 窗口透明
         vibrancy: 'fullscreen-ui',
         titleBarStyle: 'hiddenInset',
@@ -188,6 +188,11 @@ app.on('window-all-closed', () => {
     }
 });
 
+
+ipcMain.on('copy-to-clipboard', (event, text) => {
+    clipboard.writeText(text);
+    event.sender.send('copy-success', true); // 通知渲染进程复制成功
+});
 
 
 // 开启取色模式
