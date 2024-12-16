@@ -129,26 +129,10 @@
             height: 100%;
             font-size: 13px;
             color: #6f6f6f;
-            z-index: 3;
-            opacity: 0;
-            transition: opacity 0.1s ease-in, visibility 0.1s ease-in;
-            visibility: hidden;
         }
 
-        .instruction-panel.is-panel {
-            background-color: #e6e6e670;
-            backdrop-filter: blur(15px);
-        }
-
-        .instruction-panel>div,
-        .instruction-panel>div>div,
-        .instruction-panel>div>div>p {
-            text-align: center;
-            width: 100%;
-        }
-
-        .instruction-panel>div,
-        .instruction-panel>div>div {
+        .panel-instruction,
+        .panel-content-wrapper {
             position: absolute;
             top: 0;
             left: 0;
@@ -156,25 +140,33 @@
             right: 0;
             margin: auto;
             width: 100%;
-            max-width: 660px;
             display: flex;
             align-items: center;
-            z-index: 4;
         }
 
-        .instruction-panel>div {
-            visibility: hidden;
+        .panel-instruction {
             opacity: 0;
-            transition: opacity 0.1s ease-in, visibility 0.1s ease-in;
+            transition: opacity 0.08s ease-in, visibility 0.08s ease-in;
+            visibility: hidden;
         }
 
-        .instruction-panel>div>div>p {
+        .panel-instruction .panel-content {
+            width: 100%;
+            text-align: center;
             font-weight: 400;
             line-height: 1.75;
         }
 
+        #color-picking-instruction {
+            color: #8f8f8f;
+            background-color: #e6e6e670;
+            backdrop-filter: saturate(180%) blur(15px);
+            z-index: 5;
+        }
+
         #onboarding-instruction {
             color: #8f8f8f;
+            z-index: 4;
         }
 
         .loader {
@@ -378,19 +370,19 @@
                         </path>
                     </svg>
                 </div>
-                <div class="instruction-panel" id="instruction_panel">
-                    <div id="color-picking-instruction">
-                        <div>
-                            <p>
+                <div class="instruction-panel">
+                    <div id="color-picking-instruction" class="panel-instruction">
+                        <div class="panel-content-wrapper">
+                            <p class="panel-content">
                                 <span id="color-picking-instruction-text-1">点击屏幕任意位置取色</span>
                                 <br>
                                 <span id="color-picking-instruction-text-2">可按 Esc 键取消操作</span>
                             </p>
                         </div>
                     </div>
-                    <div id="onboarding-instruction">
-                        <div>
-                            <p>
+                    <div id="onboarding-instruction" class="panel-instruction">
+                        <div class="panel-content-wrapper">
+                            <p class="panel-content">
                                 <span id="onboarding-instruction-text-1">点击右上角按钮进入取色模式</span>
                                 <br>
                                 <span id="onboarding-instruction-text-2">屏幕取色快捷键：</span>
@@ -464,7 +456,7 @@
         const loaderDiv = document.getElementById('loader');
         const captureButton = document.getElementById('capture-btn');
 
-        const instructionPanel = document.getElementById('instruction_panel');
+
         const colorPickingInstruction = document.getElementById('color-picking-instruction');
         const colorPickingInstructionText1 = document.getElementById('color-picking-instruction-text-1');
         const colorPickingInstructionText2 = document.getElementById('color-picking-instruction-text-2');
@@ -518,7 +510,6 @@
                 switch (instructionIndex) {
                     case 0:
                         toggleVisibility(colorPickingInstruction, true);
-                        instructionPanel.classList.add('is-panel');
                         break;
 
                     case 1:
@@ -528,15 +519,12 @@
                         break;
                 }
 
-                toggleVisibility(instructionPanel, true);
             }
         }
 
         function resetInstructionManager() {
-            toggleVisibility(instructionPanel, false);
             toggleVisibility(colorPickingInstruction, false);
             toggleVisibility(onboardingInstruction, false);
-            instructionPanel.classList.remove('is-panel');
         }
 
         captureButton.addEventListener('click', () => {
@@ -571,7 +559,7 @@
 
             chatGPTResponse.textContent = '';
 
-            isInt = false;
+            isInit = false;
             toggleVisibility(loaderDiv, true);
 
             instructionManager(false);
