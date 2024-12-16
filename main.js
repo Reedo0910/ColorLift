@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard } from 'electron';
+import { URL } from 'url';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -34,6 +35,33 @@ if (translations['app_name']) {
     app.setName(translations['app_name'])
 }
 
+app.on('web-contents-created', (event, contents) => {
+    // restrict web navigation
+    contents.on('will-navigate', (event, navigationUrl) => {
+        const parsedUrl = new URL(navigationUrl)
+
+        // to github.com only
+        if (parsedUrl.origin !== 'https://github.com') {
+            event.preventDefault()
+        }
+    })
+
+    contents.setWindowOpenHandler(({ url }) => {
+        // 在这个例子中，我们要求操作系统
+        // 在默认浏览器中打开此事件的URL
+        //
+        // 关于哪些URL应该被允许通过shell.openExternal打开，
+        // 请参照以下项目。
+        if (isSafeForExternalOpen(url)) {
+            setImmediate(() => {
+                shell.openExternal(url)
+            })
+        }
+
+        return { action: 'deny' }
+    })
+})
+
 app.on('ready', () => {
     // 创建悬浮窗口
     mainWindow = new BrowserWindow({
@@ -44,6 +72,7 @@ app.on('ready', () => {
         titleBarStyle: 'hiddenInset',
         frame: false,
         fullscreenable: false,
+        backgroundColor: 'white',
         backgroundMaterial: 'acrylic',
         alwaysOnTop: true, // 悬浮在所有窗口之上
         webPreferences: {
@@ -62,13 +91,20 @@ app.on('ready', () => {
     setLanguage(store.get('language')); // 设置默认语言
 
     // 提供翻译功能给渲染进程
-    ipcMain.handle('get-language', () => {
-        return getLanguage();
-    });
+    // ipcMain.handle('get-language', () => {
+    //     return getLanguage();
+    // });
 
     ipcMain.on('set-language', (event, lang) => {
         setLanguage(lang);
         translations = getResourceBundle(lang);
+
+        mainWindow.webContents.send('translations-update', translations);
+    });
+
+    // 将系统设置通过 webContents 传递给主界面
+    mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.send('color-pick-shortcut', store.get('colorPickShortcut'));
     });
 
     mainWindow.on('close', (event) => {
@@ -155,6 +191,8 @@ app.on('ready', () => {
         store.set('gptModel', settings.gptModel);
         store.set('language', settings.language);
         store.set('colorPickShortcut', settings.colorPickShortcut);
+
+        delete settings.apiKey;
         console.log('Settings saved:', settings);
 
         // 通知主窗口设置已更新
@@ -207,6 +245,12 @@ ipcMain.on('copy-to-clipboard', (event, text) => {
 ipcMain.on('start-capture', () => {
     isPickingColor = true; // 标记进入取色模式
     mainWindow.webContents.send('update-status', 'active');
+});
+
+// 退出取色模式
+ipcMain.on('stop-capture', () => {
+    isPickingColor = false; // 标记退出取色模式
+    mainWindow.webContents.send('update-status', 'inactive');
 });
 
 // 全局鼠标点击事件监听

@@ -29,6 +29,12 @@
 
         .visible {
             visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .invisible {
+            visibility: hidden !important;
+            opacity: 0 !important;
         }
 
         .selectable {
@@ -111,6 +117,66 @@
             z-index: 2;
         }
 
+        .instruction-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: auto;
+            width: 100%;
+            max-width: 660px;
+            height: 100%;
+            font-size: 13px;
+            color: #6f6f6f;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.1s ease-in, visibility 0.1s ease-in;
+            visibility: hidden;
+        }
+
+        .instruction-panel.is-panel {
+            background-color: #e6e6e670;
+            backdrop-filter: blur(15px);
+        }
+
+        .instruction-panel>div,
+        .instruction-panel>div>div,
+        .instruction-panel>div>div>p {
+            text-align: center;
+            width: 100%;
+        }
+
+        .instruction-panel>div,
+        .instruction-panel>div>div {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: auto;
+            width: 100%;
+            max-width: 660px;
+            display: flex;
+            align-items: center;
+            z-index: 4;
+        }
+
+        .instruction-panel>div {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.1s ease-in, visibility 0.1s ease-in;
+        }
+
+        .instruction-panel>div>div>p {
+            font-weight: 400;
+            line-height: 1.75;
+        }
+
+        #onboarding-instruction {
+            color: #8f8f8f;
+        }
+
         .loader {
             position: absolute;
             top: 0;
@@ -118,12 +184,14 @@
             right: 0;
             bottom: 0;
             margin: auto;
-            z-index: 2;
             height: 40px;
             width: 40px;
             text-align: center;
             display: inline-block;
             vertical-align: top;
+            opacity: 0;
+            z-index: 10;
+            transition: opacity 0.08s ease-in, visibility 0.08s ease-in;
             visibility: hidden;
         }
 
@@ -181,10 +249,6 @@
             opacity: 1;
         }
 
-        button:not(.neumorphic-btn):hover {
-            background-color: #ccc;
-        }
-
         .control-panel {
             position: relative;
             width: 100%;
@@ -200,8 +264,16 @@
         .control-panel button {
             display: inline-block;
             align-items: center;
+            border: 1px solid transparent;
             width: 30px;
             height: 30px;
+            opacity: 0.85;
+        }
+
+        .control-panel button:hover {
+            border-color: #eee;
+            background-color: #f2f2f2;
+            opacity: 1;
         }
 
         .control-panel>* {
@@ -233,22 +305,21 @@
             bottom: 100%;
             right: 0;
             transform: translateY(0px);
-            min-width: 115px;
-            background-color: #f0f0f0;
-            border: 1px solid #eeeeeede;
+            min-width: 135px;
+            background-color: #f8f8f8;
+            border: 1px solid #e5e5e5;
             border-radius: 10px;
             box-shadow: 1px 1px 5px #0000001a, -1px -1px 5px #ffffff4d;
             padding: 8px 3px;
             z-index: 20;
-            transition: opacity 0.15s ease, transform 0.15s ease;
+            transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
             opacity: 0;
         }
 
         .clipboard-dropdown-menu.visible {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(-5px);
-            transition: opacity 0.15s ease, transform 0.15s ease;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: translateY(-5px) !important;
         }
 
         .clipboard-dropdown-item {
@@ -261,11 +332,20 @@
             margin: 1.5px 5px;
             opacity: .85;
             border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .clipboard-dropdown-item svg {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
         }
 
         .clipboard-dropdown-item:hover {
-            border-color: #e8e8e8;
-            background-color: #e2e2e2;
+            border-color: #ccc;
+            background-color: #f3f3f3;
             opacity: 1;
         }
     </style>
@@ -273,7 +353,7 @@
 
 <body style="-webkit-app-region: drag" y>
     <div class="body-main">
-        <button id="capture-btn" class="neumorphic-btn">
+        <button id="capture-btn" class="neumorphic-btn" title="开始屏幕取色">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000">
                 <path fill-rule="evenodd"
                     d="M16.098 2.598a3.75 3.75 0 1 1 3.622 6.275l-1.72.46V12a.75.75 0 0 1-.22.53l-.75.75a.75.75 0 0 1-1.06 0l-.97-.97-7.94 7.94a2.56 2.56 0 0 1-1.81.75 1.06 1.06 0 0 0-.75.31l-.97.97a.75.75 0 0 1-1.06 0l-.75-.75a.75.75 0 0 1 0-1.06l.97-.97a1.06 1.06 0 0 0 .31-.75c0-.68.27-1.33.75-1.81L11.69 9l-.97-.97a.75.75 0 0 1 0-1.06l.75-.75A.75.75 0 0 1 12 6h2.666l.461-1.72c.165-.617.49-1.2.971-1.682Zm-3.348 7.463L4.81 18a1.06 1.06 0 0 0-.31.75c0 .318-.06.63-.172.922a2.56 2.56 0 0 1 .922-.172c.281 0 .551-.112.75-.31l7.94-7.94-1.19-1.19Z"
@@ -298,12 +378,33 @@
                         </path>
                     </svg>
                 </div>
+                <div class="instruction-panel" id="instruction_panel">
+                    <div id="color-picking-instruction">
+                        <div>
+                            <p>
+                                <span id="color-picking-instruction-text-1">点击屏幕任意位置取色</span>
+                                <br>
+                                <span id="color-picking-instruction-text-2">可按 Esc 键取消操作</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div id="onboarding-instruction">
+                        <div>
+                            <p>
+                                <span id="onboarding-instruction-text-1">点击右上角按钮进入取色模式</span>
+                                <br>
+                                <span id="onboarding-instruction-text-2">屏幕取色快捷键：</span>
+                                <span id="onboarding-instruction-text-shortcut">Alt + C</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <div id="chatgpt-response" class="selectable"></div>
             </div>
         </div>
         <div class="control-panel">
             <div class="clipboard-dropdown-container">
-                <button id="clipboard_dropdown_button">
+                <button id="clipboard_dropdown_button" title="复制…">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path fill-rule="evenodd"
                             d="M17.663 3.118c.225.015.45.032.673.05C19.876 3.298 21 4.604 21 6.109v9.642a3 3 0 0 1-3 3V16.5c0-5.922-4.576-10.775-10.384-11.217.324-1.132 1.3-2.01 2.548-2.114.224-.019.448-.036.673-.051A3 3 0 0 1 13.5 1.5H15a3 3 0 0 1 2.663 1.618ZM12 4.5A1.5 1.5 0 0 1 13.5 3H15a1.5 1.5 0 0 1 1.5 1.5H12Z"
@@ -323,11 +424,27 @@
                     </span>
                 </button>
                 <div class="clipboard-dropdown-menu" id="clipboard_dropdown_menu">
-                    <div class="clipboard-dropdown-item" data-action="copyColor">复制颜色代码</div>
-                    <div class="clipboard-dropdown-item" data-action="copyDesc">复制描述</div>
+                    <div class="clipboard-dropdown-item" data-action="copyColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M2 3a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v8.5a2.5 2.5 0 0 1-5 0V3Zm3.25 8.5a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                                clip-rule="evenodd" />
+                            <path
+                                d="m8.5 11.035 3.778-3.778a1 1 0 0 0 0-1.414l-2.122-2.121a1 1 0 0 0-1.414 0l-.242.242v7.07ZM7.656 14H13a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-.344l-5 5Z" />
+                        </svg>
+                        <span id="copy-code-btn-text">复制颜色代码</span>
+                    </div>
+                    <div class="clipboard-dropdown-item" data-action="copyDesc">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M2 3.75A.75.75 0 0 1 2.75 3h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 3.75ZM2 8a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 8Zm0 4.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span id="copy-description-btn-text">复制描述</span>
+                    </div>
                 </div>
             </div>
-            <button id="settings-btn">
+            <button id="settings-btn" title="设置">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path
                         d="M17.004 10.407c.138.435-.216.842-.672.842h-3.465a.75.75 0 0 1-.65-.375l-1.732-3c-.229-.396-.053-.907.393-1.004a5.252 5.252 0 0 1 6.126 3.537ZM8.12 8.464c.307-.338.838-.235 1.066.16l1.732 3a.75.75 0 0 1 0 .75l-1.732 3c-.229.397-.76.5-1.067.161A5.23 5.23 0 0 1 6.75 12a5.23 5.23 0 0 1 1.37-3.536ZM10.878 17.13c-.447-.098-.623-.608-.394-1.004l1.733-3.002a.75.75 0 0 1 .65-.375h3.465c.457 0 .81.407.672.842a5.252 5.252 0 0 1-6.126 3.539Z" />
@@ -347,17 +464,100 @@
         const loaderDiv = document.getElementById('loader');
         const captureButton = document.getElementById('capture-btn');
 
+        const instructionPanel = document.getElementById('instruction_panel');
+        const colorPickingInstruction = document.getElementById('color-picking-instruction');
+        const colorPickingInstructionText1 = document.getElementById('color-picking-instruction-text-1');
+        const colorPickingInstructionText2 = document.getElementById('color-picking-instruction-text-2');
+
+        const onboardingInstruction = document.getElementById('onboarding-instruction');
+        const onboardingInstructionText1 = document.getElementById('onboarding-instruction-text-1');
+        const onboardingInstructionText2 = document.getElementById('onboarding-instruction-text-2');
+        const onboardingInstructionShortcutText = document.getElementById('onboarding-instruction-text-shortcut');
+
         const clipboardDropdownButton = document.getElementById('clipboard_dropdown_button');
         const clipboardDropdownMenu = document.getElementById('clipboard_dropdown_menu');
 
         const openSettingsBtn = document.getElementById('settings-btn');
 
-        const translations = window.electronAPI.getInitialTranslations();
+        const initialTranslations = window.electronAPI.getInitialTranslations();
 
-        document.title = translations['app_name'];
+        setTranslations(initialTranslations);
+
+        let isInit = true;
+        instructionManager(true, 1);
+
+        function setTranslations(translations) {
+            document.title = translations['app_name'];
+
+            openSettingsBtn.title = translations['setting_button_title'];
+            captureButton.title = translations['enter_color_picking_mode'];
+            colorPickingInstructionText1.textContent = translations['color_picking_instruction_1'];
+            colorPickingInstructionText2.textContent = translations['color_picking_instruction_2'];
+            onboardingInstructionText1.textContent = translations['onboarding_instruction_1'];
+            onboardingInstructionText2.textContent = translations['onboarding_instruction_2'];
+        }
+
+        function toggleVisibility(element, isVisible) {
+            if (element !== null) {
+                if (isVisible) {
+                    if (!element.classList.contains('visible')) {
+                        element.classList.add('visible')
+                    }
+                } else {
+                    element.classList.remove('visible')
+                }
+            }
+        }
+
+        function instructionManager(isShowInstruction = false, instructionIndex = -1) {
+
+            resetInstructionManager();
+
+            if (isShowInstruction) {
+                // index: 0: Color Picking; 1: Onboarding
+                switch (instructionIndex) {
+                    case 0:
+                        toggleVisibility(colorPickingInstruction, true);
+                        instructionPanel.classList.add('is-panel');
+                        break;
+
+                    case 1:
+                        toggleVisibility(onboardingInstruction, true);
+
+                    default:
+                        break;
+                }
+
+                toggleVisibility(instructionPanel, true);
+            }
+        }
+
+        function resetInstructionManager() {
+            toggleVisibility(instructionPanel, false);
+            toggleVisibility(colorPickingInstruction, false);
+            toggleVisibility(onboardingInstruction, false);
+            instructionPanel.classList.remove('is-panel');
+        }
 
         captureButton.addEventListener('click', () => {
-            window.electronAPI.startCapture();
+            if (!captureButton.classList.contains('active')) {
+                window.electronAPI.startCapture();
+            } else {
+                window.electronAPI.stopCapture();
+            }
+        });
+
+        window.electronAPI.onColorPickShortcut(shortcut => {
+            if (shortcut) {
+                onboardingInstructionShortcutText.textContent = shortcut.replace(/\+/g, ' + ');
+            } else {
+                if (!onboardingInstructionText2.classList.contains('invisible')) {
+                    onboardingInstructionText2.classList.add('invisible');
+                }
+                if (!onboardingInstructionShortcutText.classList.contains('invisible')) {
+                    onboardingInstructionShortcutText.classList.add('invisible');
+                }
+            }
         });
 
         window.electronAPI.onUpdateColor(hex => {
@@ -370,7 +570,11 @@
             colorDisplay.style.boxShadow = `inset 3px 3px 7px ${darkColor}, inset -3px -3px 7px  ${lightColor}`;
 
             chatGPTResponse.textContent = '';
-            loaderDiv.classList.add('visible');
+
+            isInt = false;
+            toggleVisibility(loaderDiv, true);
+
+            instructionManager(false);
         });
 
         // window.electronAPI.onUpdateImg((base64Data) => {
@@ -378,7 +582,7 @@
         // });
 
         window.electronAPI.onChatGPTResponse((message) => {
-            loaderDiv.classList.remove('visible');
+            toggleVisibility(loaderDiv, false);
 
             chatGPTResponse.textContent = message;
         });
@@ -386,12 +590,31 @@
         window.electronAPI.onUpdateStatus((status) => {
             if (status === 'active') {
                 captureButton.classList.add('active');
+
+                instructionManager(true, 0);
             } else {
                 captureButton.classList.remove('active');
+
+                instructionManager(false);
+
+                if (isInit) {
+                    instructionManager(true, 1);
+                }
             }
         });
 
         window.electronAPI.onSettingsUpdated((settings) => {
+            if (settings.colorPickShortcut) {
+                onboardingInstructionShortcutText.textContent = settings.colorPickShortcut.replace(/\+/g, ' + ');
+            } else {
+                if (!onboardingInstructionText2.classList.contains('invisible')) {
+                    onboardingInstructionText2.classList.add('invisible');
+                }
+                if (!onboardingInstructionShortcutText.classList.contains('invisible')) {
+                    onboardingInstructionShortcutText.classList.add('invisible');
+                }
+            }
+
             const myHex = '#FFFFFF';
 
             colorDisplay.style.backgroundColor = myHex;
@@ -399,7 +622,13 @@
             colorDisplay.style.boxShadow = 'inset 3px 3px 7px #f5f5f5, inset -3px -3px 7px #ffffff';
 
             chatGPTResponse.textContent = '';
+
+            isInit = true;
         });
+
+        window.electronAPI.onTranslationsUpdated((myTranslations) => {
+            setTranslations(myTranslations);
+        })
 
         // 切换菜单显示与隐藏
         clipboardDropdownButton.addEventListener('click', () => {
@@ -409,7 +638,7 @@
         // 当在菜单外点击时隐藏菜单
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.clipboard-dropdown-container')) {
-                clipboardDropdownMenu.classList.remove('visible');
+                toggleVisibility(clipboardDropdownMenu, false);
             }
         });
 
@@ -424,15 +653,15 @@
 
             setTimeout(() => {
                 // 点击菜单项后，隐藏菜单
-                clipboardDropdownMenu.classList.remove('visible');
+                toggleVisibility(clipboardDropdownMenu, false);
             }, 50);
         });
 
-        window.electronAPI.onCopySuccess(() => {
-            // alert('已复制到粘贴板');
+        // window.electronAPI.onCopySuccess(() => {
+        //     // alert('已复制到粘贴板');
 
-            // clipboardDropdownMenu.classList.remove('visible');
-        });
+        //     // clipboardDropdownMenu.classList.remove('visible');
+        // });
 
         // 打开设置窗口
         openSettingsBtn.addEventListener('click', () => {

@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSettings: () => ipcRenderer.invoke('get-settings'),
     saveSettings: (settings) => ipcRenderer.send('save-settings', settings),
     getInitialTranslations: () => translations,
-    getLanguage: () => ipcRenderer.invoke('get-language'),
+    // getLanguage: () => ipcRenderer.invoke('get-language'),
     setLanguage: (lang) => ipcRenderer.send('set-language', lang),
     setColorPickShortcut: (shortcut) => ipcRenderer.invoke('set-color-pick-shortcut', shortcut),
 });
