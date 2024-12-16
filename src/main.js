@@ -381,22 +381,22 @@ const captureColor = async () => {
 
         // TODO: i18n
         if (!currentModelId) {
-            return mainWindow.webContents.send('chatgpt-response', '请先到右下角的设置菜单中选取一个语言模型');
+            return mainWindow.webContents.send('chatgpt-response', translations['error_model_invalid']);
         }
 
         const currentApiKey = getApiKeyForModel(currentModelId, LLMList, store.get('apiKeys'));
 
         if (!currentApiKey) {
-            return mainWindow.webContents.send('chatgpt-response', '请先到右下角的设置菜单中输入一个有效的语言模型 API 密钥');
+            return mainWindow.webContents.send('chatgpt-response', translations['error_api_key_invalid']);
         }
 
-        const message = await LLMCommunicator(hex, getLanguage(), currentModelId, currentApiKey);
+        const message = await LLMCommunicator(hex, getLanguage(), currentModelId, currentApiKey, translations);
 
         mainWindow.webContents.send('chatgpt-response', message);
     } catch (error) {
         console.error('Error capturing color:', error);
 
-        mainWindow.webContents.send('chatgpt-response', '出现了一个错误，请稍后重试');
+        mainWindow.webContents.send('chatgpt-response', translations['error_unhandled_error']);
     }
 };
 

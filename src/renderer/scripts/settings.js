@@ -1,6 +1,7 @@
 const windowTitle = document.getElementById('window-title');
 
 const providerSelect = document.getElementById('provider-select');
+const providerSelectLabel = document.getElementById('provider-select-label');
 
 const apiKeyContainer = document.getElementById('api-key-container');
 const apiKeyInput = document.getElementById('api-key-input');
@@ -14,6 +15,7 @@ const apiKeyNote = document.getElementById('api-key-note');
 const modelLabel = document.getElementById('model-label');
 const modelDescription = document.getElementById('model-description');
 
+const themeSelectLabel = document.getElementById('theme-label');
 const themeSelect = document.getElementById('theme-select');
 
 const languageLabel = document.getElementById('language-label');
@@ -44,12 +46,15 @@ const LLMList = window.electronAPI.getLLMList();
 
 document.title = translations['setting_window_title'];
 
+providerSelectLabel.textContent = translations['provider_select_label'];
 toggleVisibilityBtn.title = translations['show_api_key_button_tooltip'];
 windowTitle.textContent = translations['setting_window_title'];
 apiKeyLabel.textContent = translations['api_key_label'];
+apiKeyInput.placeholder = translations['api_key_placeholder'];
 apiKeyNote.textContent = translations['api_key_note'];
 modelLabel.textContent = translations['model_label'];
 modelDescription.textContent = translations['model_description'];
+themeSelectLabel.textContent = translations['theme_select_label'];
 languageLabel.textContent = translations['language_label'];
 languageNote.textContent = translations['language_note'];
 colorPickShortcutLabel.textContent = translations['color_pick_shortcut_label'];
@@ -61,11 +66,11 @@ closeBtn.textContent = translations['close_button'];
 // 填充 Provider 下拉菜单
 function populateProviderDropdown(selectedProviderId = '') {
 
-    providerSelect.innerHTML = `<option value="">--选择语言模型提供方--</option>`;
+    providerSelect.innerHTML = `<option value="">--${translations['provider_select_placeholder']}--</option>`;
     LLMList.forEach(provider => {
         const option = document.createElement('option');
         option.value = provider.id;
-        option.textContent = provider.provider;
+        option.textContent = translations[`provider_${provider.id}`] || provider.provider;
         if (provider.id === selectedProviderId) {
             option.selected = true;
         }
@@ -77,7 +82,7 @@ function populateProviderDropdown(selectedProviderId = '') {
 function populateModelDropdown(providerId) {
     const provider = LLMList.find(item => item.id === providerId);
 
-    modelSelect.innerHTML = `<option value="">--选择语言模型--</option>`;
+    modelSelect.innerHTML = `<option value="">--${translations['model_select_placeholder']}--</option>`;
     if (provider) {
         provider.models.forEach(model => {
             const option = document.createElement('option');
@@ -89,6 +94,31 @@ function populateModelDropdown(providerId) {
     } else {
         modelContainer.style.display = 'none';
     }
+}
+
+function populateThemeDropdown() {
+    const optionList = [
+        {
+            text: translations['theme_select_option_system'],
+            value: 'system'
+        },
+        {
+            text: translations['theme_select_option_light'],
+            value: 'light'
+        },
+        {
+            text: translations['theme_select_option_dark'],
+            value: 'dark'
+        }
+    ];
+
+    themeSelect.innerHTML = '';
+    optionList.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.value;
+        option.textContent = item.text;
+        themeSelect.appendChild(option);
+    })
 }
 
 // 根据 Model ID 初始化 Provider 和 Model 选项
@@ -131,7 +161,7 @@ apiKeyInput.addEventListener('input', (event) => {
 
 // 初始化
 populateProviderDropdown();
-
+populateThemeDropdown();
 
 // 加载当前设置
 window.electronAPI.getSettings().then((settings) => {

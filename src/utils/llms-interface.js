@@ -110,7 +110,7 @@ export const LLMList = [
         ]
     }];
 
-export const LLMCommunicator = async (hex, language, modelId, apiKey) => {
+export const LLMCommunicator = async (hex, language, modelId, apiKey, translations) => {
 
     const providerObj = findProviderByModelId(modelId);
     const providerId = providerObj.id;
@@ -167,12 +167,12 @@ export const LLMCommunicator = async (hex, language, modelId, apiKey) => {
 
     if (response.ok) {
         if (providerId === 'cohere') {
-            return data.message?.content[0]?.text || 'No Response';
+            return data.message?.content[0]?.text || translations['error_no_response'];
         }
         if (providerId === 'anthropic') {
-            return data.content[0].text || 'No Response';
+            return data.content[0].text || translations['error_no_response'];
         }
-        return data.choices[0]?.message?.content || 'No Response';
+        return data.choices[0]?.message?.content || translations['error_no_response'];
         // console.log('LLM interpretation:', message);
     } else {
         console.error('Error from LLM API:', data);
