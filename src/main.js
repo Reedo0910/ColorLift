@@ -1,4 +1,4 @@
-import { app, Menu, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard, shell } from 'electron';
+import { app, Menu, BrowserWindow, ipcMain, screen, globalShortcut, clipboard, shell } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
@@ -6,6 +6,7 @@ import sharp from 'sharp';
 import screenshot from 'screenshot-desktop';
 import { getAverageColor } from 'fast-average-color-node';
 import { setLanguage, getLanguage, getResourceBundle } from './utils/i18n.js';
+import { chatGPTCommunicator } from './utils/llms.js';
 
 // 创建 __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -369,7 +370,9 @@ const captureColor = async () => {
         // console.log('Picked Color:', hex);
         mainWindow.webContents.send('update-color', hex);
 
-        chatGPTCommunicator(hex);
+        const message = await chatGPTCommunicator(hex, getLanguage(), store.get('gptModel'), store.get('openaiApiKey'));
+
+        mainWindow.webContents.send('chatgpt-response', message);
     } catch (error) {
         console.error('Error capturing color:', error);
     }
@@ -414,32 +417,4 @@ function getAppLocale() {
     }
 
     return supportedLocales[systemLocale] || defaultLocale;
-}
-
-const chatGPTCommunicator = async (hex) => {
-    const response = await net.fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${store.get('openaiApiKey')}`,
-        },
-        body: JSON.stringify({
-            model: store.get('gptModel'),
-            messages: [
-                { role: 'system', content: `请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：Hex 你回答：这是xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，有什么应用，等等。注意：请使用${getLanguage()}进行描述。回答不超过120个字或单词。不要在你的回答中包含Hex。` },
-                { role: 'user', content: `${hex}` },
-            ],
-        }),
-    });
-
-    const data = await response.json();
-    // console.log('ChatGPT Response:', data);
-
-    if (response.ok) {
-        const message = data.choices[0]?.message?.content || 'No Response';
-        // console.log('ChatGPT interpretation:', message);
-        mainWindow.webContents.send('chatgpt-response', message);
-    } else {
-        console.error('Error from ChatGPT API:', data);
-    }
 }
