@@ -84,7 +84,7 @@ app.on('ready', () => {
 
     // mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
 
-    mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+    mainWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'index.html'));
 
     // mainWindow.webContents.openDevTools(); // Open DevTools
 
@@ -155,7 +155,7 @@ app.on('ready', () => {
                 },
             });
 
-            settingsWindow.loadFile(path.join(__dirname, 'renderer', 'settings.html'));
+            settingsWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'settings.html'));
 
             // 在窗口准备好时显示
             settingsWindow.once('ready-to-show', () => {
