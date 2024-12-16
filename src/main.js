@@ -1,12 +1,11 @@
 import { app, Menu, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard } from 'electron';
-import { URL } from 'url';
 import Store from 'electron-store';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, URL } from 'url';
 import sharp from 'sharp';
 import screenshot from 'screenshot-desktop';
 import { getAverageColor } from 'fast-average-color-node';
-import { setLanguage, getLanguage, getResourceBundle } from './i18n.js';
+import { setLanguage, getLanguage, getResourceBundle } from './utils/i18n.js';
 
 // 创建 __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -77,7 +76,7 @@ app.on('ready', () => {
         backgroundMaterial: 'acrylic',
         alwaysOnTop: true, // 悬浮在所有窗口之上
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, 'preload', 'preload.js'),
             contextIsolation: true,
             additionalArguments: [JSON.stringify(translations)],
         },
@@ -85,7 +84,7 @@ app.on('ready', () => {
 
     // mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
 
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
     // mainWindow.webContents.openDevTools(); // Open DevTools
 
@@ -150,13 +149,13 @@ app.on('ready', () => {
                 backgroundMaterial: 'acrylic',
                 backgroundColor: 'white',
                 webPreferences: {
-                    preload: path.join(__dirname, 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
+                    preload: path.join(__dirname, 'preload', 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
                     contextIsolation: true,
                     additionalArguments: [JSON.stringify(translations)],
                 },
             });
 
-            settingsWindow.loadFile('settings.html');
+            settingsWindow.loadFile(path.join(__dirname, 'renderer', 'settings.html'));
 
             // 在窗口准备好时显示
             settingsWindow.once('ready-to-show', () => {

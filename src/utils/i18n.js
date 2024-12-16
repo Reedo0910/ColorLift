@@ -16,7 +16,7 @@ await i18next.init({
 
 // 加载语言文件
 export const loadLanguageFiles = () => {
-    const localesDir = path.resolve(__dirname, 'locales');
+    const localesDir = path.resolve(__dirname, '../locales');
     const languages = fs.readdirSync(localesDir);
 
     languages.forEach((file) => {
