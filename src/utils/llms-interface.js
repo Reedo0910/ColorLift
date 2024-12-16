@@ -163,7 +163,7 @@ export const LLMCommunicator = async (hex, language, modelId, apiKey) => {
     });
 
     const data = await response.json();
-    console.log('LLM Response:', data);
+    // console.log('LLM Response:', data);
 
     if (response.ok) {
         if (providerId === 'cohere') {

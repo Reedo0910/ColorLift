@@ -17,10 +17,6 @@ additionalArguments.forEach(arg => {
     }
 });
 
-console.log(translations);
-console.log(LLMList);
-
-
 contextBridge.exposeInMainWorld('electronAPI', {
     getSettings: () => ipcRenderer.invoke('get-settings'),
     saveSettings: (settings) => ipcRenderer.send('save-settings', settings),
