@@ -6,7 +6,7 @@ import sharp from 'sharp';
 import screenshot from 'screenshot-desktop';
 import { getAverageColor } from 'fast-average-color-node';
 import { setLanguage, getLanguage, getResourceBundle } from './utils/i18n.js';
-import { chatGPTCommunicator } from './utils/llms.js';
+import { LLMCommunicator, LLMList } from './utils/llms-interface.js';
 
 // 创建 __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -22,10 +22,17 @@ const appLocale = getAppLocale();
 // 初始化 electron-store
 const store = new Store({
     defaults: {
-        openaiApiKey: '', // 默认存储 OpenAI API Key
-        gptModel: 'gpt-4o-mini', // 默认 GPT 模型
+        apiKeys: {
+            'anthropic': '',
+            'cohere': '',
+            'iflytek_spark': '',
+            'openai': '',
+            'zhipu_ai': ''
+        },
+        modelId: 'gpt-4o-mini', // 默认模型
         language: appLocale,
-        colorPickShortcut: 'Alt+C'
+        colorPickShortcut: 'Alt+C',
+        theme: 'system' // 跟随系统主题
     },
 });
 
@@ -180,11 +187,6 @@ app.on('ready', () => {
 
     setLanguage(store.get('language')); // 设置默认语言
 
-    // 提供翻译功能给渲染进程
-    // ipcMain.handle('get-language', () => {
-    //     return getLanguage();
-    // });
-
     ipcMain.on('set-language', (event, lang) => {
         setLanguage(lang);
         translations = getResourceBundle(lang);
@@ -239,7 +241,10 @@ app.on('ready', () => {
                 webPreferences: {
                     preload: path.join(__dirname, 'preload', 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
                     contextIsolation: true,
-                    additionalArguments: [JSON.stringify(translations)],
+                    additionalArguments: [
+                        JSON.stringify({ key: 'translations', value: translations }),
+                        JSON.stringify({ key: 'LLMList', value: LLMList }),
+                    ],
                 },
             });
 
@@ -268,21 +273,23 @@ app.on('ready', () => {
     // 获取当前存储的设置
     ipcMain.handle('get-settings', () => {
         return {
-            apiKey: store.get('openaiApiKey'),
-            gptModel: store.get('gptModel'),
+            apiKeys: store.get('apiKeys'),
+            modelId: store.get('modelId'),
             language: store.get('language'),
             colorPickShortcut: store.get('colorPickShortcut'),
+            theme: store.get('theme'),
         };
     });
 
     // 保存新的设置
     ipcMain.on('save-settings', (event, settings) => {
-        store.set('openaiApiKey', settings.apiKey);
-        store.set('gptModel', settings.gptModel);
+        store.set('apiKeys', settings.apiKeys);
+        store.set('modelId', settings.modelId);
         store.set('language', settings.language);
         store.set('colorPickShortcut', settings.colorPickShortcut);
+        store.set('theme', settings.theme);
 
-        delete settings.apiKey;
+        delete settings.apiKeys;
         console.log('Settings saved:', settings);
 
         // 通知主窗口设置已更新
@@ -370,11 +377,26 @@ const captureColor = async () => {
         // console.log('Picked Color:', hex);
         mainWindow.webContents.send('update-color', hex);
 
-        const message = await chatGPTCommunicator(hex, getLanguage(), store.get('gptModel'), store.get('openaiApiKey'));
+        const currentModelId = store.get('modelId');
+
+        // TODO: i18n
+        if (!currentModelId) {
+            return mainWindow.webContents.send('chatgpt-response', '请先到右下角的设置菜单中选取一个语言模型');
+        }
+
+        const currentApiKey = getApiKeyForModel(currentModelId, LLMList, store.get('apiKeys'));
+
+        if (!currentApiKey) {
+            return mainWindow.webContents.send('chatgpt-response', '请先到右下角的设置菜单中输入一个有效的语言模型 API 密钥');
+        }
+
+        const message = await LLMCommunicator(hex, getLanguage(), currentModelId, currentApiKey);
 
         mainWindow.webContents.send('chatgpt-response', message);
     } catch (error) {
         console.error('Error capturing color:', error);
+
+        mainWindow.webContents.send('chatgpt-response', '出现了一个错误，请稍后重试');
     }
 };
 
@@ -399,6 +421,22 @@ async function cropOnePixel(imageBuffer, x, y) {
         console.error("Crop failed:", err.message);
         throw err;
     }
+}
+
+function getApiKeyForModel(modelId, LLMList, apiKeys) {
+    // 找到对应的 Provider
+    const provider = LLMList.find(provider =>
+        provider.models.some(model => model.id === modelId)
+    );
+
+    // 如果找到对应的 Provider，返回对应的 API Key
+    if (provider) {
+        const providerId = provider.id;
+        return apiKeys[providerId] || null; // 返回 API Key 或 null
+    }
+
+    // 如果找不到对应的 Provider，返回 null
+    return null;
 }
 
 function getAppLocale() {

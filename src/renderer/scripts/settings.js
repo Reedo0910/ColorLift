@@ -1,10 +1,20 @@
 const windowTitle = document.getElementById('window-title');
 
+const providerSelect = document.getElementById('provider-select');
+
+const apiKeyContainer = document.getElementById('api-key-container');
+const apiKeyInput = document.getElementById('api-key-input');
+
+const modelContainer = document.getElementById('model-container');
+const modelSelect = document.getElementById('model-select');
+
 const apiKeyLabel = document.getElementById('api-key-label');
 const apiKeyNote = document.getElementById('api-key-note');
 
-const gptModelLabel = document.getElementById('gpt-model-label');
-const gptModelDescription = document.getElementById('gpt-model-description');
+const modelLabel = document.getElementById('model-label');
+const modelDescription = document.getElementById('model-description');
+
+const themeSelect = document.getElementById('theme-select');
 
 const languageLabel = document.getElementById('language-label');
 const languageNote = document.getElementById('language-note');
@@ -16,13 +26,13 @@ const saveButtonTxt = document.getElementById('save-btn-text');
 const closeBtn = document.getElementById('close-btn');
 
 const settingsForm = document.getElementById('settings-form');
-const gptModelSelect = document.getElementById('gpt-model-select');
 const languageSelect = document.getElementById('language-select');
 
-const apiKeyInput = document.getElementById('api-key-input');
 const colorPickShortcutInput = document.getElementById('color-pick-shortcut-input');
 
 const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
+
+let apiKeys, modelId;
 
 let isPasswordVisible = false; // 密钥是否可见
 
@@ -30,6 +40,7 @@ const myCurrentLanguage = '';
 const myCurrentColorPickShortcut = '';
 
 const translations = window.electronAPI.getInitialTranslations();
+const LLMList = window.electronAPI.getLLMList();
 
 document.title = translations['setting_window_title'];
 
@@ -37,8 +48,8 @@ toggleVisibilityBtn.title = translations['show_api_key_button_tooltip'];
 windowTitle.textContent = translations['setting_window_title'];
 apiKeyLabel.textContent = translations['api_key_label'];
 apiKeyNote.textContent = translations['api_key_note'];
-gptModelLabel.textContent = translations['gpt_model_label'];
-gptModelDescription.textContent = translations['gpt_model_description'];
+modelLabel.textContent = translations['model_label'];
+modelDescription.textContent = translations['model_description'];
 languageLabel.textContent = translations['language_label'];
 languageNote.textContent = translations['language_note'];
 colorPickShortcutLabel.textContent = translations['color_pick_shortcut_label'];
@@ -47,10 +58,91 @@ colorPickShortcutNote.textContent = translations['color_pick_shortcut_descriptio
 saveButtonTxt.textContent = translations['save_button'];
 closeBtn.textContent = translations['close_button'];
 
+// 填充 Provider 下拉菜单
+function populateProviderDropdown(selectedProviderId = '') {
+
+    providerSelect.innerHTML = `<option value="">--选择语言模型提供方--</option>`;
+    LLMList.forEach(provider => {
+        const option = document.createElement('option');
+        option.value = provider.id;
+        option.textContent = provider.provider;
+        if (provider.id === selectedProviderId) {
+            option.selected = true;
+        }
+        providerSelect.appendChild(option);
+    });
+}
+
+// 填充 Model 下拉菜单
+function populateModelDropdown(providerId) {
+    const provider = LLMList.find(item => item.id === providerId);
+
+    modelSelect.innerHTML = `<option value="">--选择语言模型--</option>`;
+    if (provider) {
+        provider.models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model.id;
+            option.textContent = model.name;
+            modelSelect.appendChild(option);
+        });
+        modelContainer.style.display = 'block';
+    } else {
+        modelContainer.style.display = 'none';
+    }
+}
+
+// 根据 Model ID 初始化 Provider 和 Model 选项
+function initializeWithModelId(modelId) {
+
+    const provider = LLMList.find(provider =>
+        provider.models.some(model => model.id === modelId)
+    );
+    if (provider) {
+        populateProviderDropdown(provider.id);
+        populateModelDropdown(provider.id);
+        modelSelect.value = modelId;
+        apiKeyContainer.style.display = 'block';
+        apiKeyInput.value = apiKeys[provider.id];
+    }
+}
+
+// Provider 选择事件
+providerSelect.addEventListener('change', (event) => {
+    const selectedProviderId = event.target.value;
+    populateModelDropdown(selectedProviderId);
+
+    // 显示 API Key 输入框并加载当前值
+    if (selectedProviderId) {
+        apiKeyContainer.style.display = 'block';
+        apiKeyInput.value = apiKeys[selectedProviderId];
+    } else {
+        apiKeyContainer.style.display = 'none';
+        apiKeyInput.value = '';
+    }
+});
+
+// API Key 输入事件
+apiKeyInput.addEventListener('input', (event) => {
+    const selectedProviderId = providerSelect.value;
+    if (selectedProviderId) {
+        apiKeys[selectedProviderId] = event.target.value;
+    }
+});
+
+// 初始化
+populateProviderDropdown();
+
+
 // 加载当前设置
 window.electronAPI.getSettings().then((settings) => {
-    apiKeyInput.value = settings.apiKey || '';
-    gptModelSelect.value = settings.gptModel || 'gpt-4o-mini';
+    apiKeys = settings.apiKeys || { 'anthropic': '', 'cohere': '', 'iflytek_spark': '', 'openai': '', 'zhipu_ai': '' };
+    modelId = settings.modelId || '';
+
+    if (modelId) {
+        initializeWithModelId(modelId);
+    }
+
+    themeSelect.value = settings.theme || 'system';
     languageSelect.value = settings.language || 'en';
     colorPickShortcutInput.value = settings.colorPickShortcut || '';
 
@@ -75,10 +167,11 @@ settingsForm.addEventListener('submit', async (event) => {
     }
 
     const settings = {
-        apiKey: apiKeyInput.value.trim(),
-        gptModel: gptModelSelect.value,
+        apiKeys: apiKeys,
+        modelId: modelSelect.value,
         language: languageSelect.value,
-        colorPickShortcut: colorPickShortcutInput.value.trim()
+        colorPickShortcut: colorPickShortcutInput.value.trim(),
+        theme: themeSelect.value
     };
 
     window.electronAPI.saveSettings(settings);
