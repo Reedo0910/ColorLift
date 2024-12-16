@@ -81,7 +81,7 @@ app.on('ready', () => {
         },
     });
 
-    mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
+    // mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
 
     mainWindow.loadFile('index.html');
 
