@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard } from 'electron';
+import { app, Menu, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard } from 'electron';
 import { URL } from 'url';
 import Store from 'electron-store';
 import path from 'path';
@@ -61,6 +61,8 @@ app.on('web-contents-created', (event, contents) => {
         return { action: 'deny' }
     })
 })
+
+Menu.setApplicationMenu(null);
 
 app.on('ready', () => {
     // 创建悬浮窗口
