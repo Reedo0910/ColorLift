@@ -1,4 +1,4 @@
-import { app, Menu, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard } from 'electron';
+import { app, Menu, BrowserWindow, ipcMain, screen, globalShortcut, net, clipboard, shell } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
@@ -61,7 +61,94 @@ app.on('web-contents-created', (event, contents) => {
     })
 })
 
-Menu.setApplicationMenu(null);
+const isMac = process.platform === 'darwin'
+
+const template = [
+    ...(isMac
+        ? [{
+            label: app.name,
+            submenu: [
+                { role: 'about' },
+                { type: 'separator' },
+                { role: 'services' },
+                { type: 'separator' },
+                { role: 'hide' },
+                { role: 'hideOthers' },
+                { role: 'unhide' },
+                { type: 'separator' },
+                { role: 'quit' }
+            ]
+        }]
+        : []),
+    {
+        label: 'File',
+        submenu: [
+            isMac ? { role: 'close' } : { role: 'quit' }
+        ]
+    },
+    {
+        label: 'Edit',
+        submenu: [
+            { role: 'undo' },
+            { role: 'redo' },
+            { type: 'separator' },
+            { role: 'cut' },
+            { role: 'copy' },
+            { role: 'paste' },
+            ...(isMac
+                ? [
+                    { role: 'pasteAndMatchStyle' },
+                    { role: 'delete' },
+                    { role: 'selectAll' },
+                    { type: 'separator' },
+                    {
+                        label: 'Speech',
+                        submenu: [
+                            { role: 'startSpeaking' },
+                            { role: 'stopSpeaking' }
+                        ]
+                    }
+                ]
+                : [
+                    { role: 'delete' },
+                    { type: 'separator' },
+                    { role: 'selectAll' }
+                ])
+        ]
+    },
+    {
+        label: 'Window',
+        submenu: [
+            { role: 'minimize' },
+            { role: 'zoom' },
+            ...(isMac
+                ? [
+                    { type: 'separator' },
+                    { role: 'front' },
+                    { type: 'separator' },
+                    { role: 'window' }
+                ]
+                : [
+                    { role: 'close' }
+                ])
+        ]
+    },
+    {
+        role: 'help',
+        submenu: [
+            {
+                label: 'Learn More',
+                click: async () => {
+                    await shell.openExternal('https://github.com/Reedo0910/ColorLift')
+                }
+            }
+        ]
+    }
+]
+
+const menu = Menu.buildFromTemplate(template)
+
+Menu.setApplicationMenu(menu);
 
 app.on('ready', () => {
     // 创建悬浮窗口
