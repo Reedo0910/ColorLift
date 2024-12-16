@@ -12,7 +12,10 @@
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "rm -rf ./out && electron-forge make"
+    "make": "rm -rf ./out && electron-forge make",
+    "build:x64": "electron-forge make --arch=x64",
+    "build:arm64": "electron-forge make --arch=arm64",
+    "build:all": "rm -rf ./out && npm run build:x64 && npm run build:arm64"
   },
   "type": "module",
   "author": "Zeee",
@@ -20,12 +23,14 @@
   "devDependencies": {
     "@electron-forge/cli": "^7.6.0",
     "@electron-forge/maker-deb": "^7.6.0",
+    "@electron-forge/maker-dmg": "^7.6.0",
     "@electron-forge/maker-rpm": "^7.6.0",
     "@electron-forge/maker-squirrel": "^7.6.0",
     "@electron-forge/maker-zip": "^7.6.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.6.0",
     "@electron-forge/plugin-fuses": "^7.6.0",
     "@electron/fuses": "^1.8.0",
+    "appdmg": "^0.6.6",
     "electron": "^33.2.1"
   },
   "dependencies": {

@@ -23,6 +23,11 @@ export const makers = [
     name: '@electron-forge/maker-rpm',
     config: {},
   },
+  {
+    name: '@electron-forge/maker-dmg',
+    platforms: ['darwin'],
+    config: {}
+  },
 ];
 export const plugins = [
   {
