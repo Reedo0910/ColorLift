@@ -72,7 +72,6 @@ app.on('ready', () => {
         titleBarStyle: 'hiddenInset',
         frame: false,
         fullscreenable: false,
-        backgroundColor: 'white',
         backgroundMaterial: 'acrylic',
         alwaysOnTop: true, // 悬浮在所有窗口之上
         webPreferences: {
@@ -81,6 +80,8 @@ app.on('ready', () => {
             additionalArguments: [JSON.stringify(translations)],
         },
     });
+
+    mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
 
     mainWindow.loadFile('index.html');
 
