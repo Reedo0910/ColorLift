@@ -23,7 +23,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Main Window
     startCapture: () => ipcRenderer.send('start-capture'),
     stopCapture: () => ipcRenderer.send('stop-capture'),
-    // onUpdateImg: (callback) => ipcRenderer.on('update-img', (_, img) => callback(img)),
     onUpdateColor: (callback) => ipcRenderer.on('update-color', (_, hex) => callback(hex)),
     onLLMResponse: (callback) => ipcRenderer.on('llm-response', (_, message) => callback(message)),
     onUpdateStatus: (callback) => ipcRenderer.on('update-status', (_, status) => callback(status)),

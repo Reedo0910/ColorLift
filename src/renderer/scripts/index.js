@@ -1,6 +1,5 @@
 const colorDisplay = document.getElementById('color-display');
 const hexValue = document.getElementById('hex-value');
-// const imageDisplay = document.getElementById('image-display');
 const LLMResponse = document.getElementById('llm-response');
 const loaderDiv = document.getElementById('loader');
 const captureButton = document.getElementById('capture-btn');
@@ -127,10 +126,6 @@ window.electronAPI.onUpdateColor(hex => {
 
     instructionManager(false);
 });
-
-// window.electronAPI.onUpdateImg((base64Data) => {
-//     imageDisplay.src = base64Data;
-// });
 
 window.electronAPI.onLLMResponse((message) => {
     toggleVisibility(loaderDiv, false);

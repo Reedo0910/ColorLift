@@ -195,11 +195,6 @@ app.on('ready', () => {
 
     mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
 
-    // 将系统设置通过 webContents 传递给主界面
-    // mainWindow.webContents.on('did-finish-load', () => {
-    //     mainWindow.webContents.send('color-pick-shortcut', store.get('colorPickShortcut'));
-    // });
-
     mainWindow.on('close', (event) => {
         // 检查平台
         if (process.platform === 'darwin' || process.platform === 'linux') {
@@ -371,7 +366,6 @@ const captureColor = async () => {
         const cursorPos = screen.getCursorScreenPoint(); // 获取鼠标位置
         const imgBuffer = await screenshot({ format: 'png' });
         const croppedImageBuffer = await cropOnePixel(imgBuffer, cursorPos.x, cursorPos.y);
-        // mainWindow.webContents.send('update-img', `data:image/png;base64,${croppedImageBuffer.toString('base64')}`);
 
         const color = await getAverageColor(croppedImageBuffer);
         const hex = color.hex;
