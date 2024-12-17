@@ -30,10 +30,10 @@ const store = new Store({
             'openai': '',
             'zhipu_ai': ''
         },
-        modelId: 'gpt-4o-mini', // 默认模型
+        modelId: '',
         language: appLocale,
         colorPickShortcut: 'Alt+C',
-        theme: 'system' // 跟随系统主题
+        theme: 'system'
     },
 });
 
@@ -187,7 +187,7 @@ app.on('ready', () => {
         },
     });
 
-    mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
+    // mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
 
     mainWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'index.html'));
 
