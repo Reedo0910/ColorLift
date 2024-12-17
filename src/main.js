@@ -323,14 +323,10 @@ ipcMain.on('save-settings', (event, settings) => {
     store.set('colorPickShortcut', settings.colorPickShortcut);
     store.set('theme', settings.theme);
 
+    nativeTheme.themeSource = settings.theme;
+
     // 通知主窗口设置已更新
     mainWindow.webContents.send('settings-updated', { 'colorPickShortcut': settings.colorPickShortcut, 'currentTheme': nativeTheme.shouldUseDarkColors ? 'dark' : 'light' });
-});
-
-// 设置颜色主题
-ipcMain.on('set-theme', (event, theme) => {
-    nativeTheme.themeSource = theme;
-    store.set('theme', theme);
 });
 
 ipcMain.on('set-language', (event, lang) => {

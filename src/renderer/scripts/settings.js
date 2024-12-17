@@ -208,8 +208,6 @@ settingsForm.addEventListener('submit', async (event) => {
 
     // 关闭设置窗口
     window.close();
-
-    window.electronAPI.setTheme(themeSelect.value);
 });
 
 // 关闭按钮事件

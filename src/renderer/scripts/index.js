@@ -156,7 +156,7 @@ window.electronAPI.onUpdateStatus((status) => {
 
 window.electronAPI.onSettingsUpdated((customeSettings) => {
     setColorPickShortcut(customeSettings.colorPickShortcut);
-    setColorDisplay(customeSettings.theme);
+    setColorDisplay(customeSettings.currentTheme);
 
     LLMResponse.textContent = '';
 

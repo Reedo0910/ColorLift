@@ -24,5 +24,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getInitLLMList: () => LLMList,
     setLanguage: (lang) => ipcRenderer.send('set-language', lang),
     setColorPickShortcut: (shortcut) => ipcRenderer.invoke('set-color-pick-shortcut', shortcut),
-    setTheme: (theme) => ipcRenderer.send('set-theme', theme),
 });
