@@ -11,10 +11,74 @@
             box-sizing: border-box;
         }
 
+        html {
+            color: var(--main-text);
+
+            --main-text: #000;
+            --primary-text: #181818;
+            --translucent-background: #ffffffd9;
+            --neumorphic-background-white: #ffffff;
+            --neumorphic-background-white-border: #dfdfdf;
+            --neumorphic-background-white-shadow-dark: #f5f5f5;
+            --neumorphic-background-white-shadow-light: #ffffff;
+            --instruction-panel-text: #8f8f8f;
+            --instruction-panel-overlay-background: #ddddddd9;
+            --loader-icon: #8a8a8a58;
+            --neumorphic-btn-background: linear-gradient(145deg, #f0f0f0, #dcdcdc);
+            --neumorphic-btn-border: #e8e8e8;
+            --neumorphic-btn-shadow-dark: #bebebe;
+            --neumorphic-btn-shadow-light: #ffffff;
+            --neumorphic-btn-border-active: #b8cfe2;
+            --neumorphic-btn-background-active: linear-gradient(145deg, #dcdcdc, #f0f0f0);
+            --button-icon: #1a1a1a;
+            --control-panel-btn-border-hover: #eee;
+            --control-panel-btn-background-hover: #f2f2f2;
+            --dropdown-btn-text: #383838;
+            --dropdown-menu-background: #f8f8f8;
+            --dropdown-menu-border: #e5e5e5;
+            --dropdown-menu-shadow-dark: #0000001a;
+            --dropdown-menu-shadow-light: #ffffff4d;
+            --dropdown-menu-item-text: #121212;
+            --dropdown-menu-item-border-hover: #ccc;
+            --dropdown-menu-item-background-hover: #f3f3f3;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html {
+                --main-text: #fff;
+                --primary-text: #f0f0f0;
+                --translucent-background: #2c2c2cd9;
+                --neumorphic-background-white: #262626;
+                --neumorphic-background-white-border: #383838;
+                --neumorphic-background-white-shadow-dark: #202020;
+                --neumorphic-background-white-shadow-light: #2c2c2c;
+                --instruction-panel-text: #ccc;
+                --instruction-panel-overlay-background: #323232d9;
+                --loader-icon: #b4b4b460;
+                --neumorphic-btn-background: linear-gradient(145deg, #242424, #1f1f1f);
+                --neumorphic-btn-border: #4d4d4d;
+                --neumorphic-btn-shadow-dark: #1c1c1c;
+                --neumorphic-btn-shadow-light: #282828;
+                --neumorphic-btn-border-active: #3399ff;
+                --neumorphic-btn-background-active: linear-gradient(145deg, #1f1f1f, #242424);
+                --button-icon: #f0f0f0;
+                --control-panel-btn-border-hover: #2f2f2f;
+                --control-panel-btn-background-hover: #181818;
+                --dropdown-btn-text: #efefef;
+                --dropdown-menu-background: #282828;
+                --dropdown-menu-border: #2f2f2f;
+                --dropdown-menu-shadow-dark: #212121;
+                --dropdown-menu-shadow-light: #2f2f2f;
+                --dropdown-menu-item-text: #f8f8f8;
+                --dropdown-menu-item-border-hover: #4c4c4c;
+                --dropdown-menu-item-background-hover: #5c5c5c;
+            }
+        }
+
         body {
             margin: 0;
             padding: 0;
-            background: rgba(255, 255, 255, 0.8);
+            background: var(--translucent-background);
             font-family: Arial, sans-serif;
             cursor: default;
             user-select: none;
@@ -46,12 +110,12 @@
             display: inline-block;
             width: 80px;
             height: 80px;
-            border: #dfdfdf solid 1px;
-            background-color: #ffffff;
+            border: var(--neumorphic-background-white-border) solid 1px;
+            background-color: var(--neumorphic-background-white);
             border-radius: 50%;
             /* box-shadow: 2px 2px 13px #00000033; */
-            box-shadow: inset 3px 3px 7px #f5f5f5,
-                inset -3px -3px 7px #ffffff;
+            box-shadow: inset 3px 3px 7px var(--neumorphic-background-white-shadow-dark),
+                inset -3px -3px 7px var(--neumorphic-background-white-shadow-light);
             margin-bottom: 3px;
         }
 
@@ -63,14 +127,14 @@
         #hex-value {
             display: inline-block;
             font-size: 18px;
-            color: #181818;
+            color: var(--primary-text);
             text-align: center;
             letter-spacing: 0.1px;
             padding: 8px 16px;
-            border: #ccc solid 1px;
-            background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: inset 7px 7px 14px #f5f5f5,
-                inset -7px -7px 14px #ffffff;
+            border: var(--neumorphic-background-white-border) solid 1px;
+            background-color: var(--translucent-background);
+            box-shadow: inset 7px 7px 14px var(--neumorphic-background-white-shadow-dark),
+                inset -7px -7px 14px var(--neumorphic-background-white-shadow-light);
             border-radius: 7px;
             text-transform: uppercase;
             -webkit-app-region: no-drag;
@@ -84,10 +148,10 @@
 
         .color-description {
             position: relative;
-            background-color: rgba(255, 255, 255, 0.8);
-            border: #ccc solid 1px;
-            box-shadow: inset 7px 7px 14px #f5f5f5,
-                inset -7px -7px 14px #ffffff;
+            background-color: var(--translucent-background);
+            border: var(--neumorphic-background-white-border) solid 1px;
+            box-shadow: inset 7px 7px 14px var(--neumorphic-background-white-shadow-dark),
+                inset -7px -7px 14px var(--neumorphic-background-white-shadow-light);
             border-radius: 7px;
             margin: 0 auto;
             height: 100%;
@@ -99,7 +163,7 @@
             z-index: 1;
         }
 
-        #chatgpt-response {
+        #llm-response {
             position: absolute;
             top: 0;
             left: 0;
@@ -108,7 +172,7 @@
             margin: 0 auto;
             padding: 10px 5px;
             font-size: 14px;
-            color: #181818;
+            color: var(--primary-text);
             font-style: italic;
             text-align: left;
             width: calc(100% - 30px);
@@ -129,7 +193,6 @@
             max-width: 660px;
             height: 100%;
             font-size: 13px;
-            color: #6f6f6f;
         }
 
         .panel-instruction,
@@ -159,14 +222,14 @@
         }
 
         #color-picking-instruction {
-            color: #8f8f8f;
-            background-color: #ddddddd9;
+            color: var(--instruction-panel-text);
+            background-color: var(--instruction-panel-overlay-background);
             backdrop-filter: saturate(180%) blur(25px);
             z-index: 5;
         }
 
         #onboarding-instruction {
-            color: #8f8f8f;
+            color: var(--instruction-panel-text);
             z-index: 4;
         }
 
@@ -190,7 +253,7 @@
 
         .loader svg path,
         .loader svg rect {
-            fill: #8a8a8a58;
+            fill: var(--loader-icon);
         }
 
         button {
@@ -208,9 +271,10 @@
         button.neumorphic-btn {
             padding: 10px;
             border-radius: 9px;
-            background: linear-gradient(145deg, #f0f0f0, #dcdcdc);
-            box-shadow: 4px 4px 8px #bebebe,
-                -4px -4px 8px #ffffff;
+            border: 2px solid var(--neumorphic-btn-border);
+            background: var(--neumorphic-btn-background);
+            box-shadow: 4px 4px 8px var(--neumorphic-btn-shadow-dark),
+                -4px -4px 8px var(--neumorphic-btn-shadow-light);
         }
 
         button svg {
@@ -221,7 +285,7 @@
 
         button svg path,
         button svg rect {
-            fill: #1a1a1a;
+            fill: var(--button-icon);
         }
 
         button#capture-btn {
@@ -232,9 +296,10 @@
 
         button.neumorphic-btn.active {
             border-radius: 9px;
-            background: linear-gradient(145deg, #dcdcdc, #f0f0f0);
-            box-shadow: 4px 4px 8px #bebebe,
-                -4px -4px 8px #ffffff;
+            border-color: var(--neumorphic-btn-border-active);
+            background: var(--neumorphic-btn-background-active);
+            box-shadow: 4px 4px 8px var(--neumorphic-btn-shadow-dark),
+                -4px -4px 8px var(--neumorphic-btn-shadow-light);
         }
 
         button.neumorphic-btn.active svg,
@@ -264,8 +329,8 @@
         }
 
         .control-panel button:hover {
-            border-color: #eee;
-            background-color: #f2f2f2;
+            border-color: var(--control-panel-btn-border-hover);
+            background-color: var(--control-panel-btn-background-hover);
             opacity: 1;
         }
 
@@ -275,7 +340,7 @@
 
         button#clipboard_dropdown_button {
             position: relative;
-            color: #383838;
+            color: var(--dropdown-btn-text);
             font-size: 12px;
             width: unset;
             padding-left: 6px;
@@ -299,10 +364,10 @@
             right: 0;
             transform: translateY(0px);
             min-width: 135px;
-            background-color: #f8f8f8;
-            border: 1px solid #e5e5e5;
+            background-color: var(--dropdown-menu-background);
+            border: 1px solid var(--dropdown-menu-border);
             border-radius: 10px;
-            box-shadow: 1px 1px 5px #0000001a, -1px -1px 5px #ffffff4d;
+            box-shadow: 1px 1px 5px var(--dropdown-menu-shadow-dark), -1px -1px 5px var(--dropdown-menu-shadow-light);
             padding: 8px 3px;
             z-index: 20;
             transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
@@ -319,7 +384,7 @@
             padding: 6px 8px;
             cursor: pointer;
             font-size: 12px;
-            color: #121212;
+            color: var(--dropdown-menu-item-text);
             text-align: left;
             border-radius: 8px;
             margin: 1.5px 5px;
@@ -337,8 +402,8 @@
         }
 
         .clipboard-dropdown-item:hover {
-            border-color: #ccc;
-            background-color: #f3f3f3;
+            border-color: var(--dropdown-menu-border);
+            background-color: var(--dropdown-menu-background);
             opacity: 1;
         }
     </style>
@@ -392,7 +457,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="chatgpt-response" class="selectable"></div>
+                <div id="llm-response" class="selectable"></div>
             </div>
         </div>
         <div class="control-panel">

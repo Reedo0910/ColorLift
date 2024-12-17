@@ -14,10 +14,42 @@
             box-sizing: border-box;
         }
 
+        html {
+            color: var(--main-text);
+
+            --main-text: #000;
+            --page-title-text: #222;
+            --translucent-background: #ffffffd9;
+            --button-icon: #1a1a1a;
+            --primary-button-background: #eee;
+            --hover-button: #d8d8d8;
+            --description-text: #888;
+            --input-text: #000;
+            --input-background: #fff;
+            --input-border: #eee;
+            --input-border-focus: #888;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html {
+                --main-text: #fff;
+                --page-title-text: #f8f8f8;
+                --translucent-background: #020202d9;
+                --button-icon: #fff;
+                --primary-button-background: #4f4f4f;
+                --hover-button: #666;
+                --description-text: #cfcfcf;
+                --input-text: #fff;
+                --input-background: #121212;
+                --input-border: #666;
+                --input-border-focus: #8c8c8c;
+            }
+        }
+
         body {
             margin: 0;
             padding: 0;
-            background: rgba(255, 255, 255, 0.85);
+            background: var(--translucent-background);
             font-family: Arial, sans-serif;
             cursor: default;
             overflow: hidden;
@@ -41,7 +73,7 @@
         }
 
         #save-btn {
-            background-color: #eee;
+            background-color: var(--primary-button-background);
         }
 
         #close-btn {
@@ -49,7 +81,7 @@
         }
 
         .btn-group button:hover {
-            background-color: #d8d8d8 !important;
+            background-color: var(--hover-button) !important;
         }
 
         form {
@@ -78,7 +110,7 @@
 
         .description {
             font-size: 12px;
-            color: #888;
+            color: var(--description-text);
             margin-top: 6px;
         }
 
@@ -86,7 +118,9 @@
         select {
             width: calc(100% - 10px);
             padding: 3px;
-            border: #eee 2px solid;
+            color: var(--input-text);
+            background-color: var(--input-background);
+            border: var(--input-border) 2px solid;
             border-radius: 3px;
             opacity: 0.7;
         }
@@ -94,7 +128,7 @@
         input:focus,
         select:focus {
             opacity: 1;
-            border-color: #888;
+            border-color: var(--input-border-focus);
         }
 
         .input-wrapper {
@@ -102,16 +136,25 @@
         }
 
         h1 {
-            color: #222;
+            color: var(--page-title-text);
             font-size: 14px;
             padding: 5px 10px;
             margin-bottom: 5px;
+        }
+
+        button{
+            color: var(--main-text);
         }
 
         button svg {
             width: 10px;
             height: 10px;
             opacity: .9;
+        }
+
+        button svg path,
+        button svg rect {
+            fill: var(--button-icon);
         }
 
         .api-input-label-block {
@@ -174,7 +217,8 @@
                         </button>
                     </div>
                     <div class="input-wrapper">
-                        <input type="password" id="api-key-input" autocomplete="off" spellcheck="false" autocorrect="off" placeholder="请输入你的 API 密钥" />
+                        <input type="password" id="api-key-input" autocomplete="off" spellcheck="false"
+                            autocorrect="off" placeholder="请输入你的 API 密钥" />
                         <div class="description" id="api-key-note">
                             您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。
                         </div>

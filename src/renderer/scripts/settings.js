@@ -41,8 +41,8 @@ let isPasswordVisible = false; // 密钥是否可见
 const myCurrentLanguage = '';
 const myCurrentColorPickShortcut = '';
 
-const translations = window.electronAPI.getInitialTranslations();
-const LLMList = window.electronAPI.getLLMList();
+const translations = window.electronAPI.getInitTranslations();
+const LLMList = window.electronAPI.getInitLLMList();
 
 document.title = translations['setting_window_title'];
 
@@ -208,6 +208,8 @@ settingsForm.addEventListener('submit', async (event) => {
 
     // 关闭设置窗口
     window.close();
+
+    window.electronAPI.setTheme(themeSelect.value);
 });
 
 // 关闭按钮事件

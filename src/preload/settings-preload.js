@@ -20,8 +20,9 @@ additionalArguments.forEach(arg => {
 contextBridge.exposeInMainWorld('electronAPI', {
     getSettings: () => ipcRenderer.invoke('get-settings'),
     saveSettings: (settings) => ipcRenderer.send('save-settings', settings),
-    getInitialTranslations: () => translations,
-    getLLMList: () => LLMList,
+    getInitTranslations: () => translations,
+    getInitLLMList: () => LLMList,
     setLanguage: (lang) => ipcRenderer.send('set-language', lang),
     setColorPickShortcut: (shortcut) => ipcRenderer.invoke('set-color-pick-shortcut', shortcut),
+    setTheme: (theme) => ipcRenderer.send('set-theme', theme),
 });

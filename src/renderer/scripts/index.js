@@ -1,7 +1,7 @@
 const colorDisplay = document.getElementById('color-display');
 const hexValue = document.getElementById('hex-value');
 // const imageDisplay = document.getElementById('image-display');
-const chatGPTResponse = document.getElementById('chatgpt-response');
+const LLMResponse = document.getElementById('llm-response');
 const loaderDiv = document.getElementById('loader');
 const captureButton = document.getElementById('capture-btn');
 
@@ -20,11 +20,16 @@ const clipboardDropdownMenu = document.getElementById('clipboard_dropdown_menu')
 
 const openSettingsBtn = document.getElementById('settings-btn');
 
-const initialTranslations = window.electronAPI.getInitialTranslations();
+const initTranslations = window.electronAPI.getInitTranslations();
+const initTheme = window.electronAPI.getInitTheme();
+const initColorPickShortcut = window.electronAPI.getInitColorPickShortcut();
 
-setTranslations(initialTranslations);
+setTranslations(initTranslations);
+setColorPickShortcut(initColorPickShortcut);
+setColorDisplay(initTheme);
 
 let isInit = true;
+
 instructionManager(true, 1);
 
 function setTranslations(translations) {
@@ -36,6 +41,28 @@ function setTranslations(translations) {
     colorPickingInstructionText2.textContent = translations['color_picking_instruction_2'];
     onboardingInstructionText1.textContent = translations['onboarding_instruction_1'];
     onboardingInstructionText2.textContent = translations['onboarding_instruction_2'];
+}
+
+function setColorPickShortcut(shortcut) {
+    if (shortcut) {
+        onboardingInstructionShortcutText.textContent = shortcut.replace(/\+/g, ' + ');
+    } else {
+        if (!onboardingInstructionText2.classList.contains('invisible')) {
+            onboardingInstructionText2.classList.add('invisible');
+        }
+        if (!onboardingInstructionShortcutText.classList.contains('invisible')) {
+            onboardingInstructionShortcutText.classList.add('invisible');
+        }
+    }
+}
+
+function setColorDisplay(theme) {
+    const isLightTheme = theme && theme === 'light';
+    const myHex = isLightTheme ? '#ffffff' : '#262626';
+
+    colorDisplay.style.backgroundColor = myHex;
+    hexValue.textContent = myHex;
+    colorDisplay.style.boxShadow = isLightTheme ? 'inset 3px 3px 7px #f5f5f5, inset -3px -3px 7px #ffffff' : 'inset 3px 3px 7px #202020, inset -3px -3px 7px #2c2c2c';
 }
 
 function toggleVisibility(element, isVisible) {
@@ -84,19 +111,6 @@ captureButton.addEventListener('click', () => {
     }
 });
 
-window.electronAPI.onColorPickShortcut(shortcut => {
-    if (shortcut) {
-        onboardingInstructionShortcutText.textContent = shortcut.replace(/\+/g, ' + ');
-    } else {
-        if (!onboardingInstructionText2.classList.contains('invisible')) {
-            onboardingInstructionText2.classList.add('invisible');
-        }
-        if (!onboardingInstructionShortcutText.classList.contains('invisible')) {
-            onboardingInstructionShortcutText.classList.add('invisible');
-        }
-    }
-});
-
 window.electronAPI.onUpdateColor(hex => {
     colorDisplay.style.backgroundColor = hex;
     hexValue.textContent = hex;
@@ -106,7 +120,7 @@ window.electronAPI.onUpdateColor(hex => {
     const lightColor = colorLuminance(hex, colorDifference);
     colorDisplay.style.boxShadow = `inset 3px 3px 7px ${darkColor}, inset -3px -3px 7px  ${lightColor}`;
 
-    chatGPTResponse.textContent = '';
+    LLMResponse.textContent = '';
 
     isInit = false;
     toggleVisibility(loaderDiv, true);
@@ -118,10 +132,10 @@ window.electronAPI.onUpdateColor(hex => {
 //     imageDisplay.src = base64Data;
 // });
 
-window.electronAPI.onChatGPTResponse((message) => {
+window.electronAPI.onLLMResponse((message) => {
     toggleVisibility(loaderDiv, false);
 
-    chatGPTResponse.textContent = message;
+    LLMResponse.textContent = message;
 });
 
 window.electronAPI.onUpdateStatus((status) => {
@@ -140,27 +154,14 @@ window.electronAPI.onUpdateStatus((status) => {
     }
 });
 
-window.electronAPI.onSettingsUpdated((settings) => {
-    if (settings.colorPickShortcut) {
-        onboardingInstructionShortcutText.textContent = settings.colorPickShortcut.replace(/\+/g, ' + ');
-    } else {
-        if (!onboardingInstructionText2.classList.contains('invisible')) {
-            onboardingInstructionText2.classList.add('invisible');
-        }
-        if (!onboardingInstructionShortcutText.classList.contains('invisible')) {
-            onboardingInstructionShortcutText.classList.add('invisible');
-        }
-    }
+window.electronAPI.onSettingsUpdated((customeSettings) => {
+    setColorPickShortcut(customeSettings.colorPickShortcut);
+    setColorDisplay(customeSettings.theme);
 
-    const myHex = '#FFFFFF';
-
-    colorDisplay.style.backgroundColor = myHex;
-    hexValue.textContent = myHex;
-    colorDisplay.style.boxShadow = 'inset 3px 3px 7px #f5f5f5, inset -3px -3px 7px #ffffff';
-
-    chatGPTResponse.textContent = '';
+    LLMResponse.textContent = '';
 
     isInit = true;
+    instructionManager(true, 1);
 });
 
 window.electronAPI.onTranslationsUpdated((myTranslations) => {
@@ -183,9 +184,14 @@ document.addEventListener('click', (event) => {
 clipboardDropdownMenu.addEventListener('click', (event) => {
     const action = event.target.getAttribute('data-action');
     if (action === 'copyColor') {
-        window.electronAPI.copyToClipboard(hexValue.textContent);
+        // Hex code in uppercase
+        if (hexValue.textContent) {
+            window.electronAPI.copyToClipboard(hexValue.textContent.toUpperCase());
+        }
     } else if (action === 'copyDesc') {
-        window.electronAPI.copyToClipboard(chatGPTResponse.textContent);
+        if (LLMResponse.textContent) {
+            window.electronAPI.copyToClipboard(LLMResponse.textContent);
+        }
     }
 
     setTimeout(() => {
@@ -205,8 +211,7 @@ openSettingsBtn.addEventListener('click', () => {
     window.electronAPI.openSettings();
 });
 
-// Source: https://github.com/adamgiebl/neumorphism
-// Author: adamgiebl
+// https://github.com/adamgiebl/neumorphism
 function colorLuminance(hex, lum) {
     // validate hex string
     hex = String(hex).replace(/[^0-9a-f]/gi, '');

@@ -1,4 +1,4 @@
-import { app, Menu, BrowserWindow, ipcMain, screen, globalShortcut, clipboard, shell } from 'electron';
+import { app, Menu, BrowserWindow, ipcMain, screen, nativeTheme, globalShortcut, clipboard, shell } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
@@ -15,6 +15,7 @@ const __dirname = path.dirname(__filename);
 let mainWindow;
 let settingsWindow;
 let isPickingColor = false; // 取色模式状态
+let hasColorPickShortcutUpdated = false;
 
 // 默认语言
 const appLocale = getAppLocale();
@@ -158,6 +159,11 @@ const menu = Menu.buildFromTemplate(template)
 
 Menu.setApplicationMenu(menu);
 
+const savedTheme = store.get('theme') || 'system';
+nativeTheme.themeSource = savedTheme;
+
+setLanguage(store.get('language')); // 设置默认语言
+
 app.on('ready', () => {
     // 创建悬浮窗口
     mainWindow = new BrowserWindow({
@@ -173,11 +179,15 @@ app.on('ready', () => {
         webPreferences: {
             preload: path.join(__dirname, 'preload', 'preload.js'),
             contextIsolation: true,
-            additionalArguments: [JSON.stringify(translations)],
+            additionalArguments: [
+                JSON.stringify({ key: 'translations', value: translations }),
+                JSON.stringify({ key: 'colorPickShortcut', value: store.get('colorPickShortcut') }),
+                JSON.stringify({ key: 'initTheme', value: nativeTheme.shouldUseDarkColors ? 'dark' : 'light' }),
+            ],
         },
     });
 
-    // mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
+    mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
 
     mainWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'index.html'));
 
@@ -185,19 +195,10 @@ app.on('ready', () => {
 
     mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
 
-    setLanguage(store.get('language')); // 设置默认语言
-
-    ipcMain.on('set-language', (event, lang) => {
-        setLanguage(lang);
-        translations = getResourceBundle(lang);
-
-        mainWindow.webContents.send('translations-update', translations);
-    });
-
     // 将系统设置通过 webContents 传递给主界面
-    mainWindow.webContents.on('did-finish-load', () => {
-        mainWindow.webContents.send('color-pick-shortcut', store.get('colorPickShortcut'));
-    });
+    // mainWindow.webContents.on('did-finish-load', () => {
+    //     mainWindow.webContents.send('color-pick-shortcut', store.get('colorPickShortcut'));
+    // });
 
     mainWindow.on('close', (event) => {
         // 检查平台
@@ -211,13 +212,38 @@ app.on('ready', () => {
         globalShortcut.register(store.get('colorPickShortcut'), captureColor);
     }
 
+    globalShortcut.register('Esc', () => {
+        // 退出取色模式
+        if (isPickingColor) {
+            isPickingColor = false;
+            mainWindow.webContents.send('update-status', 'inactive');
+        }
+    });
+
+    ipcMain.handle('set-color-pick-shortcut', (event, shortcut) => {
+        // 注销以前的快捷键
+        if (store.get('colorPickShortcut') !== '') {
+            globalShortcut.unregister(store.get('colorPickShortcut'));
+        }
+
+        if (shortcut !== '') {
+            // 注册新的快捷键
+            if (!globalShortcut.isRegistered(shortcut)) {
+                globalShortcut.register(shortcut, captureColor);
+
+                hasColorPickShortcutUpdated = true;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    });
 
     // 确保全局快捷键在退出时释放
     app.on('will-quit', () => {
         globalShortcut.unregisterAll();
     });
-
-    let hasColorPickShortcutUpdated = false;
 
     // 创建设置窗口
     ipcMain.on('open-settings', () => {
@@ -269,61 +295,8 @@ app.on('ready', () => {
             });
         }
     });
-
-    // 获取当前存储的设置
-    ipcMain.handle('get-settings', () => {
-        return {
-            apiKeys: store.get('apiKeys'),
-            modelId: store.get('modelId'),
-            language: store.get('language'),
-            colorPickShortcut: store.get('colorPickShortcut'),
-            theme: store.get('theme'),
-        };
-    });
-
-    // 保存新的设置
-    ipcMain.on('save-settings', (event, settings) => {
-        store.set('apiKeys', settings.apiKeys);
-        store.set('modelId', settings.modelId);
-        store.set('language', settings.language);
-        store.set('colorPickShortcut', settings.colorPickShortcut);
-        store.set('theme', settings.theme);
-
-        delete settings.apiKeys;
-        console.log('Settings saved:', settings);
-
-        // 通知主窗口设置已更新
-        mainWindow.webContents.send('settings-updated', settings);
-    });
-
-    ipcMain.handle('set-color-pick-shortcut', (event, shortcut) => {
-        // 注销以前的快捷键
-        if (store.get('colorPickShortcut') !== '') {
-            globalShortcut.unregister(store.get('colorPickShortcut'));
-        }
-
-        if (shortcut !== '') {
-            // 注册新的快捷键
-            if (!globalShortcut.isRegistered(shortcut)) {
-                globalShortcut.register(shortcut, captureColor);
-
-                hasColorPickShortcutUpdated = true;
-            } else {
-                return false;
-            }
-        }
-
-        return true;
-    });
-
-    globalShortcut.register('Esc', () => {
-        // 退出取色模式
-        if (isPickingColor) {
-            isPickingColor = false;
-            mainWindow.webContents.send('update-status', 'inactive');
-        }
-    });
 });
+
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
@@ -331,6 +304,41 @@ app.on('window-all-closed', () => {
     }
 });
 
+// 获取当前存储的设置
+ipcMain.handle('get-settings', () => {
+    return {
+        apiKeys: store.get('apiKeys'),
+        modelId: store.get('modelId'),
+        language: store.get('language'),
+        colorPickShortcut: store.get('colorPickShortcut'),
+        theme: store.get('theme'),
+    };
+});
+
+// 保存新的设置
+ipcMain.on('save-settings', (event, settings) => {
+    store.set('apiKeys', settings.apiKeys);
+    store.set('modelId', settings.modelId);
+    store.set('language', settings.language);
+    store.set('colorPickShortcut', settings.colorPickShortcut);
+    store.set('theme', settings.theme);
+
+    // 通知主窗口设置已更新
+    mainWindow.webContents.send('settings-updated', { 'colorPickShortcut': settings.colorPickShortcut, 'currentTheme': nativeTheme.shouldUseDarkColors ? 'dark' : 'light' });
+});
+
+// 设置颜色主题
+ipcMain.on('set-theme', (event, theme) => {
+    nativeTheme.themeSource = theme;
+    store.set('theme', theme);
+});
+
+ipcMain.on('set-language', (event, lang) => {
+    setLanguage(lang);
+    translations = getResourceBundle(lang);
+
+    mainWindow.webContents.send('translations-update', translations);
+});
 
 ipcMain.on('copy-to-clipboard', (event, text) => {
     clipboard.writeText(text);
@@ -355,8 +363,6 @@ app.on('browser-window-focus', () => {
     const clickListener = async () => {
         if (isPickingColor) {
             await captureColor();
-            isPickingColor = false; // 退出取色模式
-            mainWindow.webContents.send('update-status', 'inactive');
         }
     };
 
@@ -377,25 +383,27 @@ const captureColor = async () => {
         // console.log('Picked Color:', hex);
         mainWindow.webContents.send('update-color', hex);
 
+        isPickingColor = false; // 退出取色模式
+        mainWindow.webContents.send('update-status', 'inactive');
+
         const currentModelId = store.get('modelId');
 
-        // TODO: i18n
         if (!currentModelId) {
-            return mainWindow.webContents.send('chatgpt-response', translations['error_model_invalid']);
+            return mainWindow.webContents.send('llm-response', translations['error_model_invalid']);
         }
 
         const currentApiKey = getApiKeyForModel(currentModelId, LLMList, store.get('apiKeys'));
 
         if (!currentApiKey) {
-            return mainWindow.webContents.send('chatgpt-response', translations['error_api_key_invalid']);
+            return mainWindow.webContents.send('llm-response', translations['error_api_key_invalid']);
         }
 
         const message = await LLMCommunicator(hex, getLanguage(), currentModelId, currentApiKey, translations);
 
-        mainWindow.webContents.send('chatgpt-response', message);
+        mainWindow.webContents.send('llm-response', message);
     } catch (error) {
         console.error('Error capturing color:', error);
 
-        mainWindow.webContents.send('chatgpt-response', translations['error_unhandled_error']);
+        mainWindow.webContents.send('llm-response', translations['error_unhandled_error']);
     }
 };

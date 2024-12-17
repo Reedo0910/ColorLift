@@ -1,6 +1,23 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-const translations = JSON.parse(process.argv.find((arg) => arg.startsWith('{')) || '{}');
+const additionalArguments = process.argv.filter(arg => arg.startsWith('{') && arg.endsWith('}'));
+
+let translations, colorPickShortcut, initTheme;
+
+additionalArguments.forEach(arg => {
+    try {
+        const parsed = JSON.parse(arg);
+        if (parsed.key === 'translations') {
+            translations = parsed.value;
+        } else if (parsed.key === 'colorPickShortcut') {
+            colorPickShortcut = parsed.value;
+        } else if (parsed.key === 'initTheme') {
+            initTheme = parsed.value;
+        }
+    } catch (error) {
+        console.error('Error parsing additionalArguments:', error);
+    }
+});
 
 contextBridge.exposeInMainWorld('electronAPI', {
     // Main Window
@@ -8,14 +25,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
     stopCapture: () => ipcRenderer.send('stop-capture'),
     // onUpdateImg: (callback) => ipcRenderer.on('update-img', (_, img) => callback(img)),
     onUpdateColor: (callback) => ipcRenderer.on('update-color', (_, hex) => callback(hex)),
-    onChatGPTResponse: (callback) => ipcRenderer.on('chatgpt-response', (_, message) => callback(message)),
+    onLLMResponse: (callback) => ipcRenderer.on('llm-response', (_, message) => callback(message)),
     onUpdateStatus: (callback) => ipcRenderer.on('update-status', (_, status) => callback(status)),
     // Settings
     openSettings: () => ipcRenderer.send('open-settings'),
     onSettingsUpdated: (callback) => ipcRenderer.on('settings-updated', (_, settings) => callback(settings)),
-    onColorPickShortcut: (callback) => ipcRenderer.once('color-pick-shortcut', (_, shortcut) => callback(shortcut)),
+    getInitColorPickShortcut: () => colorPickShortcut,
+    getInitTheme: () => initTheme,
     // Translations
-    getInitialTranslations: () => translations,
+    getInitTranslations: () => translations,
     onTranslationsUpdated: (callback) => ipcRenderer.on('translations-update', (_, translations) => callback(translations)),
     // Clipboard APIs
     copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text),
