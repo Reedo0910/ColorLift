@@ -141,6 +141,13 @@ providerSelect.addEventListener('change', (event) => {
     const selectedProviderId = event.target.value;
     populateModelDropdown(selectedProviderId);
 
+    // 默认选中列表第一个可用项 
+    if (selectedProviderId) {
+        if (modelSelect && modelSelect.options.length >= 2) {
+            modelSelect.selectedIndex = 1;
+        }
+    }
+
     // 显示 API Key 输入框并加载当前值
     if (selectedProviderId) {
         apiKeyContainer.style.display = 'block';

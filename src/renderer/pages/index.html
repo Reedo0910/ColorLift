@@ -32,8 +32,8 @@
             --neumorphic-btn-border-active: #b8cfe2;
             --neumorphic-btn-background-active: linear-gradient(145deg, #dcdcdc, #f0f0f0);
             --button-icon: #1a1a1a;
-            --control-panel-btn-border-hover: #eee;
-            --control-panel-btn-background-hover: #f2f2f2;
+            --control-panel-btn-border-hover: #ccc;
+            --control-panel-btn-background-hover: #eee;
             --dropdown-btn-text: #383838;
             --dropdown-menu-background: #f8f8f8;
             --dropdown-menu-border: #e5e5e5;
@@ -64,8 +64,8 @@
                 --neumorphic-btn-border-active: #3399ff;
                 --neumorphic-btn-background-active: linear-gradient(145deg, #1f1f1f, #242424);
                 --button-icon: #f0f0f0;
-                --control-panel-btn-border-hover: #2f2f2f;
-                --control-panel-btn-background-hover: #181818;
+                --control-panel-btn-border-hover: #6c6c6c;
+                --control-panel-btn-background-hover: #5a5a5a;
                 --dropdown-btn-text: #efefef;
                 --dropdown-menu-background: #282828;
                 --dropdown-menu-border: #2f2f2f;
@@ -73,7 +73,7 @@
                 --dropdown-menu-shadow-light: #2f2f2f;
                 --dropdown-menu-item-text: #f8f8f8;
                 --dropdown-menu-item-border-hover: #4c4c4c;
-                --dropdown-menu-item-background-hover: #5c5c5c;
+                --dropdown-menu-item-background-hover: #3c3c3c;
             }
         }
 
@@ -325,6 +325,7 @@
             display: inline-block;
             align-items: center;
             border: 1px solid transparent;
+            border-radius: 6px;
             width: 30px;
             height: 30px;
             opacity: 0.85;
@@ -404,8 +405,8 @@
         }
 
         .clipboard-dropdown-item:hover {
-            border-color: var(--dropdown-menu-border);
-            background-color: var(--dropdown-menu-background);
+            border-color: var(--dropdown-menu-item-border-hover);
+            background-color: var(--dropdown-menu-item-background-hover);
             opacity: 1;
         }
     </style>
