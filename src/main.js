@@ -202,6 +202,8 @@ app.on('ready', () => {
         transparent: true,
         vibrancy: 'fullscreen-ui',
         titleBarStyle: 'hiddenInset',
+        // expose window controlls in Windows/Linux
+        ...(!isMac ? { titleBarOverlay: true } : {}),
         frame: false,
         fullscreenable: false,
         backgroundMaterial: 'acrylic',
