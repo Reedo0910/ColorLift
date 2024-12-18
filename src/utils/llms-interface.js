@@ -111,81 +111,91 @@ export const LLMList = [
     }];
 
 export const LLMCommunicator = async (hex, language, modelId, apiKey, translations) => {
+    try {
+        const providerObj = findProviderByModelId(modelId);
+        if (!providerObj) {
+            return translations['error_invalid_model_id'] || 'Invalid model ID.';
+        }
 
-    const providerObj = findProviderByModelId(modelId);
-    const providerId = providerObj.id;
-    const url = providerObj.apiUrl;
-    const providerLocale = providerObj.locale;
-    const authHeader = providerObj.authHeader;
-    const tokenPrefix = providerObj.tokenPrefix;
-    const additionalHeader = providerObj.additionalHeader || '';
-    const additionalValue = providerObj.additionalValue || '';
+        const { apiUrl, authHeader, tokenPrefix, additionalHeader, additionalValue, locale } = providerObj;
+        if (!apiUrl) {
+            return translations['error_invalid_api_url'] || 'Invalid API URL.';
+        }
 
-    if (!url) {
-        return 'invalid model id';
+        const promptEN = `Please describe the color represented by this Hex code in a single paragraph. Example: I provide: Hex. You Response: This is a [color name] color, which is closer to [color name] (or has hints of other tones). You can mention where this color is commonly seen, its applications, etc. Note: You must respond in ${language}. Your response may not exceed 120 words. Do not include the Hex code in your response.`;
+
+        const promptCN = `请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：Hex 你回答：这是xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，有什么应用，等等。注意：请使用${language}进行描述。回答不超过120个字或单词。不要在你的回答中包含Hex。`;
+
+        const bodyObject = buildRequestBody(providerObj, modelId, hex, locale === 'en' ? promptEN : promptCN);
+
+        const headers = buildHeaders(authHeader, tokenPrefix, apiKey, additionalHeader, additionalValue);
+
+        const response = await net.fetch(apiUrl, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(bodyObject),
+        });
+
+        return await handleResponse(response, providerObj, translations);
+
+    } catch (error) {
+        console.error('Unexpected error:', error);
+        return translations['error_unexpected'] || 'An unexpected error occurred. Please try again later.';
     }
+};
 
-    const promptEN = `Please describe the color represented by this Hex code in a single paragraph. Example: I provide: Hex. You Response: This is a [color name] color, which is closer to [color name] (or has hints of other tones). You can mention where this color is commonly seen, its applications, etc. . Note: You must respond in ${language}. Your response may not exceed 120 words. Do not include the Hex code in your response.`;
+function buildRequestBody(providerObj, modelId, hex, prompt) {
+    if (providerObj.id === 'anthropic') {
+        return {
+            model: modelId,
+            system: prompt,
+            max_tokens: 300,
+            messages: [{ role: 'user', content: hex }],
+        };
+    }
+    return {
+        model: modelId,
+        messages: [
+            { role: 'system', content: prompt },
+            { role: 'user', content: hex },
+        ],
+    };
+}
 
-    const promptCN = `请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：Hex 你回答：这是xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，有什么应用，等等。注意：请使用${language}进行描述。回答不超过120个字或单词。不要在你的回答中包含Hex。`;
-
-    const headers = {
+function buildHeaders(authHeader, tokenPrefix, apiKey, additionalHeader, additionalValue) {
+    return {
         'Content-Type': 'application/json',
         [authHeader]: `${tokenPrefix}${apiKey}`,
-        ...(additionalHeader ? { [additionalHeader]: additionalValue } : {}), // 仅当 additionalHeader 存在时添加
+        ...(additionalHeader ? { [additionalHeader]: additionalValue } : {}),
     };
+}
 
-    let bodyObject;
-
-    if (providerId === 'anthropic') {
-        bodyObject = {
-            model: modelId,
-            system: promptEN,
-            max_tokens: 300,
-            messages: [
-                { role: 'user', content: `${hex}` }
-            ]
-        }
-    } else {
-        bodyObject = {
-            model: modelId,
-            messages: [
-                { role: 'system', content: providerLocale === 'en' ? promptEN : promptCN },
-                { role: 'user', content: `${hex}` },
-            ]
-        }
+async function handleResponse(response, providerObj, translations) {
+    let data;
+    try {
+        data = await response.json();
+    } catch (err) {
+        console.error('Failed to parse JSON response:', err);
+        return translations['error_invalid_response'] || 'Invalid response from the API.';
     }
 
-    const response = await net.fetch(url, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(bodyObject),
-    });
-
-    const data = await response.json();
-    // console.log('LLM Response:', data);
-
     if (response.ok) {
-        if (providerId === 'cohere') {
-            return data.message?.content[0]?.text || translations['error_no_response'];
+        switch (providerObj.id) {
+            case 'cohere':
+                return data.message?.content?.[0]?.text || translations['error_no_response'];
+            case 'anthropic':
+                return data.content?.[0]?.text || translations['error_no_response'];
+            default:
+                return data.choices?.[0]?.message?.content || translations['error_no_response'];
         }
-        if (providerId === 'anthropic') {
-            return data.content[0].text || translations['error_no_response'];
-        }
-        return data.choices[0]?.message?.content || translations['error_no_response'];
-        // console.log('LLM interpretation:', message);
     } else {
-        console.error('Error from LLM API:', data);
-        return '';
+        console.error('API error:', data);
+        return `${translations['error_api']} ${data.message || 'Unknown error'}`;
     }
 }
 
 function findProviderByModelId(modelId) {
-    for (const provider of LLMList) {
-        const model = provider.models.find(model => model.id === modelId);
-        if (model) {
-            return provider;
-        }
-    }
-    return null;
+    return LLMList.find(provider =>
+        provider.models.some(model => model.id === modelId)
+    );
 }
