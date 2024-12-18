@@ -110,9 +110,11 @@ function instructionManager(isShowInstruction = false, instructionIndex = -1) {
 
             case 1:
                 toggleVisibility(onboardingInstruction, true);
+                break;
 
             case 2:
                 toggleVisibility(errorInstruction, true);
+                break;
 
             default:
                 break;
