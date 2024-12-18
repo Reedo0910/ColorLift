@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 const additionalArguments = process.argv.filter(arg => arg.startsWith('{') && arg.endsWith('}'));
 
-let translations, LLMList;
+let translations, LLMList, isMac;
 
 additionalArguments.forEach(arg => {
     try {
@@ -11,6 +11,8 @@ additionalArguments.forEach(arg => {
             translations = parsed.value;
         } else if (parsed.key === 'LLMList') {
             LLMList = parsed.value;
+        } else if (parsed.key === 'isMac') {
+            isMac = parsed.value;
         }
     } catch (error) {
         console.error('Error parsing additionalArguments:', error);
@@ -24,4 +26,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getInitLLMList: () => LLMList,
     setLanguage: (lang) => ipcRenderer.send('set-language', lang),
     setColorPickShortcut: (shortcut) => ipcRenderer.invoke('set-color-pick-shortcut', shortcut),
+    // Other var
+    isMacOS: () => isMac
 });

@@ -55,7 +55,7 @@ function isSafeForExternalOpen(url) {
     }
 }
 
-const isMac = process.platform === 'darwin'
+const isMac = process.platform === 'darwin';
 
 const template = [
     // { role: 'appMenu' }
@@ -179,9 +179,9 @@ const template = [
             }
         ]
     }
-]
+];
 
-const menu = Menu.buildFromTemplate(template)
+const menu = Menu.buildFromTemplate(template);
 
 Menu.setApplicationMenu(menu);
 
@@ -207,6 +207,7 @@ app.on('ready', () => {
                 JSON.stringify({ key: 'translations', value: translations }),
                 JSON.stringify({ key: 'colorPickShortcut', value: store.get('colorPickShortcut') }),
                 JSON.stringify({ key: 'initTheme', value: nativeTheme.shouldUseDarkColors ? 'dark' : 'light' }),
+                JSON.stringify({ key: 'isMac', value: isMac }),
             ],
         },
     });
@@ -375,6 +376,7 @@ function openSettingsWindow() {
                 additionalArguments: [
                     JSON.stringify({ key: 'translations', value: translations }),
                     JSON.stringify({ key: 'LLMList', value: LLMList }),
+                    JSON.stringify({ key: 'isMac', value: isMac }),
                 ],
             },
         });
@@ -499,7 +501,7 @@ ipcMain.on('copy-to-clipboard', (event, text) => {
 
 // Enable color picking mode
 ipcMain.on('start-capture', () => {
-    isPickingColor = true; 
+    isPickingColor = true;
     mainWindow.webContents.send('update-status', 'active');
 });
 
@@ -542,7 +544,7 @@ const captureColor = async () => {
         mainWindow.webContents.send('update-color', hex);
 
         // Exit color picking mode
-        isPickingColor = false; 
+        isPickingColor = false;
         mainWindow.webContents.send('update-status', 'inactive');
 
         const currentModelId = store.get('modelId');

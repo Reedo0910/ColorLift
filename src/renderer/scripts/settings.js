@@ -43,6 +43,7 @@ const myCurrentColorPickShortcut = '';
 
 const translations = window.electronAPI.getInitTranslations();
 const LLMList = window.electronAPI.getInitLLMList();
+const isMac = window.electronAPI.isMacOS();
 
 document.title = translations['setting_window_title'];
 
@@ -58,7 +59,7 @@ themeSelectLabel.textContent = translations['theme_select_label'];
 languageLabel.textContent = translations['language_label'];
 languageNote.textContent = translations['language_note'];
 colorPickShortcutLabel.textContent = translations['color_pick_shortcut_label'];
-colorPickShortcutNote.textContent = translations['color_pick_shortcut_description'];
+colorPickShortcutNote.textContent = isMac ? translations['color_pick_shortcut_description_mac'] : translations['color_pick_shortcut_description'];
 
 saveButtonTxt.textContent = translations['save_button'];
 closeBtn.textContent = translations['close_button'];
@@ -181,7 +182,7 @@ window.electronAPI.getSettings().then((settings) => {
 
     themeSelect.value = settings.theme || 'system';
     languageSelect.value = settings.language || 'en';
-    colorPickShortcutInput.value = settings.colorPickShortcut || '';
+    colorPickShortcutInput.value = getDisplayShortcut(settings.colorPickShortcut) || '';
 
     myCurrentLanguage = languageSelect.value;
     myCurrentColorPickShortcut = colorPickShortcutInput.value;
@@ -196,7 +197,7 @@ settingsForm.addEventListener('submit', async (event) => {
     }
 
     if (colorPickShortcutInput.value.trim() !== myCurrentColorPickShortcut.trim()) {
-        const isSet = await window.electronAPI.setColorPickShortcut(colorPickShortcutInput.value.trim());
+        const isSet = await window.electronAPI.setColorPickShortcut(getBackendShortcut(colorPickShortcutInput.value.trim()));
 
         if (!isSet) {
             return alert(translations['color_pick_shortcut_alert']);
@@ -207,7 +208,7 @@ settingsForm.addEventListener('submit', async (event) => {
         apiKeys: apiKeys,
         modelId: modelSelect.value,
         language: languageSelect.value,
-        colorPickShortcut: colorPickShortcutInput.value.trim(),
+        colorPickShortcut: getBackendShortcut(colorPickShortcutInput.value.trim()), // use electron key format
         theme: themeSelect.value
     };
 
@@ -245,7 +246,8 @@ colorPickShortcutInput.addEventListener('keydown', (event) => {
         colorPickShortcutInput.value = ''
     } else {
         const shortcut = getShortcutString(event);
-        colorPickShortcutInput.value = shortcut || colorPickShortcutInput.value;
+        const displayShortcut = getDisplayShortcut(shortcut);
+        colorPickShortcutInput.value = displayShortcut || colorPickShortcutInput.value;
     }
 });
 
@@ -256,19 +258,48 @@ function getShortcutString(event) {
     if (event.shiftKey) keys.push('Shift');
     if (event.altKey) keys.push('Alt');
 
+    let hasLetterOrDigit = false;
+
     if (event.code.startsWith('Key')) {
-        // The letter following "Key" represents the letter key that was pressed
+        // Get letter ("KeyA" -> "A")
         const letter = event.code.substring(3).toUpperCase();
         if (keys.length !== 0) {
             keys.push(letter);
         }
+        hasLetterOrDigit = true;
     } else if (event.code.startsWith('Digit')) {
-        // The number following "Digit" represents the digit key that was pressed
+        // Get digit ("Digit1" -> "1")
         const digit = event.code.substring(5);
         if (keys.length !== 0) {
             keys.push(digit);
         }
+        hasLetterOrDigit = true;
+    }
+
+    // Ensure there is at least one letter or digit in the shortcut
+    if (!hasLetterOrDigit) {
+        return '';
     }
 
     return keys.join('+');
+}
+
+// Format shortcut key based on OS
+function getDisplayShortcut(shortcut) {
+    return isMac
+        ? shortcut
+            .replace('CmdOrCtrl', 'Cmd') // macOS: CmdOrCtrl -> Cmd
+            .replace('Alt', 'Option')   // macOS: Alt -> Option
+        : shortcut
+            .replace('CmdOrCtrl', 'Ctrl') // Windows/Linux: CmdOrCtrl -> Ctrl
+}
+
+// Transfer to Electron key format when storing shortcut
+function getBackendShortcut(value) {
+    return isMac
+        ? value
+            .replace('Cmd', 'CmdOrCtrl') // Cmd -> CmdOrCtrl
+            .replace('Option', 'Alt')   // Option -> Alt
+        : value
+            .replace('Ctrl', 'CmdOrCtrl') // Ctrl -> CmdOrCtrl
 }

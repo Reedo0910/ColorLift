@@ -26,6 +26,7 @@ const openAboutBtn = document.getElementById('about_button');
 const initTranslations = window.electronAPI.getInitTranslations();
 const initTheme = window.electronAPI.getInitTheme();
 const initColorPickShortcut = window.electronAPI.getInitColorPickShortcut();
+const isMac = window.electronAPI.isMacOS();
 
 setTranslations(initTranslations);
 setColorPickShortcut(initColorPickShortcut);
@@ -54,7 +55,14 @@ function setTranslations(translations) {
 
 function setColorPickShortcut(shortcut) {
     if (shortcut) {
-        onboardingInstructionShortcutText.textContent = shortcut.replace(/\+/g, ' + ');
+        const formattedShortcut = isMac
+            ? shortcut
+                .replace('CmdOrCtrl', 'Cmd') // Replace CmdOrCtrl with Cmd on macOS
+                .replace('Alt', 'Option')   // Replace Alt with Option on macOS
+            : shortcut
+                .replace('CmdOrCtrl', 'Ctrl') // Replace CmdOrCtrl with Ctrl on Windows/Linux
+
+        onboardingInstructionShortcutText.textContent = formattedShortcut.replace(/\+/g, ' + ');
     } else {
         if (!onboardingInstructionText2.classList.contains('invisible')) {
             onboardingInstructionText2.classList.add('invisible');

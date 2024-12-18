@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 const additionalArguments = process.argv.filter(arg => arg.startsWith('{') && arg.endsWith('}'));
 
-let translations, colorPickShortcut, initTheme;
+let translations, colorPickShortcut, initTheme, isMac;
 
 additionalArguments.forEach(arg => {
     try {
@@ -13,6 +13,8 @@ additionalArguments.forEach(arg => {
             colorPickShortcut = parsed.value;
         } else if (parsed.key === 'initTheme') {
             initTheme = parsed.value;
+        } else if (parsed.key === 'isMac') {
+            isMac = parsed.value;
         }
     } catch (error) {
         console.error('Error parsing additionalArguments:', error);
@@ -26,7 +28,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onUpdateColor: (callback) => ipcRenderer.on('update-color', (_, hex) => callback(hex)),
     onLLMResponse: (callback) => ipcRenderer.on('llm-response', (_, message) => callback(message)),
     onUpdateStatus: (callback) => ipcRenderer.on('update-status', (_, status) => callback(status)),
-    //About
+    // About
     openAbout: () => ipcRenderer.send('open-about'),
     // Settings
     openSettings: () => ipcRenderer.send('open-settings'),
@@ -37,5 +39,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getInitTranslations: () => translations,
     onTranslationsUpdated: (callback) => ipcRenderer.on('translations-update', (_, translations) => callback(translations)),
     // Clipboard APIs
-    copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text)
+    copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text),
+    // Other var
+    isMacOS: () => isMac
 });
