@@ -31,7 +31,6 @@
     "@electron-forge/plugin-fuses": "^7.6.0",
     "@electron-forge/publisher-github": "^7.6.0",
     "@electron/fuses": "^1.8.0",
-    "appdmg": "^0.6.6",
     "electron": "^33.2.1"
   },
   "dependencies": {
@@ -42,5 +41,8 @@
     "i18next": "^24.1.0",
     "screenshot-desktop": "^1.15.0",
     "sharp": "^0.33.5"
+  },
+  "optionalDependencies": {
+    "appdmg": "^0.6.6"
   }
 }
