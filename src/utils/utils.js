@@ -25,31 +25,30 @@ export async function cropOnePixel(imageBuffer, x, y) {
 }
 
 export function getApiKeyForModel(modelId, LLMList, apiKeys) {
-    // 找到对应的 Provider
+    // Find corresponding Provider by modelId
     const provider = LLMList.find(provider =>
         provider.models.some(model => model.id === modelId)
     );
 
-    // 如果找到对应的 Provider，返回对应的 API Key
+    // Return the corresponding API Key if the matching Provider is found
     if (provider) {
         const providerId = provider.id;
-        return apiKeys[providerId] || null; // 返回 API Key 或 null
+        return apiKeys[providerId] || null;
     }
 
-    // 如果找不到对应的 Provider，返回 null
     return null;
 }
 
 export function getAppLocale() {
     const supportedLocales = {
-        'zh-CN': 'zh-CN', // 简体中文
-        'zh-TW': 'zh-TW', // 繁体中文
-        'en': 'en',       // 英文
+        'zh-CN': 'zh-CN', // Simplified Chinese
+        'zh-TW': 'zh-TW', // Traditional Chinese
+        'en': 'en',       // English
     };
 
     const defaultLocale = 'en';
 
-    const systemLocale = app.getLocale(); // 获取系统语言
+    const systemLocale = app.getLocale(); // Get current system language (locale)
 
     if (systemLocale.startsWith('zh-')) {
         return systemLocale === 'zh-CN' ? 'zh-CN' : 'zh-TW';

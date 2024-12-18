@@ -8,20 +8,20 @@ import { cropOnePixel, getApiKeyForModel, getAppLocale } from './utils/utils.js'
 import { setLanguage, getLanguage, getResourceBundle, t } from './utils/i18n.js';
 import { LLMCommunicator, LLMList } from './utils/llms-interface.js';
 
-// 创建 __dirname
+// Define __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
 let settingsWindow;
 let aboutWindow;
-let isPickingColor = false; // 取色模式状态
+let isPickingColor = false; // Color picking state
 let hasColorPickShortcutUpdated = false;
 
-// 默认语言
+// Get locale language
 const appLocale = getAppLocale();
 
-// 初始化 electron-store
+// Init electron-store
 const store = new Store({
     defaults: {
         apiKeys: {
@@ -38,7 +38,7 @@ const store = new Store({
     },
 });
 
-setLanguage(store.get('language')); // 设置默认语言
+setLanguage(store.get('language')); // Set default language
 
 let translations = getResourceBundle(store.get('language'));
 
@@ -189,17 +189,17 @@ const savedTheme = store.get('theme') || 'system';
 nativeTheme.themeSource = savedTheme;
 
 app.on('ready', () => {
-    // 创建悬浮窗口
+    // Create main window
     mainWindow = new BrowserWindow({
         width: 345,
         height: 480,
-        transparent: true, // 窗口透明
+        transparent: true,
         vibrancy: 'fullscreen-ui',
         titleBarStyle: 'hiddenInset',
         frame: false,
         fullscreenable: false,
         backgroundMaterial: 'acrylic',
-        alwaysOnTop: true, // 悬浮在所有窗口之上
+        alwaysOnTop: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload', 'preload.js'),
             contextIsolation: true,
@@ -217,28 +217,27 @@ app.on('ready', () => {
 
     // mainWindow.webContents.openDevTools(); // Open DevTools
 
-    mainWindow.setSkipTaskbar(true); // 不出现在任务栏中
+    mainWindow.setSkipTaskbar(true); // Hide in task bar
 
     mainWindow.on('close', (event) => {
-        // 检查平台
         if (process.platform === 'darwin' || process.platform === 'linux') {
-            app.quit(); // macOS 和 Linux 上完全退出
+            app.quit(); // fully quit on macOS and Linux
         }
     });
 
-    // 注册全局快捷键
+    // Register global color picking shortcut
     if (store.get('colorPickShortcut') !== '' && !globalShortcut.isRegistered(store.get('colorPickShortcut'))) {
         globalShortcut.register(store.get('colorPickShortcut'), captureColor);
     }
 
     ipcMain.handle('set-color-pick-shortcut', (event, shortcut) => {
-        // 注销以前的快捷键
+        // Unregister previous color picking shortcut
         if (store.get('colorPickShortcut') !== '') {
             globalShortcut.unregister(store.get('colorPickShortcut'));
         }
 
         if (shortcut !== '') {
-            // 注册新的快捷键
+            // Register new color picking shortcut
             if (!globalShortcut.isRegistered(shortcut)) {
                 globalShortcut.register(shortcut, captureColor);
 
@@ -251,12 +250,12 @@ app.on('ready', () => {
         return true;
     });
 
-    // 确保全局快捷键在退出时释放
+    // Ensure global shortcuts are released upon exit
     app.on('will-quit', () => {
         globalShortcut.unregisterAll();
     });
 
-    // 创建设置窗口
+    // Create Settings window
     ipcMain.on('open-settings', () => {
         openSettingsWindow();
     });
@@ -267,7 +266,7 @@ app.on('ready', () => {
     });
 
     globalShortcut.register('Esc', () => {
-        // 退出取色模式
+        // Quit color picking mode
         if (isPickingColor) {
             isPickingColor = false;
             mainWindow.webContents.send('update-status', 'inactive');
@@ -318,7 +317,6 @@ function openAboutWindow() {
         aboutWindow = new BrowserWindow({
             width: 320,
             height: 420,
-            title: '关于',
             resizable: false,
             minimizable: false,
             maximizable: false,
@@ -372,7 +370,7 @@ function openSettingsWindow() {
             backgroundMaterial: 'acrylic',
             backgroundColor: 'white',
             webPreferences: {
-                preload: path.join(__dirname, 'preload', 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
+                preload: path.join(__dirname, 'preload', 'settings-preload.js'),
                 contextIsolation: true,
                 additionalArguments: [
                     JSON.stringify({ key: 'translations', value: translations }),
@@ -383,12 +381,12 @@ function openSettingsWindow() {
 
         settingsWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'settings.html'));
 
-        // 在窗口准备好时显示
+        // Show when the window is ready
         settingsWindow.once('ready-to-show', () => {
             settingsWindow.show();
         });
 
-        // 窗口关闭时清理引用
+        // Clean up references when the window is closed
         settingsWindow.on('closed', () => {
             settingsWindow = null;
 
@@ -445,7 +443,7 @@ const checkForUpdates = async () => {
             title: translations['update_error_dialog_title'],
             message: translations['update_error_dialog_message'],
             buttons: [translations['dialog_open_github_option'], translations['dialog_close_option']],
-            defaultId: 0 // 默认选中 "Open GitHub"
+            defaultId: 0 // Select "Open GitHub" by default
         });
 
         if (alterResult === 0) {
@@ -461,7 +459,7 @@ app.on('window-all-closed', () => {
     }
 });
 
-// 获取当前存储的设置
+// Retrieve the currently stored settings
 ipcMain.handle('get-settings', () => {
     return {
         apiKeys: store.get('apiKeys'),
@@ -472,7 +470,7 @@ ipcMain.handle('get-settings', () => {
     };
 });
 
-// 保存新的设置
+// Save new settings
 ipcMain.on('save-settings', (event, settings) => {
     store.set('apiKeys', settings.apiKeys);
     store.set('modelId', settings.modelId);
@@ -482,7 +480,7 @@ ipcMain.on('save-settings', (event, settings) => {
 
     nativeTheme.themeSource = settings.theme;
 
-    // 通知主窗口设置已更新
+    // Notify the main window that settings have been updated
     mainWindow.webContents.send('settings-updated', { 'colorPickShortcut': settings.colorPickShortcut, 'currentTheme': nativeTheme.shouldUseDarkColors ? 'dark' : 'light' });
 });
 
@@ -493,25 +491,25 @@ ipcMain.on('set-language', (event, lang) => {
     mainWindow.webContents.send('translations-update', translations);
 });
 
+// Copy hex / description to clipboard
 ipcMain.on('copy-to-clipboard', (event, text) => {
     clipboard.writeText(text);
-    event.sender.send('copy-success', true); // 通知渲染进程复制成功
 });
 
 
-// 开启取色模式
+// Enable color picking mode
 ipcMain.on('start-capture', () => {
-    isPickingColor = true; // 标记进入取色模式
+    isPickingColor = true; 
     mainWindow.webContents.send('update-status', 'active');
 });
 
-// 退出取色模式
+// Exit color picking mode
 ipcMain.on('stop-capture', () => {
-    isPickingColor = false; // 标记退出取色模式
+    isPickingColor = false;
     mainWindow.webContents.send('update-status', 'inactive');
 });
 
-// 全局鼠标点击事件监听
+// Listen to cursor click event on the whole screen
 app.on('browser-window-focus', () => {
     const clickListener = async () => {
         if (isPickingColor) {
@@ -522,18 +520,18 @@ app.on('browser-window-focus', () => {
     app.once('browser-window-blur', clickListener);
 });
 
-// 捕获颜色
+// Proceed picking color
 const captureColor = async () => {
     if ((settingsWindow && !settingsWindow.isDestroyed()) ||
         (aboutWindow && !aboutWindow.isDestroyed())) {
-        // 当一个模态窗口开启时，或已经开启时，退出取色模式
+        // Exit color picking mode when a modal window is opened or already open
         isPickingColor = false;
         mainWindow.webContents.send('update-status', 'inactive');
         return;
     }
 
     try {
-        const cursorPos = screen.getCursorScreenPoint(); // 获取鼠标位置
+        const cursorPos = screen.getCursorScreenPoint(); // Get cursor current position
         const imgBuffer = await screenshot({ format: 'png' });
         const croppedImageBuffer = await cropOnePixel(imgBuffer, cursorPos.x, cursorPos.y);
 
@@ -543,7 +541,8 @@ const captureColor = async () => {
         // console.log('Picked Color:', hex);
         mainWindow.webContents.send('update-color', hex);
 
-        isPickingColor = false; // 退出取色模式
+        // Exit color picking mode
+        isPickingColor = false; 
         mainWindow.webContents.send('update-status', 'inactive');
 
         const currentModelId = store.get('modelId');

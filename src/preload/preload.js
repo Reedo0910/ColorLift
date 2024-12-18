@@ -37,6 +37,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getInitTranslations: () => translations,
     onTranslationsUpdated: (callback) => ipcRenderer.on('translations-update', (_, translations) => callback(translations)),
     // Clipboard APIs
-    copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text),
-    // onCopySuccess: (callback) => ipcRenderer.on('copy-success', (_, message) => callback(message))
+    copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text)
 });

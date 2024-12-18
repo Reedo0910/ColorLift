@@ -173,19 +173,19 @@ window.electronAPI.onTranslationsUpdated((myTranslations) => {
     setTranslations(myTranslations);
 })
 
-// 切换菜单显示与隐藏
+// Toggle clipboard dropdown menu
 clipboardDropdownButton.addEventListener('click', () => {
     clipboardDropdownMenu.classList.toggle('visible');
 });
 
-// 当在菜单外点击时隐藏菜单
+// Hide clipboard dropdown menu when clicking out of the menu
 document.addEventListener('click', (event) => {
     if (!event.target.closest('.clipboard-dropdown-container')) {
         toggleVisibility(clipboardDropdownMenu, false);
     }
 });
 
-// 为菜单项添加事件监听
+
 clipboardDropdownMenu.addEventListener('click', (event) => {
     const action = event.target.getAttribute('data-action');
     if (action === 'copyColor') {
@@ -200,22 +200,17 @@ clipboardDropdownMenu.addEventListener('click', (event) => {
     }
 
     setTimeout(() => {
-        // 点击菜单项后，隐藏菜单
+        // Hide dropdown menu once an item is clicked
         toggleVisibility(clipboardDropdownMenu, false);
     }, 50);
 });
 
-// window.electronAPI.onCopySuccess(() => {
-//     // alert('已复制到粘贴板');
-
-//     // clipboardDropdownMenu.classList.remove('visible');
-// });
-
-// 打开设置窗口
+// Open settings window
 openSettingsBtn.addEventListener('click', () => {
     window.electronAPI.openSettings();
 });
 
+// Open about window
 openAboutBtn.addEventListener('click', () => {
     window.electronAPI.openAbout();
 });
