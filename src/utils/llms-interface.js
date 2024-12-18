@@ -114,12 +114,12 @@ export const LLMCommunicator = async (hex, language, modelId, apiKey, translatio
     try {
         const providerObj = findProviderByModelId(modelId);
         if (!providerObj) {
-            return translations['error_invalid_model_id'] || 'Invalid model ID.';
+            return `||ERROR|| ${translations['error_invalid_model_id'] || 'Invalid model ID.'}`;
         }
 
         const { apiUrl, authHeader, tokenPrefix, additionalHeader, additionalValue, locale } = providerObj;
         if (!apiUrl) {
-            return translations['error_invalid_api_url'] || 'Invalid API URL.';
+            return `||ERROR|| ${translations['error_invalid_api_url'] || 'Invalid API URL.'}`;
         }
 
         const promptEN = `Please describe the color represented by this Hex code in a single paragraph. Example: I provide: Hex. You Response: This is a [color name] color, which is closer to [color name] (or has hints of other tones). You can mention where this color is commonly seen, its applications, etc. Note: You must respond in ${language}. Your response may not exceed 120 words. Do not include the Hex code in your response.`;
@@ -140,7 +140,7 @@ export const LLMCommunicator = async (hex, language, modelId, apiKey, translatio
 
     } catch (error) {
         console.error('Unexpected error:', error);
-        return translations['error_unexpected'] || 'An unexpected error occurred. Please try again later.';
+        return `||ERROR|| ${translations['error_unexpected'] || 'An unexpected error occurred. Please try again later.'}`;
     }
 };
 
@@ -176,21 +176,21 @@ async function handleResponse(response, providerObj, translations) {
         data = await response.json();
     } catch (err) {
         console.error('Failed to parse JSON response:', err);
-        return translations['error_invalid_response'] || 'Invalid response from the API.';
+        return `||ERROR|| ${translations['error_invalid_response'] || 'Invalid response from the API.'}`;
     }
 
     if (response.ok) {
         switch (providerObj.id) {
             case 'cohere':
-                return data.message?.content?.[0]?.text || translations['error_no_response'];
+                return data.message?.content?.[0]?.text || `||ERROR|| ${translations['error_no_response']}`;
             case 'anthropic':
-                return data.content?.[0]?.text || translations['error_no_response'];
+                return data.content?.[0]?.text || `||ERROR|| ${translations['error_no_response']}`;
             default:
-                return data.choices?.[0]?.message?.content || translations['error_no_response'];
+                return data.choices?.[0]?.message?.content || `||ERROR|| ${translations['error_no_response']}`;
         }
     } else {
         console.error('API error:', data);
-        return `${translations['error_api']} ${data.message || 'Unknown error'}`;
+        return `||ERROR|| ${translations['error_api']} (Code: ${response.status}) ${data.message?.content || data.error?.message || data.message || 'Unknown error'}`;
     }
 }
 

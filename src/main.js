@@ -550,13 +550,13 @@ const captureColor = async () => {
         const currentModelId = store.get('modelId');
 
         if (!currentModelId) {
-            return mainWindow.webContents.send('llm-response', translations['error_model_invalid']);
+            return mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_model_invalid']}`);
         }
 
         const currentApiKey = getApiKeyForModel(currentModelId, LLMList, store.get('apiKeys'));
 
         if (!currentApiKey) {
-            return mainWindow.webContents.send('llm-response', translations['error_api_key_invalid']);
+            return mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_api_key_invalid']}`);
         }
 
         const message = await LLMCommunicator(hex, getLanguage(), currentModelId, currentApiKey, translations);
@@ -565,6 +565,6 @@ const captureColor = async () => {
     } catch (error) {
         console.error('Error capturing color:', error);
 
-        mainWindow.webContents.send('llm-response', translations['error_unhandled_error']);
+        mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_unhandled_error']}`);
     }
 };

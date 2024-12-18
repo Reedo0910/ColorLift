@@ -218,11 +218,20 @@
             line-height: 1.75;
         }
 
-        #color-picking-instruction {
+        #color-picking-instruction,
+        #error-instruction {
             color: var(--instruction-panel-text);
             background-color: var(--instruction-panel-overlay-background);
             backdrop-filter: saturate(180%) blur(25px);
             z-index: 5;
+        }
+
+        #error-instruction {
+            z-index: 6;
+        }
+
+        #error-log {
+            font-weight: 300;
         }
 
         #onboarding-instruction {
@@ -450,6 +459,13 @@
                     </svg>
                 </div>
                 <div class="instruction-panel">
+                    <div id="error-instruction" class="panel-instruction">
+                        <div class="panel-content-wrapper">
+                            <p class="panel-content">
+                                <span id="error-log" class="selectable"></span>
+                            </p>
+                        </div>
+                    </div>
                     <div id="color-picking-instruction" class="panel-instruction">
                         <div class="panel-content-wrapper">
                             <p class="panel-content">

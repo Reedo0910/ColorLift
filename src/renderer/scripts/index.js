@@ -5,6 +5,9 @@ const loaderDiv = document.getElementById('loader');
 const captureButton = document.getElementById('capture-btn');
 
 
+const errorInstruction = document.getElementById('error-instruction');
+const errorInstructionLog = document.getElementById('error-log');
+
 const colorPickingInstruction = document.getElementById('color-picking-instruction');
 const colorPickingInstructionText1 = document.getElementById('color-picking-instruction-text-1');
 const colorPickingInstructionText2 = document.getElementById('color-picking-instruction-text-2');
@@ -99,7 +102,7 @@ function instructionManager(isShowInstruction = false, instructionIndex = -1) {
     resetInstructionManager();
 
     if (isShowInstruction) {
-        // index: 0: Color Picking; 1: Onboarding
+        // index: 0: Color Picking; 1: Onboarding; 2: Error logs
         switch (instructionIndex) {
             case 0:
                 toggleVisibility(colorPickingInstruction, true);
@@ -107,6 +110,9 @@ function instructionManager(isShowInstruction = false, instructionIndex = -1) {
 
             case 1:
                 toggleVisibility(onboardingInstruction, true);
+
+            case 2:
+                toggleVisibility(errorInstruction, true);
 
             default:
                 break;
@@ -118,6 +124,7 @@ function instructionManager(isShowInstruction = false, instructionIndex = -1) {
 function resetInstructionManager() {
     toggleVisibility(colorPickingInstruction, false);
     toggleVisibility(onboardingInstruction, false);
+    toggleVisibility(errorInstruction, false);
 }
 
 captureButton.addEventListener('click', () => {
@@ -148,7 +155,15 @@ window.electronAPI.onUpdateColor(hex => {
 window.electronAPI.onLLMResponse((message) => {
     toggleVisibility(loaderDiv, false);
 
-    LLMResponse.textContent = message;
+    const errorLogPrefix = '||ERROR|| ';
+
+
+    if (message.startsWith(errorLogPrefix)) {
+        errorInstructionLog.textContent = message.slice(errorLogPrefix.length);
+        instructionManager(true, 2);
+    } else {
+        LLMResponse.textContent = message;
+    }
 });
 
 window.electronAPI.onUpdateStatus((status) => {
