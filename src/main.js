@@ -38,6 +38,8 @@ const store = new Store({
     },
 });
 
+setLanguage(store.get('language')); // 设置默认语言
+
 let translations = getResourceBundle(store.get('language'));
 
 if (translations['app_name']) {
@@ -56,69 +58,103 @@ function isSafeForExternalOpen(url) {
 const isMac = process.platform === 'darwin'
 
 const template = [
+    // { role: 'appMenu' }
     ...(isMac
         ? [{
-            label: app.name,
+            label: translations['app_name'],
             submenu: [
-                { role: 'about' },
+                {
+                    type: 'normal',
+                    label: t('menu_about', { appName: translations['app_name'] }),
+                    click: () => {
+                        openAboutWindow();
+                    }
+                },
                 { type: 'separator' },
-                { role: 'services' },
+                {
+                    type: 'normal',
+                    label: translations['menu_settings'],
+                    accelerator: "CmdOrCtrl+,",
+                    click: () => {
+                        openSettingsWindow();
+                    }
+                },
                 { type: 'separator' },
-                { role: 'hide' },
-                { role: 'hideOthers' },
-                { role: 'unhide' },
+                {
+                    role: 'services',
+                    label: translations['menu_services']
+                },
                 { type: 'separator' },
-                { role: 'quit' }
+                {
+                    role: 'hide',
+                    label: t('menu_hide', { appName: translations['app_name'] })
+                },
+                {
+                    role: 'hideOthers',
+                    label: translations['menu_hide_others']
+                },
+                {
+                    role: 'unhide',
+                    label: translations['menu_unhide']
+                },
+                { type: 'separator' },
+                {
+                    role: 'quit',
+                    label: t('menu_quit', { appName: translations['app_name'] })
+                }
             ]
         }]
         : []),
+    // { role: 'fileMenu' }
     {
-        label: 'File',
+        label: translations['menu_file_menu'],
         submenu: [
-            isMac ? { role: 'close' } : { role: 'quit' }
+            isMac ? { role: 'close', label: translations['menu_close'] } : { role: 'quit', label: translations['menu_quit_file_menu'] }
         ]
     },
+    // { role: 'editMenu' }
     {
-        label: 'Edit',
+        label: translations['menu_edit_menu'],
         submenu: [
-            { role: 'undo' },
-            { role: 'redo' },
+            { role: 'undo', label: translations['menu_undo'] },
+            { role: 'redo', label: translations['menu_redo'] },
             { type: 'separator' },
-            { role: 'cut' },
-            { role: 'copy' },
-            { role: 'paste' },
+            { role: 'cut', label: translations['menu_cut'] },
+            { role: 'copy', label: translations['menu_copy'] },
+            { role: 'paste', label: translations['menu_paste'] },
             ...(isMac
                 ? [
-                    { role: 'pasteAndMatchStyle' },
-                    { role: 'delete' },
-                    { role: 'selectAll' },
+                    // { role: 'pasteAndMatchStyle' },
+                    { role: 'delete', label: translations['menu_delete'] },
+                    { role: 'selectAll', label: translations['menu_select_all'] },
                     { type: 'separator' },
                     {
-                        label: 'Speech',
+                        label: translations['menu_speech'],
                         submenu: [
-                            { role: 'startSpeaking' },
-                            { role: 'stopSpeaking' }
+                            { role: 'startSpeaking', label: translations['menu_start_speaking'] },
+                            { role: 'stopSpeaking', label: translations['menu_stop_speaking'] }
                         ]
                     }
                 ]
                 : [
-                    { role: 'delete' },
+                    { role: 'delete', label: translations['menu_delete'] },
                     { type: 'separator' },
-                    { role: 'selectAll' }
+                    { role: 'selectAll', label: translations['menu_select_all'] }
                 ])
         ]
     },
+    // { role: 'windowMenu' }
     {
-        label: 'Window',
+        label: translations['menu_window_menu'],
         submenu: [
-            { role: 'minimize' },
-            { role: 'zoom' },
+            { role: 'minimize', label: translations['menu_minimize'] },
+            { role: 'zoom', label: translations['menu_zoom'] },
             ...(isMac
                 ? [
                     { type: 'separator' },
-                    { role: 'front' },
+                    { role: 'front', label: translations['menu_front'] },
                     { type: 'separator' },
-                    { role: 'window' }
+                    { role: 'window', label: translations['menu_window_menu'] }
                 ]
                 : [
                     { role: 'close' }
@@ -127,11 +163,18 @@ const template = [
     },
     {
         role: 'help',
+        label: translations['menu_help'],
         submenu: [
             {
-                label: 'Learn More',
+                label: translations['menu_learn_more'],
                 click: async () => {
-                    await shell.openExternal('https://github.com/Reedo0910/ColorLift')
+                    await shell.openExternal('https://github.com/Reedo0910/ColorLift');
+                }
+            },
+            {
+                label: translations['menu_check_for_updates'],
+                click: async () => {
+                    await checkForUpdates();
                 }
             }
         ]
@@ -144,8 +187,6 @@ Menu.setApplicationMenu(menu);
 
 const savedTheme = store.get('theme') || 'system';
 nativeTheme.themeSource = savedTheme;
-
-setLanguage(store.get('language')); // 设置默认语言
 
 app.on('ready', () => {
     // 创建悬浮窗口
@@ -217,94 +258,12 @@ app.on('ready', () => {
 
     // 创建设置窗口
     ipcMain.on('open-settings', () => {
-        if (!settingsWindow) {
-
-            if (store.get('colorPickShortcut') !== '') {
-                globalShortcut.unregister(store.get('colorPickShortcut'));
-            }
-
-            settingsWindow = new BrowserWindow({
-                width: 400,
-                height: 450,
-                title: translations['setting_window_title'],
-                parent: mainWindow,
-                modal: true,
-                show: false,
-                vibrancy: 'fullscreen-ui',
-                titleBarStyle: 'hidden',
-                frame: false,
-                backgroundMaterial: 'acrylic',
-                backgroundColor: 'white',
-                webPreferences: {
-                    preload: path.join(__dirname, 'preload', 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
-                    contextIsolation: true,
-                    additionalArguments: [
-                        JSON.stringify({ key: 'translations', value: translations }),
-                        JSON.stringify({ key: 'LLMList', value: LLMList }),
-                    ],
-                },
-            });
-
-            settingsWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'settings.html'));
-
-            // 在窗口准备好时显示
-            settingsWindow.once('ready-to-show', () => {
-                settingsWindow.show();
-            });
-
-            // 窗口关闭时清理引用
-            settingsWindow.on('closed', () => {
-                settingsWindow = null;
-
-                if (!hasColorPickShortcutUpdated) {
-                    if (store.get('colorPickShortcut') !== '') {
-                        globalShortcut.register(store.get('colorPickShortcut'), captureColor);
-                    }
-                }
-
-                hasColorPickShortcutUpdated = false;
-            });
-        }
+        openSettingsWindow();
     });
 
     // Create About window
     ipcMain.on('open-about', () => {
-        if (!aboutWindow) {
-            aboutWindow = new BrowserWindow({
-                width: 320,
-                height: 420,
-                title: '关于',
-                resizable: false,
-                minimizable: false,
-                maximizable: false,
-                vibrancy: 'fullscreen-ui',
-                titleBarStyle: 'hidden',
-                frame: false,
-                modal: true,
-                show: false,
-                parent: mainWindow,
-                backgroundMaterial: 'acrylic',
-                backgroundColor: 'white',
-                webPreferences: {
-                    preload: path.join(__dirname, 'preload', 'about-preload.js'),
-                    contextIsolation: true,
-                    additionalArguments: [
-                        JSON.stringify({ key: 'translations', value: translations }),
-                        JSON.stringify({ key: 'appVersion', value: app.getVersion() }),
-                    ],
-                },
-            });
-
-            aboutWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'about.html'));
-
-            aboutWindow.once('ready-to-show', () => {
-                aboutWindow.show();
-            });
-
-            aboutWindow.on('closed', () => {
-                aboutWindow = null;
-            });
-        }
+        openAboutWindow();
     });
 
     globalShortcut.register('Esc', () => {
@@ -350,58 +309,151 @@ app.on('ready', () => {
 
     // Check for updates
     ipcMain.handle('check-for-updates', async () => {
-        try {
-            const response = await net.fetch('https://api.github.com/repos/Reedo0910/ColorLift/releases/latest');
-
-            if (!response.ok) {
-                throw new Error(`Failed to fetch updates. Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            const latestVersion = data.tag_name;
-            const currentVersion = app.getVersion();
-
-            if (!data.tag_name || !data.assets || !data.assets[0]) {
-                throw new Error('Incomplete response.');
-            }
-
-            if (latestVersion > currentVersion) {
-                const result = dialog.showMessageBoxSync({
-                    type: 'info',
-                    title: translations['update_available_dialog_title'],
-                    message: t('update_available_dialog_message', { latestVersion: latestVersion }),
-                    buttons: [translations['dialog_yes_option'], translations['dialog_no_option']]
-                });
-
-                if (result === 0) {
-                    shell.openExternal(data.assets[0]?.browser_download_url);
-                    console.log(data.assets[0]?.browser_download_url);
-                }
-            } else {
-                dialog.showMessageBoxSync({
-                    type: 'info',
-                    title: translations['no_update_dialog_title'],
-                    message: translations['no_update_dialog_message']
-                });
-            }
-        } catch (error) {
-            const alterResult = dialog.showMessageBoxSync({
-                type: 'error',
-                title: translations['update_error_dialog_title'],
-                message: translations['update_error_dialog_message'],
-                buttons: [translations['dialog_open_github_option'], translations['dialog_close_option']],
-                defaultId: 0 // 默认选中 "Open GitHub"
-            });
-
-            if (alterResult === 0) {
-                shell.openExternal('https://github.com/Reedo0910/ColorLift/releases');
-            }
-
-        }
+        await checkForUpdates();
     });
 });
 
+function openAboutWindow() {
+    if (!aboutWindow) {
+        aboutWindow = new BrowserWindow({
+            width: 320,
+            height: 420,
+            title: '关于',
+            resizable: false,
+            minimizable: false,
+            maximizable: false,
+            vibrancy: 'fullscreen-ui',
+            titleBarStyle: 'hidden',
+            frame: false,
+            modal: true,
+            show: false,
+            parent: mainWindow,
+            backgroundMaterial: 'acrylic',
+            backgroundColor: 'white',
+            webPreferences: {
+                preload: path.join(__dirname, 'preload', 'about-preload.js'),
+                contextIsolation: true,
+                additionalArguments: [
+                    JSON.stringify({ key: 'translations', value: translations }),
+                    JSON.stringify({ key: 'appVersion', value: app.getVersion() }),
+                ],
+            },
+        });
+
+        aboutWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'about.html'));
+
+        aboutWindow.once('ready-to-show', () => {
+            aboutWindow.show();
+        });
+
+        aboutWindow.on('closed', () => {
+            aboutWindow = null;
+        });
+    }
+}
+
+function openSettingsWindow() {
+    if (!settingsWindow) {
+
+        if (store.get('colorPickShortcut') !== '') {
+            globalShortcut.unregister(store.get('colorPickShortcut'));
+        }
+
+        settingsWindow = new BrowserWindow({
+            width: 400,
+            height: 450,
+            title: translations['setting_window_title'],
+            parent: mainWindow,
+            modal: true,
+            show: false,
+            vibrancy: 'fullscreen-ui',
+            titleBarStyle: 'hidden',
+            frame: false,
+            backgroundMaterial: 'acrylic',
+            backgroundColor: 'white',
+            webPreferences: {
+                preload: path.join(__dirname, 'preload', 'settings-preload.js'), // 为设置窗口加载单独的 preload 脚本
+                contextIsolation: true,
+                additionalArguments: [
+                    JSON.stringify({ key: 'translations', value: translations }),
+                    JSON.stringify({ key: 'LLMList', value: LLMList }),
+                ],
+            },
+        });
+
+        settingsWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'settings.html'));
+
+        // 在窗口准备好时显示
+        settingsWindow.once('ready-to-show', () => {
+            settingsWindow.show();
+        });
+
+        // 窗口关闭时清理引用
+        settingsWindow.on('closed', () => {
+            settingsWindow = null;
+
+            if (!hasColorPickShortcutUpdated) {
+                if (store.get('colorPickShortcut') !== '') {
+                    globalShortcut.register(store.get('colorPickShortcut'), captureColor);
+                }
+            }
+
+            hasColorPickShortcutUpdated = false;
+        });
+    }
+}
+
+const checkForUpdates = async () => {
+    try {
+        const response = await net.fetch('https://api.github.com/repos/Reedo0910/ColorLift/releases/latest');
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch updates. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const latestVersion = data.tag_name;
+        const currentVersion = app.getVersion();
+
+        if (!data.tag_name || !data.assets || !data.assets[0]) {
+            throw new Error('Incomplete response.');
+        }
+
+        if (latestVersion > currentVersion) {
+            const result = dialog.showMessageBoxSync({
+                type: 'info',
+                title: translations['update_available_dialog_title'],
+                message: t('update_available_dialog_message', { latestVersion: latestVersion }),
+                buttons: [translations['dialog_yes_option'], translations['dialog_no_option']]
+            });
+
+            if (result === 0) {
+                shell.openExternal(data.assets[0]?.browser_download_url);
+                console.log(data.assets[0]?.browser_download_url);
+            }
+        } else {
+            dialog.showMessageBoxSync({
+                type: 'info',
+                title: translations['no_update_dialog_title'],
+                message: translations['no_update_dialog_message']
+            });
+        }
+    } catch (error) {
+        const alterResult = dialog.showMessageBoxSync({
+            type: 'error',
+            title: translations['update_error_dialog_title'],
+            message: translations['update_error_dialog_message'],
+            buttons: [translations['dialog_open_github_option'], translations['dialog_close_option']],
+            defaultId: 0 // 默认选中 "Open GitHub"
+        });
+
+        if (alterResult === 0) {
+            shell.openExternal('https://github.com/Reedo0910/ColorLift/releases');
+        }
+
+    }
+}
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
