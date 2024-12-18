@@ -26,6 +26,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onUpdateColor: (callback) => ipcRenderer.on('update-color', (_, hex) => callback(hex)),
     onLLMResponse: (callback) => ipcRenderer.on('llm-response', (_, message) => callback(message)),
     onUpdateStatus: (callback) => ipcRenderer.on('update-status', (_, status) => callback(status)),
+    //About
+    openAbout: () => ipcRenderer.send('open-about'),
     // Settings
     openSettings: () => ipcRenderer.send('open-settings'),
     onSettingsUpdated: (callback) => ipcRenderer.on('settings-updated', (_, settings) => callback(settings)),

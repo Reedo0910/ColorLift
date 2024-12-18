@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+    <title>关于</title>
+</head>
+
+<body>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            color: var(--main-text);
+
+            --main-text: #000;
+            --page-title-text: #222;
+            --translucent-background: #ffffffd9;
+            --button-icon: #1a1a1a;
+            --primary-button-background: #eee;
+            --hover-button: #d8d8d8;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html {
+                --main-text: #fff;
+                --page-title-text: #f8f8f8;
+                --translucent-background: #020202d9;
+                --button-icon: #fff;
+                --primary-button-background: #4f4f4f;
+                --hover-button: #3c3c3c;
+            }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--translucent-background);
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            cursor: default;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        main {
+            position: relative;
+            padding: 10px 10px;
+            height: calc(100vh - 60px);
+            width: 100%;
+        }
+
+        .text-italic {
+            font-style: italic;
+        }
+
+        h1 {
+            color: var(--page-title-text);
+            font-size: 14px;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 14px;
+            text-align: center;
+            margin: 0 0 8px;
+        }
+
+        img {
+            display: block;
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 10px;
+        }
+
+        .app-version {
+            text-align: center;
+            margin: 0;
+        }
+
+        .text-block {
+            padding: 0 10px;
+            overflow: auto;
+            width: 100%;
+            height: calc(100% - 130px);
+        }
+
+        .update-block {
+            padding-top: 10px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        button {
+            display: inline-flex;
+            background-color: transparent;
+            border: 1px solid #888;
+            color: var(--main-text);
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            align-items: center;
+        }
+
+        button:hover {
+            border-color: #6c6c6c;
+            background-color: var(--hover-button) !important;
+        }
+
+        .btn-group {
+            position: absolute;
+            bottom: 0;
+            padding-left: 10px;
+        }
+
+        #update-btn {
+            background-color: var(--primary-button-background);
+        }
+
+        button svg {
+            width: 12px;
+            height: 12px;
+            margin-right: 3px;
+        }
+
+        button svg path,
+        button svg rect {
+            fill: var(--button-icon);
+        }
+
+        a#repo-link {
+            display: inline-flex;
+            color: var(--main-text);
+            text-decoration: none;
+            align-items: center;
+            justify-content: center;
+            margin-left: 1em;
+        }
+
+        a#repo-link span {
+            display: inline-block;
+            border-bottom: 1px solid #666;
+        }
+
+        a#repo-link:hover {
+            opacity: 0.7;
+        }
+
+        a#repo-link svg {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 5px;
+        }
+
+        a#repo-link svg path,
+        a#repo-link svg rect {
+            fill: var(--button-icon);
+        }
+    </style>
+
+    <h1 id="window-title">关于</h1>
+    <main>
+        <img src="../../assets/img/AppIcon_256x256x32.png" alt="App icon" />
+        <h2>拾彩</h2>
+        <p class="app-version">版本 <span id="version">0.0.1</span></p>
+        <div class="text-block">
+            <p>拾彩是采用 GPL-3.0-only 协议的开源应用。</p>
+            <p class="text-italic">本工具不适用于精确色彩测量或专业色彩指导。所有色彩描述文本与推荐均由AI生成，请核查重要信息。</p>
+            <p class="update-block"><button id="update-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span>检查更新</span></button>
+                <a id="repo-link" href="https://github.com/Reedo0910/ColorLift" target="_blank"><span>GitHub 仓库地址</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                        <path
+                            d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" />
+                        <path
+                            d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" />
+                    </svg>
+                </a>
+            </p>
+        </div>
+        <div class="btn-group">
+            <button id="close-btn">关闭</button>
+        </div>
+    </main>
+
+    <script src="../scripts/about.js"></script>
+</body>
+
+</html>

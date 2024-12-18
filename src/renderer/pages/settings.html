@@ -56,34 +56,6 @@
             user-select: none;
         }
 
-        button {
-            display: inline-block;
-            background-color: transparent;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .btn-group {
-            position: absolute;
-            bottom: 0;
-            padding-left: 10px;
-        }
-
-        #save-btn {
-            background-color: var(--primary-button-background);
-        }
-
-        #close-btn {
-            margin-left: 5px;
-        }
-
-        .btn-group button:hover {
-            background-color: var(--hover-button) !important;
-        }
-
         form {
             position: relative;
             height: calc(100vh - 60px);
@@ -103,7 +75,7 @@
 
         label {
             display: block;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 500;
             margin-bottom: 6px;
         }
@@ -142,8 +114,30 @@
             margin-bottom: 5px;
         }
 
-        button{
+        button {
+            display: inline-flex;
+            background-color: transparent;
+            border: none;
+            border-radius: 5px;
             color: var(--main-text);
+            align-items: center;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-group {
+            position: absolute;
+            bottom: 0;
+            padding-left: 10px;
+        }
+
+        #save-btn {
+            background-color: var(--primary-button-background);
+        }
+
+        #close-btn {
+            margin-left: 5px;
         }
 
         button svg {
@@ -156,6 +150,23 @@
         button svg rect {
             fill: var(--button-icon);
         }
+
+
+        .btn-group button {
+            border: 1px solid #888;
+        }
+
+        .btn-group button svg {
+            width: 12px;
+            height: 12px;
+            margin-right: 3px;
+        }
+
+        .btn-group button:hover {
+            border-color: #6c6c6c;
+            background-color: var(--hover-button) !important;
+        }
+
 
         .api-input-label-block {
             display: flex;

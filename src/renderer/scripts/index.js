@@ -17,7 +17,11 @@ const onboardingInstructionShortcutText = document.getElementById('onboarding-in
 const clipboardDropdownButton = document.getElementById('clipboard_dropdown_button');
 const clipboardDropdownMenu = document.getElementById('clipboard_dropdown_menu');
 
+const clipboardDropdownMenuCopyCodeBtnText = document.getElementById('copy-code-btn-text');
+const clipboardDropdownMenuCopyDescriptionBtnText = document.getElementById('copy-description-btn-text');
+
 const openSettingsBtn = document.getElementById('settings-btn');
+const openAboutBtn = document.getElementById('about_button');
 
 const initTranslations = window.electronAPI.getInitTranslations();
 const initTheme = window.electronAPI.getInitTheme();
@@ -35,6 +39,11 @@ function setTranslations(translations) {
     document.title = translations['app_name'];
 
     openSettingsBtn.title = translations['setting_button_title'];
+    clipboardDropdownButton.title = translations['clipboard_dropdown_button_title'];
+
+    clipboardDropdownMenuCopyCodeBtnText.textContent = translations['copy_color_code_text'];
+    clipboardDropdownMenuCopyDescriptionBtnText.textContent = translations['copy_color_description_text'];
+
     captureButton.title = translations['enter_color_picking_mode'];
     colorPickingInstructionText1.textContent = translations['color_picking_instruction_1'];
     colorPickingInstructionText2.textContent = translations['color_picking_instruction_2'];
@@ -204,6 +213,10 @@ clipboardDropdownMenu.addEventListener('click', (event) => {
 // 打开设置窗口
 openSettingsBtn.addEventListener('click', () => {
     window.electronAPI.openSettings();
+});
+
+openAboutBtn.addEventListener('click', () => {
+    window.electronAPI.openAbout();
 });
 
 // https://github.com/adamgiebl/neumorphism

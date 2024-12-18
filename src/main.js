@@ -14,6 +14,7 @@ const __dirname = path.dirname(__filename);
 
 let mainWindow;
 let settingsWindow;
+let aboutWindow;
 let isPickingColor = false; // 取色模式状态
 let hasColorPickShortcutUpdated = false;
 
@@ -43,32 +44,14 @@ if (translations['app_name']) {
     app.setName(translations['app_name'])
 }
 
-app.on('web-contents-created', (event, contents) => {
-    // restrict web navigation
-    contents.on('will-navigate', (event, navigationUrl) => {
-        const parsedUrl = new URL(navigationUrl)
-
-        // to github.com only
-        if (parsedUrl.origin !== 'https://github.com') {
-            event.preventDefault()
-        }
-    })
-
-    contents.setWindowOpenHandler(({ url }) => {
-        // 在这个例子中，我们要求操作系统
-        // 在默认浏览器中打开此事件的URL
-        //
-        // 关于哪些URL应该被允许通过shell.openExternal打开，
-        // 请参照以下项目。
-        if (isSafeForExternalOpen(url)) {
-            setImmediate(() => {
-                shell.openExternal(url)
-            })
-        }
-
-        return { action: 'deny' }
-    })
-})
+function isSafeForExternalOpen(url) {
+    try {
+        const parsedUrl = new URL(url);
+        return parsedUrl.origin === 'https://github.com';
+    } catch (e) {
+        return false;
+    }
+}
 
 const isMac = process.platform === 'darwin'
 
@@ -207,14 +190,6 @@ app.on('ready', () => {
         globalShortcut.register(store.get('colorPickShortcut'), captureColor);
     }
 
-    globalShortcut.register('Esc', () => {
-        // 退出取色模式
-        if (isPickingColor) {
-            isPickingColor = false;
-            mainWindow.webContents.send('update-status', 'inactive');
-        }
-    });
-
     ipcMain.handle('set-color-pick-shortcut', (event, shortcut) => {
         // 注销以前的快捷键
         if (store.get('colorPickShortcut') !== '') {
@@ -251,9 +226,10 @@ app.on('ready', () => {
             settingsWindow = new BrowserWindow({
                 width: 400,
                 height: 450,
-                parent: mainWindow, // 设置为主窗口的子窗口
-                modal: true, // 模态窗口
-                show: false, // 初始隐藏
+                title: translations['setting_window_title'],
+                parent: mainWindow,
+                modal: true,
+                show: false,
                 vibrancy: 'fullscreen-ui',
                 titleBarStyle: 'hidden',
                 frame: false,
@@ -290,6 +266,87 @@ app.on('ready', () => {
             });
         }
     });
+
+    // Create About window
+    ipcMain.on('open-about', () => {
+        if (!aboutWindow) {
+            aboutWindow = new BrowserWindow({
+                width: 320,
+                height: 420,
+                title: '关于',
+                resizable: false,
+                minimizable: false,
+                maximizable: false,
+                vibrancy: 'fullscreen-ui',
+                titleBarStyle: 'hidden',
+                frame: false,
+                modal: true,
+                show: false,
+                parent: mainWindow,
+                backgroundMaterial: 'acrylic',
+                backgroundColor: 'white',
+                webPreferences: {
+                    preload: path.join(__dirname, 'preload', 'about-preload.js'),
+                    contextIsolation: true,
+                    additionalArguments: [
+                        JSON.stringify({ key: 'translations', value: translations }),
+                        JSON.stringify({ key: 'appVersion', value: app.getVersion() }),
+                    ],
+                },
+            });
+
+            aboutWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'about.html'));
+
+            aboutWindow.once('ready-to-show', () => {
+                aboutWindow.show();
+            });
+
+            aboutWindow.on('closed', () => {
+                aboutWindow = null;
+            });
+        }
+    });
+
+    globalShortcut.register('Esc', () => {
+        // 退出取色模式
+        if (isPickingColor) {
+            isPickingColor = false;
+            mainWindow.webContents.send('update-status', 'inactive');
+        }
+
+        if (settingsWindow && !settingsWindow.isDestroyed()) {
+            settingsWindow.close();
+            settingsWindow = null;
+        }
+
+        if (aboutWindow && !aboutWindow.isDestroyed()) {
+            aboutWindow.close();
+            aboutWindow = null;
+        }
+    });
+
+
+    app.on('web-contents-created', (event, contents) => {
+        // restrict web navigation
+        contents.on('will-navigate', (event, navigationUrl) => {
+            const parsedUrl = new URL(navigationUrl)
+
+            // to github.com only
+            if (parsedUrl.origin !== 'https://github.com') {
+                event.preventDefault()
+            }
+        })
+
+        contents.setWindowOpenHandler(({ url }) => {
+            if (isSafeForExternalOpen(url)) {
+                setImmediate(() => {
+                    shell.openExternal(url)
+                })
+            }
+
+            return { action: 'deny' }
+        })
+    })
 });
 
 
@@ -362,6 +419,14 @@ app.on('browser-window-focus', () => {
 
 // 捕获颜色
 const captureColor = async () => {
+    if ((settingsWindow && !settingsWindow.isDestroyed()) ||
+        (aboutWindow && !aboutWindow.isDestroyed())) {
+        // 当一个模态窗口开启时，或已经开启时，退出取色模式
+        isPickingColor = false;
+        mainWindow.webContents.send('update-status', 'inactive');
+        return;
+    }
+
     try {
         const cursorPos = screen.getCursorScreenPoint(); // 获取鼠标位置
         const imgBuffer = await screenshot({ format: 'png' });
