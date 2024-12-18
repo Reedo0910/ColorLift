@@ -22,7 +22,10 @@
             --translucent-background: #ffffffd9;
             --button-icon: #1a1a1a;
             --primary-button-background: #eee;
-            --hover-button: #d8d8d8;
+            --button-border: #d8d8d8;
+            --button-background-hover: #d8d8d8;
+            --button-border-hover: #c0c0c0;
+            --link-border-bottom: #ccc;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -32,7 +35,10 @@
                 --translucent-background: #020202d9;
                 --button-icon: #fff;
                 --primary-button-background: #4f4f4f;
-                --hover-button: #3c3c3c;
+                --button-border: #888;
+                --button-background-hover: #3c3c3c;
+                --button-border-hover: #6c6c6c;
+                --link-border-bottom: #666;
             }
         }
 
@@ -99,7 +105,7 @@
         button {
             display: inline-flex;
             background-color: transparent;
-            border: 1px solid #888;
+            border: 1px solid var(--button-border);
             color: var(--main-text);
             border-radius: 5px;
             padding: 5px 10px;
@@ -109,8 +115,8 @@
         }
 
         button:hover {
-            border-color: #6c6c6c;
-            background-color: var(--hover-button) !important;
+            border-color: var(--button-border-hover);
+            background-color: var(--button-background-hover) !important;
         }
 
         .btn-group {
@@ -145,7 +151,7 @@
 
         a#repo-link span {
             display: inline-block;
-            border-bottom: 1px solid #666;
+            border-bottom: 1px solid var(--link-border-bottom);
         }
 
         a#repo-link:hover {
@@ -180,7 +186,8 @@
                             clip-rule="evenodd" />
                     </svg>
                     <span id="check-for-update-button-text">检查更新</span></button>
-                <a id="repo-link" href="https://github.com/Reedo0910/ColorLift" target="_blank"><span id="github-link-text">GitHub 仓库地址</span>
+                <a id="repo-link" href="https://github.com/Reedo0910/ColorLift" target="_blank"><span
+                        id="github-link-text">GitHub 仓库地址</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
                         <path
                             d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" />

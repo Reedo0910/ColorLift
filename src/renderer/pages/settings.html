@@ -22,7 +22,9 @@
             --translucent-background: #ffffffd9;
             --button-icon: #1a1a1a;
             --primary-button-background: #eee;
-            --hover-button: #d8d8d8;
+            --button-border: #d8d8d8;
+            --button-background-hover: #d8d8d8;
+            --button-border-hover: #c0c0c0;
             --description-text: #888;
             --input-text: #000;
             --input-background: #fff;
@@ -37,7 +39,9 @@
                 --translucent-background: #020202d9;
                 --button-icon: #fff;
                 --primary-button-background: #4f4f4f;
-                --hover-button: #3c3c3c;
+                --button-border: #888;
+                --button-background-hover: #3c3c3c;
+                --button-border-hover: #6c6c6c;
                 --description-text: #cfcfcf;
                 --input-text: #fff;
                 --input-background: #121212;
@@ -153,7 +157,7 @@
 
 
         .btn-group button {
-            border: 1px solid #888;
+            border: 1px solid var(--button-border);
         }
 
         .btn-group button svg {
@@ -163,8 +167,8 @@
         }
 
         .btn-group button:hover {
-            border-color: #6c6c6c;
-            background-color: var(--hover-button) !important;
+            border-color: var(--button-border-hover);
+            background-color: var(--button-background-hover) !important;
         }
 
 
