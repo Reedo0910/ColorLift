@@ -38,6 +38,7 @@ instructionManager(true, 1);
 function setTranslations(translations) {
     document.title = translations['app_name'];
 
+    openAboutBtn.title = translations['about_button_title'];
     openSettingsBtn.title = translations['setting_button_title'];
     clipboardDropdownButton.title = translations['clipboard_dropdown_button_title'];
 

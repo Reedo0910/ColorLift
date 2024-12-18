@@ -19,5 +19,6 @@ additionalArguments.forEach(arg => {
 
 contextBridge.exposeInMainWorld('electronAPI', {
     getInitTranslations: () => translations,
-    getAppVersion: () => appVersion
+    getAppVersion: () => appVersion,
+    checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
 });

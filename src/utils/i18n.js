@@ -31,6 +31,7 @@ export const loadLanguageFiles = () => {
 export const setLanguage = (lang) => i18next.changeLanguage(lang);
 export const getLanguage = () => i18next.language;
 export const getResourceBundle = (lang) => i18next.getResourceBundle(lang, 'translation');
+export const t = (key, options) => i18next.t(key, options);
 
 // 加载语言文件
 loadLanguageFiles();

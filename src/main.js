@@ -1,11 +1,11 @@
-import { app, Menu, BrowserWindow, ipcMain, screen, nativeTheme, globalShortcut, clipboard, shell } from 'electron';
+import { app, Menu, BrowserWindow, ipcMain, screen, nativeTheme, globalShortcut, clipboard, shell, net, dialog } from 'electron';
 import Store from 'electron-store';
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
 import screenshot from 'screenshot-desktop';
 import { getAverageColor } from 'fast-average-color-node';
 import { cropOnePixel, getApiKeyForModel, getAppLocale } from './utils/utils.js'
-import { setLanguage, getLanguage, getResourceBundle } from './utils/i18n.js';
+import { setLanguage, getLanguage, getResourceBundle, t } from './utils/i18n.js';
 import { LLMCommunicator, LLMList } from './utils/llms-interface.js';
 
 // 创建 __dirname
@@ -346,7 +346,60 @@ app.on('ready', () => {
 
             return { action: 'deny' }
         })
-    })
+    });
+
+    // Check for updates
+    ipcMain.handle('check-for-updates', async () => {
+        try {
+            const response = await net.fetch('https://api.github.com/repos/Reedo0910/ColorLift/releases/latest');
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch updates. Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            const latestVersion = data.tag_name;
+            const currentVersion = app.getVersion();
+
+            if (!data.tag_name || !data.assets || !data.assets[0]) {
+                throw new Error('Incomplete response.');
+            }
+
+            if (latestVersion > currentVersion) {
+                const result = dialog.showMessageBoxSync({
+                    type: 'info',
+                    title: translations['update_available_dialog_title'],
+                    message: t('update_available_dialog_message', { latestVersion: latestVersion }),
+                    buttons: [translations['dialog_yes_option'], translations['dialog_no_option']]
+                });
+
+                if (result === 0) {
+                    shell.openExternal(data.assets[0]?.browser_download_url);
+                    console.log(data.assets[0]?.browser_download_url);
+                }
+            } else {
+                dialog.showMessageBoxSync({
+                    type: 'info',
+                    title: translations['no_update_dialog_title'],
+                    message: translations['no_update_dialog_message']
+                });
+            }
+        } catch (error) {
+            const alterResult = dialog.showMessageBoxSync({
+                type: 'error',
+                title: translations['update_error_dialog_title'],
+                message: translations['update_error_dialog_message'],
+                buttons: [translations['dialog_open_github_option'], translations['dialog_close_option']],
+                defaultId: 0 // 默认选中 "Open GitHub"
+            });
+
+            if (alterResult === 0) {
+                shell.openExternal('https://github.com/Reedo0910/ColorLift/releases');
+            }
+
+        }
+    });
 });
 
 
