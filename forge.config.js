@@ -29,6 +29,19 @@ export const makers = [
     config: {}
   },
 ];
+export const publishers = [
+  {
+    name: '@electron-forge/publisher-github',
+    config: {
+      repository: {
+        owner: 'Reedo0910',
+        name: 'ColorLift'
+      },
+      draft: true,
+      prerelease: true
+    }
+  }
+];
 export const plugins = [
   {
     name: '@electron-forge/plugin-auto-unpack-natives',
