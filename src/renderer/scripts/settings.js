@@ -2,6 +2,7 @@ const windowTitle = document.getElementById('window-title');
 
 const providerSelect = document.getElementById('provider-select');
 const providerSelectLabel = document.getElementById('provider-select-label');
+const providerSelectNote = document.getElementById('provider-select-note');
 
 const apiKeyContainer = document.getElementById('api-key-container');
 const apiKeyInput = document.getElementById('api-key-input');
@@ -48,6 +49,7 @@ const isMac = window.electronAPI.isMacOS();
 document.title = translations['setting_window_title'];
 
 providerSelectLabel.textContent = translations['provider_select_label'];
+providerSelectNote.textContent = translations['provider_select_note'];
 toggleVisibilityBtn.title = translations['show_api_key_button_tooltip'];
 windowTitle.textContent = translations['setting_window_title'];
 apiKeyLabel.textContent = translations['api_key_label'];

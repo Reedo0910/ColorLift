@@ -14,6 +14,7 @@
     "setting_window_title": "設定",
     "provider_select_label": "語言模型提供方",
     "provider_select_placeholder": "選擇語言模型提供方",
+    "provider_select_note": "API Token 費用因提供商與模型而異，詳情請參閱相應提供商的官方文件。",
     "api_key_label": "語言模型 API 密鑰",
     "api_key_placeholder": "請輸入你的 API 密鑰",
     "api_key_note": "請輸入您從該服務提供商處獲取的 API 密鑰。密鑰將僅存儲於本地設備上，請妥善保管。",

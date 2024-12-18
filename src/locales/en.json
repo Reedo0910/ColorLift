@@ -14,6 +14,7 @@
     "setting_window_title": "Settings",
     "provider_select_label": "Language Model Provider",
     "provider_select_placeholder": "Select Language Model Provider",
+    "provider_select_note": "API token costs vary by provider and model. For details, please refer to the official documentation of the respective provider.",
     "api_key_label": "Language Model API Key",
     "api_key_placeholder": "Enter your API key",
     "api_key_note": "Enter the API key obtained from the service provider. The key will only be stored locally on your device. Please keep it secure.",
