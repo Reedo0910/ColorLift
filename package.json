@@ -13,6 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
     "make": "rm -rf ./out && electron-forge make",
+    "build:win64": "electron-forge make --arch=x64 --targets=@electron-forge/maker-squirrel,@electron-forge/maker-zip",
     "build:x64": "electron-forge make --arch=x64",
     "build:arm64": "electron-forge make --arch=arm64",
     "build:all": "rm -rf ./out && npm run build:x64 && npm run build:arm64"
