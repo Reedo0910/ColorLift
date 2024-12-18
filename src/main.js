@@ -7,6 +7,7 @@ import { getAverageColor } from 'fast-average-color-node';
 import { cropOnePixel, getApiKeyForModel, getAppLocale } from './utils/utils.js'
 import { setLanguage, getLanguage, getResourceBundle, t } from './utils/i18n.js';
 import { LLMCommunicator, LLMList } from './utils/llms-interface.js';
+import electronSquirrelStartup from 'electron-squirrel-startup';
 
 // Define __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -17,6 +18,11 @@ let settingsWindow;
 let aboutWindow;
 let isPickingColor = false; // Color picking state
 let hasColorPickShortcutUpdated = false;
+
+// Prevent Squirrel.Windows launches the app multiple times during the installation/updating/uninstallation
+if (electronSquirrelStartup) {
+    app.quit();
+}
 
 // Get locale language
 const appLocale = getAppLocale();
