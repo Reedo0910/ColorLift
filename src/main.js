@@ -19,6 +19,8 @@ let aboutWindow;
 let isPickingColor = false; // Color picking state
 let hasColorPickShortcutUpdated = false;
 
+const isMac = process.platform === 'darwin';
+
 // Prevent Squirrel.Windows launches the app multiple times during the installation/updating/uninstallation
 if (electronSquirrelStartup) {
     app.quit();
@@ -39,7 +41,7 @@ const store = new Store({
         },
         modelId: '',
         language: appLocale,
-        colorPickShortcut: 'Alt+C',
+        colorPickShortcut: isMac ? 'Alt+C' : 'Alt+D',
         theme: 'system'
     },
 });
@@ -60,8 +62,6 @@ function isSafeForExternalOpen(url) {
         return false;
     }
 }
-
-const isMac = process.platform === 'darwin';
 
 const template = [
     // { role: 'appMenu' }
@@ -201,9 +201,11 @@ app.on('ready', () => {
         height: 480,
         transparent: true,
         vibrancy: 'fullscreen-ui',
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
         // expose window controlls in Windows/Linux
-        ...(!isMac ? { titleBarOverlay: true } : {}),
+        ...(!isMac ? {
+            titleBarOverlay: true
+        } : {}),
         frame: false,
         fullscreenable: false,
         backgroundMaterial: 'acrylic',
@@ -226,7 +228,7 @@ app.on('ready', () => {
 
     // mainWindow.webContents.openDevTools(); // Open DevTools
 
-    mainWindow.setSkipTaskbar(true); // Hide in task bar
+    // mainWindow.setSkipTaskbar(true); // Hide in task bar
 
     mainWindow.on('close', (event) => {
         if (process.platform === 'darwin' || process.platform === 'linux') {
@@ -319,6 +321,13 @@ app.on('ready', () => {
     ipcMain.handle('check-for-updates', async () => {
         await checkForUpdates();
     });
+
+    // set Title Bar Overlay everytime the native theme has changed
+    nativeTheme.on('updated', () => {
+        setTitleBarOverlay();
+    })
+
+    setTitleBarOverlay();
 });
 
 function openAboutWindow() {
@@ -408,6 +417,16 @@ function openSettingsWindow() {
 
             hasColorPickShortcutUpdated = false;
         });
+    }
+}
+
+function setTitleBarOverlay() {
+    if (isMac) return;
+
+    if (nativeTheme.shouldUseDarkColors) {
+        mainWindow.setTitleBarOverlay({ color: '#3a3a3a', symbolColor: '#888888' });
+    } else {
+        mainWindow.setTitleBarOverlay({ color: '#ebebeb', symbolColor: '#6f6f6f' });
     }
 }
 

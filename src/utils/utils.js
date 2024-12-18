@@ -48,11 +48,18 @@ export function getAppLocale() {
 
     const defaultLocale = 'en';
 
-    const systemLocale = app.getLocale(); // Get current system language (locale)
+    const systemLanguage = app.getPreferredSystemLanguages()[0] || app.getLocale(); // Get current system language (locale)
 
-    if (systemLocale.startsWith('zh-')) {
-        return systemLocale === 'zh-CN' ? 'zh-CN' : 'zh-TW';
+    if (systemLanguage.startsWith('zh-')) {
+        if (systemLanguage.includes('Hans')) {
+            return 'zh-CN';
+        } else if (systemLanguage.includes('Hant')) {
+            return 'zh-TW';
+        }
+
+        // Fallback
+        return systemLanguage.startsWith('zh-CN') ? 'zh-CN' : 'zh-TW';
     }
 
-    return supportedLocales[systemLocale] || defaultLocale;
+    return supportedLocales[systemLanguage] || defaultLocale;
 }

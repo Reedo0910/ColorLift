@@ -39,6 +39,10 @@ let isInit = true;
 
 instructionManager(true, 1);
 
+// Swap capture button position for macos
+if (isMac) captureButton.classList.add('mac');
+
+
 function setTranslations(translations) {
     document.title = translations['app_name'];
 
@@ -52,7 +56,7 @@ function setTranslations(translations) {
     captureButton.title = translations['enter_color_picking_mode'];
     colorPickingInstructionText1.textContent = translations['color_picking_instruction_1'];
     colorPickingInstructionText2.textContent = translations['color_picking_instruction_2'];
-    onboardingInstructionText1.textContent = translations['onboarding_instruction_1'];
+    onboardingInstructionText1.textContent = isMac ? translations['onboarding_instruction_1_mac'] : translations['onboarding_instruction_1'];
     onboardingInstructionText2.textContent = translations['onboarding_instruction_2'];
 }
 
@@ -212,7 +216,8 @@ document.addEventListener('click', (event) => {
 
 
 clipboardDropdownMenu.addEventListener('click', (event) => {
-    const action = event.target.getAttribute('data-action');
+    const action = event.target.closest('.clipboard-dropdown-item')?.getAttribute('data-action');
+
     if (action === 'copyColor') {
         // Hex code in uppercase
         if (hexValue.textContent) {

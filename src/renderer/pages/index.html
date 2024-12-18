@@ -296,8 +296,13 @@
 
         button#capture-btn {
             position: absolute;
-            right: 25px;
+            left: 25px;
             top: 25px;
+        }
+
+        button#capture-btn.mac {
+            right: 25px;
+            left: unset;
         }
 
         button.neumorphic-btn.active {
@@ -432,7 +437,7 @@
     </style>
 </head>
 
-<body style="-webkit-app-region: drag" y>
+<body style="-webkit-app-region: drag">
     <div class="body-main">
         <button id="capture-btn" class="neumorphic-btn" title="开始屏幕取色">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000">
