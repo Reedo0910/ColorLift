@@ -27,7 +27,7 @@ export const makers = [
     name: '@electron-forge/maker-dmg',
     platforms: ['darwin'],
     config: {
-      icon: './src/assets/icons/AppIcon.icns'
+      icon: './src/assets/icons/DriveIcon.icns'
     }
   },
 ];
