@@ -1,25 +1,33 @@
-import { app } from 'electron';
+import { app, screen } from 'electron';
 import sharp from 'sharp';
 
 export async function cropOnePixel(imageBuffer, x, y) {
     try {
+        // adapt to retina
+        const primaryDisplay = screen.getPrimaryDisplay();
+        const devicePixelRatio = primaryDisplay.scaleFactor;
+
+        // convert to physic pixel
+        const physicalX = Math.floor(x * devicePixelRatio);
+        const physicalY = Math.floor(y * devicePixelRatio);
+
         const metadata = await sharp(imageBuffer).metadata();
 
-        if (x < 0 || y < 0 || x >= metadata.width || y >= metadata.height) {
-            throw new Error('Cursor position is out of screenshot bounds');
+        if (
+            physicalX < 0 || physicalY < 0 ||
+            physicalX >= metadata.width || physicalY >= metadata.height
+        ) {
+            throw new Error(`Cursor position (${x}, ${y}) with devicePixelRatio ${devicePixelRatio} is out of bounds.`);
         }
 
-        const cropX = Math.max(0, x);
-        const cropY = Math.max(0, y);
-
         const croppedBuffer = await sharp(imageBuffer)
-            .extract({ left: cropX, top: cropY, width: 1, height: 1 })
+            .extract({ left: physicalX, top: physicalY, width: 1, height: 1 })
             .png()
             .toBuffer();
 
         return croppedBuffer;
     } catch (err) {
-        console.error("Crop failed:", err.message);
+        console.error("Crop failed:", { x, y, error: err.message });
         throw err;
     }
 }
