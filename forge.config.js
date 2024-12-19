@@ -26,7 +26,9 @@ export const makers = [
   {
     name: '@electron-forge/maker-dmg',
     platforms: ['darwin'],
-    config: {}
+    config: {
+      icon: './src/assets/icons/AppIcon.icns'
+    }
   },
 ];
 export const publishers = [
