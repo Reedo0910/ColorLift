@@ -33,13 +33,19 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Build and Publish
+    - name: Build (macOS)
+      if: matrix.os == 'macos-latest'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        if [ "${{ matrix.os }}" == "macos-latest" ]; then
-          npm run build:macos
-        elif [ "${{ matrix.os }}" == "windows-latest" ]; then
-          npm run build:win
-        fi
-        npm run publish
+      run: npm run build:macos
+
+    - name: Build (Windows)
+      if: matrix.os == 'windows-latest'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run build:win
+
+    - name: Publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npm run publish
