@@ -8,7 +8,7 @@ ColorLift is a free cross-platform accessibility tool available for Windows and 
 
 - **English**
 - [简体中文](/README.md)
-- [繁體中文](README_zh-TW.md)
+- [繁體中文](README_ZH-TW.md)
 
 Select your preferred language version to access the documentation.  
 选择您偏好的语言版本以获取文档信息。  

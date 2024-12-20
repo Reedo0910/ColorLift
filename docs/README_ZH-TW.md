@@ -7,7 +7,7 @@
 ## 🌐 切換語言 / Language Switch / 切换语言
 
 - **繁體中文**
-- [English](docs/README_EN.md)
+- [English](README_EN.md)
 - [簡體中文](/README.md)
 
 選擇您偏好的語言版本以獲取文檔資訊。  
