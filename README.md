@@ -6,12 +6,12 @@
 
 ## 🌐 切换语言 / Language Switch / 切換語言
 
-- [English](docs/README_EN.md)
 - **简体中文**
+- [English](docs/README_EN.md)
 - [繁體中文](docs/README_ZH-TW.md)
 
-Select your preferred language version to access the documentation.  
-选择您偏好的语言版本以获取文档信息。   
+选择您偏好的语言版本以获取文档信息。  
+Select your preferred language version to access the documentation.    
 選擇您偏好的語言版本以獲取文檔資訊。
 
 ## 下载
