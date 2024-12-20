@@ -122,7 +122,7 @@ export const LLMCommunicator = async (hex, language, modelId, apiKey, translatio
             return `||ERROR|| ${translations['error_invalid_api_url'] || 'Invalid API URL.'}`;
         }
 
-        const promptEN = `Please describe the color represented by this Hex code in a single paragraph. Example: I provide: Hex. You Response: This is a [color name] color, which is closer to [color name] (or has hints of other tones). You can mention where this color is commonly seen, its applications, etc. Note: You must respond in ${language}. Your response may not exceed 120 words. Do not include the Hex code in your response.`;
+        const promptEN = `Please describe the color represented by this Hex code in a single paragraph. Example: I provide: Hex. You Response: This is a [color name] color, which is closer to [color name] (or has hints of other tones). You can mention where this color is commonly seen, its applications, etc. Note: You must respond in ${language}. Your responses do not exceed 120 words. Do not include the Hex code in your response.`;
 
         const promptCN = `请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：Hex 你回答：这是xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，有什么应用，等等。注意：请使用${language}进行描述。回答不超过120个字或单词。不要在你的回答中包含Hex。`;
 

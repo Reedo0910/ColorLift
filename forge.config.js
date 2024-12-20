@@ -3,7 +3,8 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
 export const packagerConfig = {
   asar: { unpack: "**/node_modules/{sharp,@img}/**/*" },
-  icon: './src/assets/icons/AppIcon'
+  icon: './src/assets/icons/AppIcon',
+  appCategoryType: 'public.app-category.utilities'
 };
 export const rebuildConfig = {};
 export const makers = [
