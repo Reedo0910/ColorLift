@@ -8,6 +8,7 @@ import { cropOnePixel, getApiKeyForModel, getAppLocale } from './utils/utils.js'
 import { setLanguage, getLanguage, getResourceBundle, t } from './utils/i18n.js';
 import { LLMCommunicator, LLMList } from './utils/llms-interface.js';
 import electronSquirrelStartup from 'electron-squirrel-startup';
+import semver from 'semver';
 
 // Define __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -440,47 +441,82 @@ const checkForUpdates = async () => {
 
         const data = await response.json();
 
+        if (!data || !data.tag_name || !Array.isArray(data.assets) || data.assets.length === 0) {
+            throw new Error('Invalid API response.');
+        }
+
         const latestVersion = data.tag_name;
         const currentVersion = app.getVersion();
 
-        if (!data.tag_name || !data.assets || !data.assets[0]) {
-            throw new Error('Incomplete response.');
-        }
+        if (semver.gt(latestVersion, currentVersion)) {
+            // select file based on OS and arch
+            let downloadUrl;
 
-        if (latestVersion > currentVersion) {
+            switch (process.platform) {
+                case 'darwin': { // macOS
+                    if (process.arch === 'arm64') {
+                        downloadUrl = data.assets.find(asset => asset.name.includes('macos-arm64') && asset.name.endsWith('.dmg'))?.browser_download_url;
+                    } else if (process.arch === 'x64') {
+                        downloadUrl = data.assets.find(asset => asset.name.includes('macos-x64') && asset.name.endsWith('.dmg'))?.browser_download_url;
+                    }
+                    break;
+                }
+                case 'win32': { // Windows
+                    downloadUrl = data.assets.find(asset => asset.name.endsWith('.exe'))?.browser_download_url;
+                    break;
+                }
+                case 'linux': { // Linux
+                    downloadUrl = data.assets.find(asset => asset.name.endsWith('.AppImage'))?.browser_download_url;
+                    break;
+                }
+                default:
+                    throw new Error('Unsupported platform.');
+            }
+
+            if (!downloadUrl) {
+                throw new Error('No suitable file found for the current platform or architecture.');
+            }
+
             const result = dialog.showMessageBoxSync({
                 type: 'info',
-                title: translations['update_available_dialog_title'],
-                message: t('update_available_dialog_message', { latestVersion: latestVersion }),
-                buttons: [translations['dialog_yes_option'], translations['dialog_no_option']]
+                title: translations['update_available_dialog_title'] || 'Update Available',
+                message: t('update_available_dialog_message', { latestVersion }) ||
+                    `A new version (${latestVersion}) is available. Would you like to download it?`,
+                buttons: [
+                    translations['dialog_yes_option'] || 'Yes',
+                    translations['dialog_no_option'] || 'No',
+                ],
             });
 
             if (result === 0) {
-                shell.openExternal(data.assets[0]?.browser_download_url);
-                console.log(data.assets[0]?.browser_download_url);
+                shell.openExternal(downloadUrl);
             }
         } else {
             dialog.showMessageBoxSync({
                 type: 'info',
-                title: translations['no_update_dialog_title'],
-                message: translations['no_update_dialog_message']
+                title: translations['no_update_dialog_title'] || 'No Updates Available',
+                message: translations['no_update_dialog_message'] || 'You are using the latest version.',
             });
         }
     } catch (error) {
+        console.error('Error checking for updates:', error.message);
+
         const alterResult = dialog.showMessageBoxSync({
             type: 'error',
-            title: translations['update_error_dialog_title'],
-            message: translations['update_error_dialog_message'],
-            buttons: [translations['dialog_open_github_option'], translations['dialog_close_option']],
-            defaultId: 0 // Select "Open GitHub" by default
+            title: translations['update_error_dialog_title'] || 'Update Error',
+            message: translations['update_error_dialog_message'] || 'An error occurred while checking for updates.',
+            buttons: [
+                translations['dialog_open_github_option'] || 'Open GitHub',
+                translations['dialog_close_option'] || 'Close',
+            ],
+            defaultId: 0,
         });
 
         if (alterResult === 0) {
             shell.openExternal('https://github.com/Reedo0910/ColorLift/releases');
         }
-
     }
-}
+};
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
