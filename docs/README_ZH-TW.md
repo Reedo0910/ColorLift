@@ -1,3 +1,5 @@
+![ColorLift icon](images/icon.png)
+
 # 拾彩
 
 > 通過 AI 生成的顏色文字描述，幫助用戶（特別是色覺障礙者）理解屏幕上的顏色及其應用場景。
@@ -6,15 +8,10 @@
 
 拾彩（ColorLift）是一款免費的跨平台輔助工具，支援 Windows 和 macOS。本項目致力於通過直觀的文字描述，幫助用戶更好地理解和應用色彩。*以及提供一個十分賞心悅目的用戶介面。*
 
-## 🌐 切換語言 / Language Switch / 切换语言
+## 🌐 Translations Available
 
-- **繁體中文**
 - [English](README_EN.md)
 - [简体中文](/README.md)
-
-選擇您偏好的語言版本以獲取文檔資訊。  
-Select your preferred language version to access the documentation.  
-选择您偏好的语言版本以获取文档信息。  
 
 ## 下載
 
