@@ -40,8 +40,7 @@ export const publishers = [
         owner: 'Reedo0910',
         name: 'ColorLift'
       },
-      draft: true,
-      prerelease: true
+      draft: true
     }
   }
 ];
