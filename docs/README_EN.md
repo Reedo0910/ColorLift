@@ -99,7 +99,7 @@ ColorLift supports the following language models:
    ColorLift does not support mobile OS. However, you can use screen mirroring tools (e.g., *[iPhone Mirroring](https://support.apple.com/120421)* on macOS) to pick colors from mobile screens.
 
 5. **Automatic updates?**
-   Due to the lack of code signing, automatic updates are not supported on macOS. Check for updates manually via the About window or download the latest version from the [GitHub Release Page](https://github.com/Reedo0910/ColorLift/releases).
+   Due to budget constraints, ColorLift does not utilize code signing. According to Electron's official limitations, unsigned applications cannot provide automatic update services on macOS. Currently, ColorLift checks for updates in the background when the app starts, but users need to manually download and install the update files. You can also disable app updates in the settings and manually check for updates in the About window, or directly download the latest version from the [GitHub Release Page](https://github.com/Reedo0910/ColorLift/releases).
 
 6. **Rendering issues on Windows/macOS?**
    Window rendering issues may occur during window resizing or theme switching. Restart the application to resolve the issue.

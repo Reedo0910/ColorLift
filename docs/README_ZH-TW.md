@@ -106,7 +106,7 @@
 
 5. **關於應用自動更新**
 
-    由於經費原因，拾彩未啟用代碼簽名。根據 Electron 官方限制，未簽名的應用無法在 macOS 上提供自動更新服務。故目前拾彩未在代碼層面添加任何自動更新功能。您可以在關於窗口進行手動檢查更新，或直接通過 [GitHub Release 頁面](https://github.com/Reedo0910/ColorLift/releases) 下載最新的版本。
+    由於經費原因，拾彩未啟用程式簽名。根據 Electron 官方限制，未簽名的應用程式無法在 macOS 上提供自動更新服務。目前拾彩會在啟動應用程式時在背景檢查更新，但需要使用者手動下載更新檔案並安裝。您也可以在設定中停用應用程式更新，並在關於視窗手動檢查更新，或直接通過 [GitHub Release 頁面](https://github.com/Reedo0910/ColorLift/releases) 下載最新版本。
 
 6. **關於在 Windows / macOS 下窗口渲染異常**
 
