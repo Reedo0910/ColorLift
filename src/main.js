@@ -329,6 +329,9 @@ app.on('ready', () => {
     })
 
     setTitleBarOverlay();
+
+    // check for updates in the background on app starts
+    checkForUpdates(true)
 });
 
 function openAboutWindow() {
@@ -431,7 +434,7 @@ function setTitleBarOverlay() {
     }
 }
 
-const checkForUpdates = async () => {
+const checkForUpdates = async (isSilentUpdate = false) => {
     try {
         const response = await net.fetch('https://api.github.com/repos/Reedo0910/ColorLift/releases/latest');
 
@@ -492,6 +495,8 @@ const checkForUpdates = async () => {
                 shell.openExternal(downloadUrl);
             }
         } else {
+            if (isSilentUpdate) return;
+
             dialog.showMessageBoxSync({
                 type: 'info',
                 title: translations['no_update_dialog_title'] || 'No Updates Available',
@@ -500,6 +505,8 @@ const checkForUpdates = async () => {
         }
     } catch (error) {
         console.error('Error checking for updates:', error.message);
+
+        if (isSilentUpdate) return;
 
         const alterResult = dialog.showMessageBoxSync({
             type: 'error',
