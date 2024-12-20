@@ -161,19 +161,24 @@
             z-index: 1;
         }
 
-        #llm-response {
+        .llm-response-container {
             position: relative;
             margin: 0 auto;
             padding: 10px 5px;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        #llm-response {
+            width: calc(100% - 30px);
+            max-width: 660px;
+            margin: 0 auto;
             font-size: 14px;
             color: var(--primary-text);
             font-style: italic;
             text-align: left;
-            width: calc(100% - 30px);
-            max-width: 660px;
-            height: 100%;
             line-height: 2;
-            z-index: 2;
         }
 
         .instruction-panel {
@@ -448,7 +453,7 @@
             <p id="hex-value" class="selectable">#ffffff</p>
         </div>
         <div class="color-description-block">
-            <div class="color-description" data-simplebar>
+            <div class="color-description">
                 <div id="loader" class="loader">
                     <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px"
@@ -488,7 +493,9 @@
                         </div>
                     </div>
                 </div>
-                <div id="llm-response" class="selectable"></div>
+                <div class="llm-response-container" data-simplebar>
+                    <div id="llm-response" class="selectable"></div>
+                </div>
             </div>
         </div>
         <div class="control-panel">
