@@ -2,6 +2,8 @@
 
 > AI-generated color descriptions to help users (especially those with color vision deficiencies) understand screen colors and their application contexts.
 
+![UI screenshots](images/promote_en.png)
+
 ColorLift is a free cross-platform accessibility tool available for Windows and macOS. This project aims to assist users in better understanding and utilizing colors through intuitive textual descriptions, all while providing a visually pleasing user interface.
 
 ## 🌐 Language Switch / 切换语言 / 切換語言
@@ -26,10 +28,6 @@ You can download ColorLift's installation packages and portable archives for Win
 - 🌍 **Multi-language Support**: Currently supports English, Simplified Chinese, and Traditional Chinese. Contributions for additional languages or corrections are welcome.
 - 🤖 **Multi-Model Support**: API support for Anthropic, Cohere, iFlytek Spark, OpenAI, and Zhipu AI.
 - 💻 **Cross-Platform Compatibility**: Supports Windows and macOS.
-
-## Interface
-
-![UI screenshots](images/promote_en.png)
 
 ## System Requirements
 
