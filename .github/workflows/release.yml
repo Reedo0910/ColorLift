@@ -1,0 +1,39 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Generate Changelog
+      run: npx changelogithub
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build and Publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if [ "${{ matrix.os }}" == "macos-latest" ]; then
+          npm run build:macos
+        elif [ "${{ matrix.os }}" == "windows-latest" ]; then
+          npm run build:win
+        fi
+        npm run publish
