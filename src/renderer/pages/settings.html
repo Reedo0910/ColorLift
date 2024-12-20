@@ -5,10 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+    <link rel="stylesheet" href="../styles/simplebar.css">
     <title>Settings</title>
-</head>
-
-<body>
     <style>
         * {
             box-sizing: border-box;
@@ -201,13 +199,15 @@
             font-style: italic;
         }
     </style>
+</head>
 
+<body>
     <div>
         <h1 id="window-title">
             设置
         </h1>
         <form id="settings-form">
-            <div class="form-main">
+            <div class="form-main" data-simplebar>
                 <div class="text-input">
                     <label for="provider-select" id="provider-select-label">语言模型提供方</label>
                     <div class="input-wrapper">
@@ -286,7 +286,6 @@
                     </div>
                 </div>
 
-
                 <div class="text-input">
                     <div class="color-pick-shortcut-input-label-block">
                         <label id="color-pick-shortcut-label" for="color-pick-shortcut-input">
@@ -315,6 +314,7 @@
         </form>
     </div>
 
+    <script src="../scripts/simplebar.min.js"></script>
     <script src="../scripts/settings.js"></script>
 </body>
 

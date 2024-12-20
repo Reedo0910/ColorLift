@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+    <link rel="stylesheet" href="../styles/simplebar.css">
     <title>ColorLift</title>
     <style>
         * {
@@ -161,11 +162,7 @@
         }
 
         #llm-response {
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
+            position: relative;
             margin: 0 auto;
             padding: 10px 5px;
             font-size: 14px;
@@ -451,7 +448,7 @@
             <p id="hex-value" class="selectable">#ffffff</p>
         </div>
         <div class="color-description-block">
-            <div class="color-description">
+            <div class="color-description" data-simplebar>
                 <div id="loader" class="loader">
                     <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="40px" height="40px"
@@ -559,6 +556,7 @@
         </div>
     </div>
 
+    <script src="../scripts/simplebar.min.js"></script>
     <script src="../scripts/index.js"></script>
 </body>
 
