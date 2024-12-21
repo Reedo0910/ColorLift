@@ -232,6 +232,16 @@ app.on('ready', () => {
 
     // mainWindow.setSkipTaskbar(true); // Hide in task bar
 
+    // Check for updates in the background on app starts
+    mainWindow.once('ready-to-show', () => {
+        // delay for 1 seconds
+        setTimeout(() => {
+            if (store.get('isGetUpdateOnStart')) {
+                checkForUpdates(true);
+            }
+        }, 1000);
+    });
+
     mainWindow.on('close', (event) => {
         if (process.platform === 'darwin' || process.platform === 'linux') {
             app.quit(); // fully quit on macOS and Linux
@@ -330,11 +340,6 @@ app.on('ready', () => {
     })
 
     setTitleBarOverlay();
-
-    // check for updates in the background on app starts
-    if (store.get('isGetUpdateOnStart')) {
-        checkForUpdates(true);
-    }
 });
 
 function openAboutWindow() {
