@@ -389,7 +389,7 @@ function openSettingsWindow() {
 
         settingsWindow = new BrowserWindow({
             width: 400,
-            height: 450,
+            height: 515,
             title: translations['setting_window_title'],
             parent: mainWindow,
             modal: true,
