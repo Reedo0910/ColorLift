@@ -34,6 +34,7 @@
     "color_pick_shortcut_description": "快捷键必须至少包含 Ctrl、Shift 或 Alt 与一个数字或字母，按退格键清除。",
     "color_pick_shortcut_description_mac": "快捷键必须至少包含 Command、Shift 或 Option 与一个数字或字母，按退格键清除。",
     "color_pick_shortcut_alert": "该快捷键已被系统占用，请重新设置",
+    "update_check_label": "应用启动时检查更新",
     "save_button": "保存",
     "close_button": "关闭",
     "error_model_invalid": "请先在右下角设置菜单中选择语言模型",

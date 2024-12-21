@@ -75,6 +75,12 @@
             margin-bottom: 25px;
         }
 
+        .text-input.inline-block {
+            display: flex;
+            align-items: center;
+            justify-content: left;
+        }
+
         label {
             display: block;
             font-size: 12px;
@@ -86,6 +92,11 @@
             font-size: 12px;
             color: var(--description-text);
             margin-top: 6px;
+        }
+
+        .text-input.inline-block label,
+        .text-input.inline-block .description {
+            margin: 0;
         }
 
         input,
@@ -103,6 +114,20 @@
         select:focus {
             opacity: 1;
             border-color: var(--input-border-focus);
+        }
+
+        input[type="checkbox"] {
+            position: relative;
+            top: 1px;
+            width: 15px;
+            height: 15px;
+            border: var(--input-border) 2px solid;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"]#update-check {
+            position: relative;
+            top: 1px;
         }
 
         .input-wrapper {
@@ -298,6 +323,15 @@
                         <div class="description" id="color-pick-shortcut-note">
                             同时按下键盘上的组合键以设置
                         </div>
+                    </div>
+                </div>
+
+                <div class="text-input inline-block">
+                    <label id="update-label" for="update-check">
+                        应用启动时检查更新
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="checkbox" id="update-check" name="update-check" />
                     </div>
                 </div>
             </div>

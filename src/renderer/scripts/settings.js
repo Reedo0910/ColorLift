@@ -22,6 +22,9 @@ const themeSelect = document.getElementById('theme-select');
 const languageLabel = document.getElementById('language-label');
 const languageNote = document.getElementById('language-note');
 
+const updateCheckLabel = document.getElementById('update-label');
+const updateCheckCheckbox = document.getElementById('update-check');
+
 const colorPickShortcutLabel = document.getElementById('color-pick-shortcut-label');
 const colorPickShortcutNote = document.getElementById('color-pick-shortcut-note');
 
@@ -62,6 +65,7 @@ languageLabel.textContent = translations['language_label'];
 languageNote.textContent = translations['language_note'];
 colorPickShortcutLabel.textContent = translations['color_pick_shortcut_label'];
 colorPickShortcutNote.textContent = isMac ? translations['color_pick_shortcut_description_mac'] : translations['color_pick_shortcut_description'];
+updateCheckLabel.textContent = translations['update_check_label'];
 
 saveButtonTxt.textContent = translations['save_button'];
 closeBtn.textContent = translations['close_button'];
@@ -182,6 +186,7 @@ window.electronAPI.getSettings().then((settings) => {
         initializeWithModelId(modelId);
     }
 
+    updateCheckCheckbox.checked = settings.isGetUpdateOnStart;
     themeSelect.value = settings.theme || 'system';
     languageSelect.value = settings.language || 'en';
     colorPickShortcutInput.value = getDisplayShortcut(settings.colorPickShortcut) || '';
@@ -211,7 +216,8 @@ settingsForm.addEventListener('submit', async (event) => {
         modelId: modelSelect.value,
         language: languageSelect.value,
         colorPickShortcut: getBackendShortcut(colorPickShortcutInput.value.trim()), // use electron key format
-        theme: themeSelect.value
+        theme: themeSelect.value,
+        isGetUpdateOnStart: updateCheckCheckbox.checked
     };
 
     window.electronAPI.saveSettings(settings);

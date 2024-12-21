@@ -43,7 +43,8 @@ const store = new Store({
         modelId: '',
         language: appLocale,
         colorPickShortcut: isMac ? 'Alt+C' : 'Alt+D',
-        theme: 'system'
+        theme: 'system',
+        isGetUpdateOnStart: true
     },
 });
 
@@ -331,7 +332,9 @@ app.on('ready', () => {
     setTitleBarOverlay();
 
     // check for updates in the background on app starts
-    checkForUpdates(true)
+    if (store.get('isGetUpdateOnStart')) {
+        checkForUpdates(true);
+    }
 });
 
 function openAboutWindow() {
@@ -539,6 +542,7 @@ ipcMain.handle('get-settings', () => {
         language: store.get('language'),
         colorPickShortcut: store.get('colorPickShortcut'),
         theme: store.get('theme'),
+        isGetUpdateOnStart: store.get('isGetUpdateOnStart')
     };
 });
 
@@ -549,6 +553,7 @@ ipcMain.on('save-settings', (event, settings) => {
     store.set('language', settings.language);
     store.set('colorPickShortcut', settings.colorPickShortcut);
     store.set('theme', settings.theme);
+    store.set('isGetUpdateOnStart', settings.isGetUpdateOnStart);
 
     nativeTheme.themeSource = settings.theme;
 

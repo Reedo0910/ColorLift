@@ -34,6 +34,7 @@
     "color_pick_shortcut_description": "Shortcut must include at least Ctrl, Shift, or Alt with a number or letter. Press Backspace to clear.",
     "color_pick_shortcut_description_mac": "Shortcut must include at least Command, Shift, or Option with a number or letter. Press Backspace to clear.",
     "color_pick_shortcut_alert": "The shortcut is already in use by the system. Please choose another.",
+    "update_check_label": "Check updates at launch",
     "save_button": "Save",
     "close_button": "Close",
     "error_model_invalid": "Please select a language model in the settings menu at the bottom right.",
