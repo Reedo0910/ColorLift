@@ -110,7 +110,7 @@ export const LLMList = [
         ]
     }];
 
-export const LLMCommunicator = async (hex, language, modelId, apiKey, translations) => {
+export const LLMCommunicator = async (colorObj, language, modelId, apiKey, translations) => {
     try {
         const providerObj = findProviderByModelId(modelId);
         if (!providerObj) {
@@ -122,11 +122,11 @@ export const LLMCommunicator = async (hex, language, modelId, apiKey, translatio
             return `||ERROR|| ${translations['error_invalid_api_url'] || 'Invalid API URL.'}`;
         }
 
-        const promptEN = `Please describe the color represented by this Hex code in a single paragraph. Example: I provide: Hex. You Response: This is a [color name] color, which is closer to [color name] (or has hints of other tones). You can mention where this color is commonly seen, its applications, etc. Note: You must respond in ${language}. Your responses do not exceed 120 words. Do not include the Hex code in your response.`;
+        const prompt = `Please describe the characteristics and application scenarios of the following color. Input format: - HSL: [hsl value] - RGB: [rgb value] - Hex: [hex value] Requirements: 1. Description includes: - Basic hue name - Approximate or blended tones - Common application scenarios (including famous cases, where applicable) - Visual impression 2. Use ${language} for the description 3. Limit the response to 120 words 4. Do not include any color codes (HSL/RGB/Hex) Example: Input: - HSL: hsl(120, 2%, 16%) - RGB: rgb(40, 42, 40) - Hex: #282A28 Output: This is a deep iron gray, close to charcoal tones with an olive undertone. It conveys seriousness, professionalism, and mystery, commonly seen in modern architecture facades, high-end electronics, and winter fashion collections.`;
 
-        const promptCN = `请描述一下这个Hex所代表的颜色。输出在一个段落中。示例：我提供：Hex 你回答：这是xxx色，它更接近xxx色（或混杂了什么色调），一般会在哪里能见到，有什么应用，等等。注意：请使用${language}进行描述。回答不超过120个字或单词。不要在你的回答中包含Hex。`;
+        const userPrompt = `- HSL：${colorObj.hsl} - RGB：${colorObj.rgb} - Hex：${colorObj.hex}`;
 
-        const bodyObject = buildRequestBody(providerObj, modelId, hex, locale === 'en' ? promptEN : promptCN);
+        const bodyObject = buildRequestBody(providerObj, modelId, userPrompt, prompt);
 
         const headers = buildHeaders(authHeader, tokenPrefix, apiKey, additionalHeader, additionalValue);
 
@@ -144,20 +144,20 @@ export const LLMCommunicator = async (hex, language, modelId, apiKey, translatio
     }
 };
 
-function buildRequestBody(providerObj, modelId, hex, prompt) {
+function buildRequestBody(providerObj, modelId, userPrompt, systemPrompt) {
     if (providerObj.id === 'anthropic') {
         return {
             model: modelId,
-            system: prompt,
-            max_tokens: 300,
-            messages: [{ role: 'user', content: hex }],
+            system: systemPrompt,
+            max_tokens: 350,
+            messages: [{ role: 'user', content: userPrompt }],
         };
     }
     return {
         model: modelId,
         messages: [
-            { role: 'system', content: prompt },
-            { role: 'user', content: hex },
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
         ],
     };
 }
