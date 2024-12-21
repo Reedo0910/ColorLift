@@ -602,14 +602,15 @@ ipcMain.on('stop-capture', () => {
     mainWindow.webContents.send('update-status', 'inactive');
 });
 
-// Listen to cursor click event on the whole screen
-app.on('browser-window-focus', () => {
-    const clickListener = async () => {
-        if (isPickingColor) {
-            await captureColor();
-        }
-    };
+const clickListener = async () => {
+    if (isPickingColor) {
+        await captureColor();
+    }
+};
 
+// Listen to cursor click event on the whole screen (once at a time)
+app.on('browser-window-focus', () => {
+    app.removeListener('browser-window-blur', clickListener);
     app.once('browser-window-blur', clickListener);
 });
 
