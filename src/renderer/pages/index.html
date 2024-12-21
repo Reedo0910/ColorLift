@@ -122,20 +122,39 @@
             margin-bottom: 3px;
         }
 
-        #hex-value {
-            display: inline-block;
-            font-size: 18px;
-            color: var(--primary-text);
+        .color-code-value-block {
+            position: relative;
+            padding: 8px 0;
+            width: 205px;
+            margin: 18px auto;
             text-align: center;
-            letter-spacing: 0.1px;
-            padding: 8px 16px;
             border: var(--neumorphic-background-white-border) solid 1px;
             background-color: var(--translucent-background);
             box-shadow: inset 7px 7px 14px var(--neumorphic-background-white-shadow-dark),
                 inset -7px -7px 14px var(--neumorphic-background-white-shadow-light);
             border-radius: 7px;
-            text-transform: uppercase;
             -webkit-app-region: no-drag;
+        }
+
+        #color-code-value {
+            display: inline-block;
+            font-size: 18px;
+            color: var(--primary-text);
+            letter-spacing: 0.1px;
+            margin: 0;
+            padding: 0;
+        }
+
+        #convert-btn {
+            position: absolute;
+            right: -35px;
+            bottom: 4px;
+            user-select: none !important;
+        }
+
+        #convert-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
         .color-description-block {
@@ -351,7 +370,7 @@
             margin-right: 5px;
         }
 
-        .control-panel button {
+        button.control-btn {
             display: inline-block;
             align-items: center;
             border: 1px solid transparent;
@@ -361,7 +380,7 @@
             opacity: 0.85;
         }
 
-        .control-panel button:hover {
+        button.control-btn:hover {
             border-color: var(--control-panel-btn-border-hover);
             background-color: var(--control-panel-btn-background-hover);
             opacity: 1;
@@ -449,8 +468,15 @@
             </svg>
         </button>
         <div id="color-display"></div>
-        <div class="hex-value-block">
-            <p id="hex-value" class="selectable">#ffffff</p>
+        <div class="color-code-value-block selectable" id="color_code_value_block" >
+            <p id="color-code-value">#ffffff</p>
+            <button id="convert-btn" class="control-btn" title="颜色格式转换">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M10 4.5c1.215 0 2.417.055 3.604.162a.68.68 0 0 1 .615.597c.124 1.038.208 2.088.25 3.15l-1.689-1.69a.75.75 0 0 0-1.06 1.061l2.999 3a.75.75 0 0 0 1.06 0l3.001-3a.75.75 0 1 0-1.06-1.06l-1.748 1.747a41.31 41.31 0 0 0-.264-3.386 2.18 2.18 0 0 0-1.97-1.913 41.512 41.512 0 0 0-7.477 0 2.18 2.18 0 0 0-1.969 1.913 41.16 41.16 0 0 0-.16 1.61.75.75 0 1 0 1.495.12c.041-.52.093-1.038.154-1.552a.68.68 0 0 1 .615-.597A40.012 40.012 0 0 1 10 4.5ZM5.281 9.22a.75.75 0 0 0-1.06 0l-3.001 3a.75.75 0 1 0 1.06 1.06l1.748-1.747c.042 1.141.13 2.27.264 3.386a2.18 2.18 0 0 0 1.97 1.913 41.533 41.533 0 0 0 7.477 0 2.18 2.18 0 0 0 1.969-1.913c.064-.534.117-1.071.16-1.61a.75.75 0 1 0-1.495-.12c-.041.52-.093 1.037-.154 1.552a.68.68 0 0 1-.615.597 40.013 40.013 0 0 1-7.208 0 .68.68 0 0 1-.615-.597 39.785 39.785 0 0 1-.25-3.15l1.689 1.69a.75.75 0 0 0 1.06-1.061l-2.999-3Z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
         </div>
         <div class="color-description-block">
             <div class="color-description">
@@ -500,7 +526,7 @@
         </div>
         <div class="control-panel">
             <div class="left-section">
-                <button id="about_button" title="关于">
+                <button id="about_button" class="control-btn" title="关于">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                         <path fill-rule="evenodd"
                             d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
@@ -510,7 +536,7 @@
             </div>
             <div class="right-section">
                 <div class="clipboard-dropdown-container">
-                    <button id="clipboard_dropdown_button" title="复制…">
+                    <button id="clipboard_dropdown_button" class="control-btn" title="复制…">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                             <path fill-rule="evenodd"
                                 d="M17.663 3.118c.225.015.45.032.673.05C19.876 3.298 21 4.604 21 6.109v9.642a3 3 0 0 1-3 3V16.5c0-5.922-4.576-10.775-10.384-11.217.324-1.132 1.3-2.01 2.548-2.114.224-.019.448-.036.673-.051A3 3 0 0 1 13.5 1.5H15a3 3 0 0 1 2.663 1.618ZM12 4.5A1.5 1.5 0 0 1 13.5 3H15a1.5 1.5 0 0 1 1.5 1.5H12Z"
@@ -550,7 +576,7 @@
                         </div>
                     </div>
                 </div>
-                <button id="settings-btn" title="设置">
+                <button id="settings-btn" class="control-btn" title="设置">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path
                             d="M17.004 10.407c.138.435-.216.842-.672.842h-3.465a.75.75 0 0 1-.65-.375l-1.732-3c-.229-.396-.053-.907.393-1.004a5.252 5.252 0 0 1 6.126 3.537ZM8.12 8.464c.307-.338.838-.235 1.066.16l1.732 3a.75.75 0 0 1 0 .75l-1.732 3c-.229.397-.76.5-1.067.161A5.23 5.23 0 0 1 6.75 12a5.23 5.23 0 0 1 1.37-3.536ZM10.878 17.13c-.447-.098-.623-.608-.394-1.004l1.733-3.002a.75.75 0 0 1 .65-.375h3.465c.457 0 .81.407.672.842a5.252 5.252 0 0 1-6.126 3.539Z" />

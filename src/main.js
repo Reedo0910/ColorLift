@@ -9,6 +9,8 @@ import { setLanguage, getLanguage, getResourceBundle, t } from './utils/i18n.js'
 import { LLMCommunicator, LLMList } from './utils/llms-interface.js';
 import electronSquirrelStartup from 'electron-squirrel-startup';
 import semver from 'semver';
+import convert from 'color-convert';
+import colorString from 'color-string'
 
 // Define __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -44,7 +46,8 @@ const store = new Store({
         language: appLocale,
         colorPickShortcut: isMac ? 'Alt+C' : 'Alt+D',
         theme: 'system',
-        isGetUpdateOnStart: true
+        isGetUpdateOnStart: true,
+        colorFormat: 'hex' // hex, rgb, hsl
     },
 });
 
@@ -220,6 +223,7 @@ app.on('ready', () => {
                 JSON.stringify({ key: 'colorPickShortcut', value: store.get('colorPickShortcut') }),
                 JSON.stringify({ key: 'initTheme', value: nativeTheme.shouldUseDarkColors ? 'dark' : 'light' }),
                 JSON.stringify({ key: 'isMac', value: isMac }),
+                JSON.stringify({ key: 'colorFormat', value: store.get('colorFormat') }),
             ],
         },
     });
@@ -547,7 +551,8 @@ ipcMain.handle('get-settings', () => {
         language: store.get('language'),
         colorPickShortcut: store.get('colorPickShortcut'),
         theme: store.get('theme'),
-        isGetUpdateOnStart: store.get('isGetUpdateOnStart')
+        isGetUpdateOnStart: store.get('isGetUpdateOnStart'),
+        colorFormat: store.get('colorFormat')
     };
 });
 
@@ -559,11 +564,17 @@ ipcMain.on('save-settings', (event, settings) => {
     store.set('colorPickShortcut', settings.colorPickShortcut);
     store.set('theme', settings.theme);
     store.set('isGetUpdateOnStart', settings.isGetUpdateOnStart);
+    store.set('colorFormat', settings.colorFormat);
 
     nativeTheme.themeSource = settings.theme;
 
     // Notify the main window that settings have been updated
-    mainWindow.webContents.send('settings-updated', { 'colorPickShortcut': settings.colorPickShortcut, 'currentTheme': nativeTheme.shouldUseDarkColors ? 'dark' : 'light' });
+    mainWindow.webContents.send('settings-updated',
+        {
+            'colorPickShortcut': settings.colorPickShortcut,
+            'currentTheme': nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
+            'colorFormat': settings.colorFormat
+        });
 });
 
 ipcMain.on('set-language', (event, lang) => {
@@ -573,7 +584,7 @@ ipcMain.on('set-language', (event, lang) => {
     mainWindow.webContents.send('translations-update', translations);
 });
 
-// Copy hex / description to clipboard
+// Copy color code / description to clipboard
 ipcMain.on('copy-to-clipboard', (event, text) => {
     clipboard.writeText(text);
 });
@@ -619,9 +630,12 @@ const captureColor = async () => {
 
         const color = await getAverageColor(croppedImageBuffer);
         const hex = color.hex;
+        const rgbValue = colorString.get(hex).value;  // e.g., {model: 'rgb', value: [255, 255, 255, 1]}, see https://github.com/Qix-/color-string
+        const rgb = colorString.to.rgb(rgbValue);
+        const hsl = colorString.to.hsl(convert.rgb.hsl(rgbValue));
 
         // console.log('Picked Color:', hex);
-        mainWindow.webContents.send('update-color', hex);
+        mainWindow.webContents.send('update-color', { hex, hsl, rgb });
 
         // Exit color picking mode
         isPickingColor = false;

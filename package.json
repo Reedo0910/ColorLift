@@ -35,6 +35,8 @@
     "electron": "^33.2.1"
   },
   "dependencies": {
+    "color-convert": "^2.0.1",
+    "color-string": "^1.9.1",
     "dotenv": "^16.4.7",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.0.0",

@@ -1,5 +1,7 @@
 const colorDisplay = document.getElementById('color-display');
-const hexValue = document.getElementById('hex-value');
+const colorCodeValue = document.getElementById('color-code-value');
+const colorCodeConvertBtn = document.getElementById('convert-btn');
+
 const LLMResponse = document.getElementById('llm-response');
 const loaderDiv = document.getElementById('loader');
 const captureButton = document.getElementById('capture-btn');
@@ -28,8 +30,17 @@ const openAboutBtn = document.getElementById('about_button');
 
 const initTranslations = window.electronAPI.getInitTranslations();
 const initTheme = window.electronAPI.getInitTheme();
+const initColorFormat = window.electronAPI.getInitColorFormat();
 const initColorPickShortcut = window.electronAPI.getInitColorPickShortcut();
 const isMac = window.electronAPI.isMacOS();
+
+let colorItem = {
+    hex: '',
+    rgb: '',
+    hsl: ''
+}
+
+let currentColorDisplayFormat = initColorFormat;
 
 setTranslations(initTranslations);
 setColorPickShortcut(initColorPickShortcut);
@@ -46,6 +57,7 @@ if (isMac) captureButton.classList.add('mac');
 function setTranslations(translations) {
     document.title = translations['app_name'];
 
+    colorCodeConvertBtn.title = translations['convert_button_title'];
     openAboutBtn.title = translations['about_button_title'];
     openSettingsBtn.title = translations['setting_button_title'];
     clipboardDropdownButton.title = translations['clipboard_dropdown_button_title'];
@@ -83,11 +95,43 @@ function setColorPickShortcut(shortcut) {
 function setColorDisplay(theme) {
     const isLightTheme = theme && theme === 'light';
     const myHex = isLightTheme ? '#ffffff' : '#262626';
+    const myRGB = isLightTheme ? 'rgb(255, 255, 255)' : 'rgb(38, 38, 38)';
+    const myHSL = isLightTheme ? 'hsl(0, 0%, 100%)' : 'hsl(0, 0%, 15%)';
+
+    colorItem.hex = myHex;
+    colorItem.rgb = myRGB;
+    colorItem.hsl = myHSL;
 
     colorDisplay.style.backgroundColor = myHex;
-    hexValue.textContent = myHex;
+    colorCodeValue.textContent = formatDisplayColorValue(colorItem.hex, colorItem.rgb, colorItem.hsl);
     colorDisplay.style.boxShadow = isLightTheme ? 'inset 3px 3px 7px #f5f5f5, inset -3px -3px 7px #ffffff' : 'inset 3px 3px 7px #202020, inset -3px -3px 7px #2c2c2c';
 }
+
+function getNextColorFormat() {
+    // format display order
+    const formats = ['hex', 'rgb', 'hsl'];
+
+    // get current color format index
+    const currentIndex = formats.indexOf(currentColorDisplayFormat);
+
+    // compute next color format index
+    const nextIndex = (currentIndex + 1) % formats.length;
+
+    // get next format
+    const nextFormat = formats[nextIndex];
+
+    currentColorDisplayFormat = nextFormat;
+
+    return { color: colorItem[nextFormat], colorFormat:nextFormat };
+}
+
+colorCodeConvertBtn.addEventListener('click', () => {
+    const {color, colorFormat}= getNextColorFormat();
+
+    colorCodeValue.textContent = color;
+
+    currentColorDisplayFormat = colorFormat;
+})
 
 function toggleVisibility(element, isVisible) {
     if (element !== null) {
@@ -99,6 +143,30 @@ function toggleVisibility(element, isVisible) {
             element.classList.remove('visible')
         }
     }
+}
+
+function formatDisplayColorValue(hex, rgb, hsl) {
+    let displayColorValue;
+
+    switch (currentColorDisplayFormat) {
+        case 'hex':
+            displayColorValue = hex;
+            break;
+
+        case 'rgb':
+            displayColorValue = rgb;
+            break;
+
+        case 'hsl':
+            displayColorValue = hsl;
+            break;
+
+        default:
+            displayColorValue = '';
+            break;
+    }
+
+    return displayColorValue;
 }
 
 function instructionManager(isShowInstruction = false, instructionIndex = -1) {
@@ -141,9 +209,17 @@ captureButton.addEventListener('click', () => {
     }
 });
 
-window.electronAPI.onUpdateColor(hex => {
+window.electronAPI.onUpdateColor(colorObj => {
+    const hex = colorObj?.hex;
+    const rgb = colorObj?.rgb;
+    const hsl = colorObj?.hsl;
+
+    colorItem.hex = hex;
+    colorItem.rgb = rgb;
+    colorItem.hsl = hsl;
+
     colorDisplay.style.backgroundColor = hex;
-    hexValue.textContent = hex;
+    colorCodeValue.textContent = formatDisplayColorValue(colorItem.hex, colorItem.rgb, colorItem.hsl);
 
     const colorDifference = 0.15;
     const darkColor = colorLuminance(hex, colorDifference * -1);
@@ -189,6 +265,8 @@ window.electronAPI.onUpdateStatus((status) => {
 });
 
 window.electronAPI.onSettingsUpdated((customeSettings) => {
+    currentColorDisplayFormat = customeSettings.colorFormat || initColorFormat;
+
     setColorPickShortcut(customeSettings.colorPickShortcut);
     setColorDisplay(customeSettings.currentTheme);
 
@@ -220,8 +298,8 @@ clipboardDropdownMenu.addEventListener('click', (event) => {
 
     if (action === 'copyColor') {
         // Hex code in uppercase
-        if (hexValue.textContent) {
-            window.electronAPI.copyToClipboard(hexValue.textContent.toUpperCase());
+        if (colorCodeValue.textContent) {
+            window.electronAPI.copyToClipboard(colorCodeValue.textContent);
         }
     } else if (action === 'copyDesc') {
         if (LLMResponse.textContent) {

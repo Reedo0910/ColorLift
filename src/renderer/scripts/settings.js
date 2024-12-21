@@ -19,6 +19,9 @@ const modelDescription = document.getElementById('model-description');
 const themeSelectLabel = document.getElementById('theme-label');
 const themeSelect = document.getElementById('theme-select');
 
+const colorFormatSelectLabel = document.getElementById('color-format-label');
+const colorFormatSelect = document.getElementById('color-format-select');
+
 const languageLabel = document.getElementById('language-label');
 const languageNote = document.getElementById('language-note');
 
@@ -60,6 +63,7 @@ apiKeyInput.placeholder = translations['api_key_placeholder'];
 apiKeyNote.textContent = translations['api_key_note'];
 modelLabel.textContent = translations['model_label'];
 modelDescription.textContent = translations['model_description'];
+colorFormatSelectLabel.textContent = translations['color_format_label'];
 themeSelectLabel.textContent = translations['theme_select_label'];
 languageLabel.textContent = translations['language_label'];
 languageNote.textContent = translations['language_note'];
@@ -190,6 +194,7 @@ window.electronAPI.getSettings().then((settings) => {
     themeSelect.value = settings.theme || 'system';
     languageSelect.value = settings.language || 'en';
     colorPickShortcutInput.value = getDisplayShortcut(settings.colorPickShortcut) || '';
+    colorFormatSelect.value = settings.colorFormat || 'hex';
 
     myCurrentLanguage = languageSelect.value;
     myCurrentColorPickShortcut = colorPickShortcutInput.value;
@@ -217,7 +222,8 @@ settingsForm.addEventListener('submit', async (event) => {
         language: languageSelect.value,
         colorPickShortcut: getBackendShortcut(colorPickShortcutInput.value.trim()), // use electron key format
         theme: themeSelect.value,
-        isGetUpdateOnStart: updateCheckCheckbox.checked
+        isGetUpdateOnStart: updateCheckCheckbox.checked,
+        colorFormat: colorFormatSelect.value
     };
 
     window.electronAPI.saveSettings(settings);
