@@ -28,6 +28,7 @@
             --input-background: #fff;
             --input-border: #eee;
             --input-border-focus: #888;
+            --link-border-bottom: #ccc;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -45,6 +46,7 @@
                 --input-background: #121212;
                 --input-border: #666;
                 --input-border-focus: #8c8c8c;
+                --link-border-bottom: #666;
             }
         }
 
@@ -56,6 +58,10 @@
             cursor: default;
             overflow: hidden;
             user-select: none;
+        }
+
+        .main-text {
+            color: var(--main-text) !important;
         }
 
         form {
@@ -81,7 +87,13 @@
             justify-content: left;
         }
 
-        label {
+        h3 {
+            margin: 0;
+            padding: 0;
+        }
+
+        label,
+        h3 {
             display: block;
             font-size: 12px;
             font-weight: 500;
@@ -223,6 +235,37 @@
         .text-italic {
             font-style: italic;
         }
+
+        a#readme-link {
+            display: inline-flex;
+            color: var(--main-text);
+            text-decoration: none;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.2em;
+            margin-right: 0.2em;
+        }
+
+        a#readme-link span {
+            display: inline-block;
+            border-bottom: 1px solid var(--link-border-bottom);
+        }
+
+        a#readme-link:hover {
+            opacity: 0.7;
+        }
+
+        a#readme-link svg {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 5px;
+        }
+
+        a#readme-link svg path,
+        a#readme-link svg rect {
+            fill: var(--button-icon);
+        }
     </style>
 </head>
 
@@ -233,6 +276,23 @@
         </h1>
         <form id="settings-form">
             <div class="form-main" data-simplebar>
+                <div class="text-input">
+                    <h3 id="help-message-title">使用上遇到困难？</h3>
+                    <div class="input-wrapper">
+                        <div class="description main-text" id="help-message-text">
+                            请参阅我们的<a id="readme-link" href="https://github.com/Reedo0910/ColorLift"
+                                target="_blank"><span id="github-readme-link-text">说明文档</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                                    <path
+                                        d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" />
+                                    <path
+                                        d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" />
+                                </svg>
+                            </a>获取有关语言模型的 API 密钥的设置等相关信息。
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-input">
                     <label for="provider-select" id="provider-select-label">语言模型提供方</label>
                     <div class="input-wrapper">
