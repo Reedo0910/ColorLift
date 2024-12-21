@@ -94,11 +94,11 @@ function setColorPickShortcut(shortcut) {
 
 function setColorDisplay(theme) {
     const isLightTheme = theme && theme === 'light';
-    const myHex = isLightTheme ? '#ffffff' : '#262626';
+    const myHex = isLightTheme ? '#FFFFFF' : '#262626';
     const myRGB = isLightTheme ? 'rgb(255, 255, 255)' : 'rgb(38, 38, 38)';
     const myHSL = isLightTheme ? 'hsl(0, 0%, 100%)' : 'hsl(0, 0%, 15%)';
 
-    colorItem.hex = myHex;
+    colorItem.hex = myHex.toUpperCase();
     colorItem.rgb = myRGB;
     colorItem.hsl = myHSL;
 
@@ -214,7 +214,7 @@ window.electronAPI.onUpdateColor(colorObj => {
     const rgb = colorObj?.rgb;
     const hsl = colorObj?.hsl;
 
-    colorItem.hex = hex;
+    colorItem.hex = hex.toUpperCase();
     colorItem.rgb = rgb;
     colorItem.hsl = hsl;
 
