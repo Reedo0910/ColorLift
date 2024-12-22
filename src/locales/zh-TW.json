@@ -15,7 +15,7 @@
     "onboarding_instruction_2": "螢幕取色快捷鍵：",
     "setting_window_title": "設定",
     "help_message_title": "使用上遇到困難？",
-    "help_message_text": "請參閱我們的[[readme_link_text]]以獲取有關語言模型 API 金鑰的設定等相關資訊。",
+    "help_message_text": "請參閱我們的[[readme_link_text]]以獲取有關語言模型 API 密鑰的設定等相關資訊。",
     "readme_link_text": "說明文件",
     "readme_link": "https://github.com/Reedo0910/ColorLift/blob/master/docs/README_ZH-TW.md#注意",
     "provider_select_label": "語言模型提供方",
