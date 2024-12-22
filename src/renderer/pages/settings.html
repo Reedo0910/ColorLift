@@ -272,15 +272,17 @@
 <body>
     <div>
         <h1 id="window-title">
-            设置
+            <!-- 设置 -->
         </h1>
         <form id="settings-form">
             <div class="form-main" data-simplebar>
                 <div class="text-input">
-                    <h3 id="help-message-title">使用上遇到困难？</h3>
+                    <h3 id="help-message-title">
+                        <!-- 使用上遇到困难？ -->
+                    </h3>
                     <div class="input-wrapper">
                         <div class="description main-text" id="help-message-text">
-                            请参阅我们的<a id="readme-link" href="https://github.com/Reedo0910/ColorLift"
+                            <!-- 请参阅我们的<a id="readme-link" href="https://github.com/Reedo0910/ColorLift"
                                 target="_blank"><span id="github-readme-link-text">说明文档</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
                                     <path
@@ -288,19 +290,21 @@
                                     <path
                                         d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" />
                                 </svg>
-                            </a>获取有关语言模型的 API 密钥的设置等相关信息。
+                            </a>获取有关语言模型的 API 密钥的设置等相关信息。 -->
                         </div>
                     </div>
                 </div>
 
                 <div class="text-input">
-                    <label for="provider-select" id="provider-select-label">语言模型提供方</label>
+                    <label for="provider-select" id="provider-select-label">
+                        <!-- 语言模型提供方 -->
+                    </label>
                     <div class="input-wrapper">
                         <select id="provider-select">
                             <option value="">--选择语言模型提供方--</option>
                         </select>
                         <div class="description" id="provider-select-note">
-                            API 的 Token 费用因提供商与模型版本不同而有所差异，详情请参阅相应提供商官网的使用文档。
+                            <!-- API 的 Token 费用因提供商与模型版本不同而有所差异，详情请参阅相应提供商官网的使用文档。 -->
                         </div>
                     </div>
                 </div>
@@ -308,7 +312,7 @@
                 <div class="text-input" id="api-key-container" style="display: none;">
                     <div class="api-input-label-block">
                         <label id="api-key-label" for="api-key-input">
-                            API 密钥
+                            <!-- API 密钥 -->
                         </label>
                         <button id="toggle-visibility-btn" type="button" aria-label="Toggle visibility" title="显示密钥">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
@@ -323,28 +327,28 @@
                         <input type="password" id="api-key-input" autocomplete="off" spellcheck="false"
                             autocorrect="off" placeholder="请输入你的 API 密钥" />
                         <div class="description" id="api-key-note">
-                            您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。
+                            <!-- 您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。 -->
                         </div>
                     </div>
                 </div>
 
                 <div class="text-input" id="model-container" style="display: none;">
                     <label id="model-label" for="model-select">
-                        当前使用的模型
+                        <!-- 当前使用的模型 -->
                     </label>
                     <div class="input-wrapper">
                         <select id="model-select">
                             <option value="">--选择语言模型--</option>
                         </select>
                         <div class="description" id="model-description">
-                            通常参数较少的语言模型响应速度会更快且更经济，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。
+                            <!-- 通常参数较少的语言模型响应速度会更快且更经济，而参数较多的语言模型则会有更贴近真实的结果与更生动的表述。 -->
                         </div>
                     </div>
                 </div>
 
                 <div class="text-input">
                     <label id="color-format-label" for="color-format-select">
-                        默认颜色格式
+                        <!-- 默认颜色格式 -->
                     </label>
                     <div class="input-wrapper">
                         <select id="color-format-select">
@@ -357,7 +361,7 @@
 
                 <div class="text-input">
                     <label id="language-label" for="language-select">
-                        语言
+                        <!-- 语言 -->
                     </label>
                     <div class="input-wrapper">
                         <select id="language-select">
@@ -366,14 +370,14 @@
                             <option value="zh-TW">繁体中文</option>
                         </select>
                         <div class="description" id="language-note">
-                            部分设置需要在重启后才能生效。
+                            <!-- 部分设置需要在重启后才能生效。 -->
                         </div>
                     </div>
                 </div>
 
                 <div class="text-input">
                     <label id="theme-label" for="theme-select">
-                        主题
+                        <!-- 主题 -->
                     </label>
                     <div class="input-wrapper">
                         <select id="theme-select">
@@ -387,21 +391,21 @@
                 <div class="text-input">
                     <div class="color-pick-shortcut-input-label-block">
                         <label id="color-pick-shortcut-label" for="color-pick-shortcut-input">
-                            屏幕取色快捷键
+                            <!-- 屏幕取色快捷键 -->
                         </label>
                     </div>
                     <div class="input-wrapper">
                         <input type="text" id="color-pick-shortcut-input" autocomplete="off" spellcheck="false"
                             autocorrect="off" readonly="readonly" />
                         <div class="description" id="color-pick-shortcut-note">
-                            同时按下键盘上的组合键以设置
+                            <!-- 同时按下键盘上的组合键以设置 -->
                         </div>
                     </div>
                 </div>
 
                 <div class="text-input inline-block">
                     <label id="update-label" for="update-check">
-                        应用启动时检查更新
+                        <!-- 应用启动时检查更新 -->
                     </label>
                     <div class="input-wrapper">
                         <input type="checkbox" id="update-check" name="update-check" />
