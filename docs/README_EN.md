@@ -90,7 +90,7 @@ You just need to perform some simple setup to use it. Please refer to the offici
 
 **This issue often occurs after updating the application. You need to reset ColorLift's system permissions:**
 
-(macOS 15.0 or later) Go to System Settings > Privacy & Security > Screen Recording and System Audio > Select ColorLift > Click the minus button (`-`) at the bottom-left of the list to remove ColorLift from the permissions list (you may need to enter your system password to confirm) > Relaunch ColorLift and re-grant "Screen Recording and System Audio" permissions.
+(macOS 15.0 and above) Please navigate to **System Settings > Privacy & Security > Screen Recording and System Audio**, select **ColorLift**, and click the **minus (-) button** in the lower left corner to remove ColorLift. Then, use ColorLift to pick a color. At this point, ColorLift will reappear in the list. Finally, enable the permissions for ColorLift in the list.
 
 Steps and interface wording might vary slightly on other macOS versions.
 
