@@ -21,6 +21,9 @@ let settingsWindow;
 let aboutWindow;
 let isPickingColor = false; // Color picking state
 let hasColorPickShortcutUpdated = false;
+let isMultipleDisplays = false;
+let electronDisplays = [];
+let screenshotDisplays = [];
 
 const isMac = process.platform === 'darwin';
 
@@ -344,7 +347,24 @@ app.on('ready', () => {
     })
 
     setTitleBarOverlay();
+
+    // get display count
+    updateDisplayCount();
+
+    // listen to screen adds/removes
+    screen.on('display-added', updateDisplayCount);
+    screen.on('display-removed', updateDisplayCount);
+
 });
+
+// if multiple screens in used
+async function updateDisplayCount() {
+    const displays = screen.getAllDisplays();
+    isMultipleDisplays = (displays.length > 1);
+
+    electronDisplays = displays;
+    screenshotDisplays = await screenshot.listDisplays();
+}
 
 function openAboutWindow() {
     if (!aboutWindow) {
@@ -626,9 +646,53 @@ const captureColor = async () => {
 
     try {
         const cursorPos = screen.getCursorScreenPoint(); // Get cursor current position
-        const imgBuffer = await screenshot({ format: 'png' });
-        const croppedImageBuffer = await cropOnePixel(imgBuffer, cursorPos.x, cursorPos.y);
 
+        const currentDisplay = isMultipleDisplays ? screen.getDisplayNearestPoint(cursorPos) : screen.getPrimaryDisplay();
+
+        // Calculate relative and physical cursor position
+        const relativeX = cursorPos.x - currentDisplay.bounds.x;
+        const relativeY = cursorPos.y - currentDisplay.bounds.y;
+        const physicalX = Math.floor(relativeX * currentDisplay.scaleFactor);
+        const physicalY = Math.floor(relativeY * currentDisplay.scaleFactor);
+
+        let targetScreenIndex = 0;
+
+        // if multiple displays exist
+        if (isMultipleDisplays) {
+            // Caveat: if screen label mismatch, using this index as fallback.
+            // However, this is assuming the item order of the list of screen.getAllDisplays() is aligned with screenshot.listDisplays()
+            // If this issue (multi-monitor supports) persists, consider asking users in the setting panel to manually map monitors
+            let displayIndex = electronDisplays.findIndex(d => d.id === currentDisplay.id);
+
+            if (displayIndex < 0 || displayIndex >= screenshotDisplays.length) {
+                displayIndex = 0;
+
+                throw new Error('No corresponding display in screens list');
+            }
+
+            // Default to the matched display index
+            targetScreenIndex = displayIndex;
+
+            const targetScreen = screenshotDisplays.find(screen => screen.name === currentDisplay.label);
+
+            if (targetScreen) {
+                targetScreenIndex = targetScreen.id;
+            } else if (currentDisplay.internal && isMac) {
+                const internalScreen = screenshotDisplays.find(screen => screen.name === 'Color LCD');
+
+                if (internalScreen) {
+                    targetScreenIndex = internalScreen.id;
+                } else {
+                    console.error(`Unknown internal screen label: ${currentDisplay.label}`);
+                }
+            } else {
+                console.error(`Screenshot display not found. (Target: ${currentDisplay.label})`);
+            }
+        }
+
+        // Capture screenshot and process the image
+        const imgBuffer = await screenshot({ screen: targetScreenIndex, format: 'png' });
+        const croppedImageBuffer = await cropOnePixel(imgBuffer, physicalX, physicalY);
         const color = await getAverageColor(croppedImageBuffer);
         const hex = color.hex;
         const rgbValue = colorString.get(hex).value;  // e.g., {model: 'rgb', value: [255, 255, 255, 1]}, see https://github.com/Qix-/color-string
@@ -645,7 +709,6 @@ const captureColor = async () => {
         mainWindow.webContents.send('update-status', 'inactive');
 
         const currentModelId = store.get('modelId');
-
         if (!currentModelId) {
             return mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_model_invalid']}`);
         }
@@ -662,6 +725,10 @@ const captureColor = async () => {
     } catch (error) {
         console.error('Error capturing color:', error);
 
-        mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_unhandled_error']}`);
+        const errorMessage = (error && error.message) ? `(${error.message})` : '';
+
+        mainWindow.webContents.send(
+            'llm-response',
+            `||ERROR|| ${translations['error_unhandled_error']} ${errorMessage}`);
     }
 };
