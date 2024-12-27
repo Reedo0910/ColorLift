@@ -82,9 +82,14 @@ Before using ColorLift, ensure you have an API Key from a supported large langua
 
 ### Security Warning When Launching for the First Time After Installation/Update
 
-Since ColorLift currently does not have code signing enabled (as this is a personal project for fun, and I haven't paid for an Apple Developer Account), macOS will display a security warning the first time you run it.
+Since ColorLift has not yet enabled code signing (as this is a hobby-driven personal project and the annual fee for an Apple Developer account has not been paid), macOS may trigger a security warning the first time you run the app. Follow these steps to set it up for normal use:
 
-You just need to perform some simple setup to use it. Please refer to the official documentation: [Open a Mac App from an Unidentified Developer](https://support.apple.com/guide/mac-help/mh40616/mac).
+- **macOS with Intel chip**: Please refer to Apple's official documentation: [Open a Mac app from an unidentified developer](https://support.apple.com/guide/mac-help/mh40616/mac).
+- **macOS with Apple M-series chip**: Open "Terminal" (press `Command+Space`, search for "Terminal"), then enter the following command and press Enter:
+
+```bash
+sudo xattr -dr com.apple.quarantine /Applications/ColorLift.app
+```
 
 ### Why Does System Settings Show That ColorLift Has "Screen Recording and System Audio" Permission, But It Still Prompts for Permission? (Or Why Can't I Pick Colors Properly?)
 
@@ -127,7 +132,7 @@ If the automatic update process causes inconvenience, you can disable "Check for
    Due to budget constraints, ColorLift does not utilize code signing. According to Electron's official limitations, unsigned applications cannot provide automatic update services on macOS. Currently, ColorLift checks for updates in the background when the app starts, but users need to manually download and install the update files. You can also disable app updates in the settings and manually check for updates in the About window, or directly download the latest version from the [GitHub Release Page](https://github.com/Reedo0910/ColorLift/releases).
 
 5. **Rendering issues on Windows/macOS?**
-   Window rendering issues may occur during window resizing or theme switching. Restart the application to resolve the issue.
+   During the testing phase, it was observed that ColorLift might encounter window rendering issues on Windows or macOS. Specifically, when the system switches between dark and light themes, the window background may become transparent. Restarting the application can resolve this issue.
 
 6. **Color picking accuracy?**
    The color picker retrieves the color value of a single pixel from a screenshot. While accurate for most scenarios, slight deviations may occur in extreme cases. This deviation is negligible for descriptions but not suitable for professional color measurement.
