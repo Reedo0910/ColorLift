@@ -207,7 +207,7 @@ app.on('ready', () => {
     mainWindow = new BrowserWindow({
         width: 345,
         height: 480,
-        transparent: true,
+        // transparent: true,
         vibrancy: 'fullscreen-ui',
         titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
         // expose window controlls in Windows/Linux
@@ -216,7 +216,7 @@ app.on('ready', () => {
         } : {}),
         frame: false,
         fullscreenable: false,
-        // backgroundMaterial: 'acrylic',
+        backgroundMaterial: 'acrylic',
         alwaysOnTop: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload', 'preload.js'),
@@ -464,9 +464,9 @@ function setTitleBarOverlay() {
     if (isMac) return;
 
     if (nativeTheme.shouldUseDarkColors) {
-        mainWindow.setTitleBarOverlay({ color: '#3a3a3a', symbolColor: '#888888' });
+        mainWindow.setTitleBarOverlay({ color: '#32323200', symbolColor: '#a8a8a8' });
     } else {
-        mainWindow.setTitleBarOverlay({ color: '#f2f2f2', symbolColor: '#6f6f6f' });
+        mainWindow.setTitleBarOverlay({ color: '#f8f8f800', symbolColor: '#6f6f6f' });
     }
 }
 
