@@ -719,7 +719,7 @@ const captureColor = async () => {
             return mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_api_key_invalid']}`);
         }
 
-        const message = await LLMCommunicator(colorObj, getLanguage(), currentModelId, currentApiKey, translations);
+        const message = await LLMCommunicator(colorObj, currentModelId, currentApiKey, translations);
 
         mainWindow.webContents.send('llm-response', message);
     } catch (error) {

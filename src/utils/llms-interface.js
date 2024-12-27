@@ -110,19 +110,19 @@ export const LLMList = [
         ]
     }];
 
-export const LLMCommunicator = async (colorObj, language, modelId, apiKey, translations) => {
+export const LLMCommunicator = async (colorObj, modelId, apiKey, translations) => {
     try {
         const providerObj = findProviderByModelId(modelId);
         if (!providerObj) {
             return `||ERROR|| ${translations['error_invalid_model_id'] || 'Invalid model ID.'}`;
         }
 
-        const { apiUrl, authHeader, tokenPrefix, additionalHeader, additionalValue, locale } = providerObj;
+        const { apiUrl, authHeader, tokenPrefix, additionalHeader, additionalValue } = providerObj;
         if (!apiUrl) {
             return `||ERROR|| ${translations['error_invalid_api_url'] || 'Invalid API URL.'}`;
         }
 
-        const prompt = `Please describe the characteristics and application scenarios of the following color. Input format: - HSL: [hsl value] - RGB: [rgb value] - Hex: [hex value] Requirements: 1. Description includes: - Basic hue name - Approximate or blended tones - Common application scenarios - Visual impression 2. Use ${language} for the description 3. Limit the response to 120 words 4. Do not include any color codes (HSL/RGB/Hex) 5. Do not include any formatting in your output, and provide the response in a single paragraph. Example: Input: - HSL: hsl(120, 2%, 16%) - RGB: rgb(40, 42, 40) - Hex: #282A28 Output: This is a deep iron gray, close to charcoal tones with an olive undertone. It conveys seriousness, professionalism, and mystery, commonly seen in modern architecture facades, high-end electronics, and winter fashion collections.`;
+        const prompt = translations['prompt_text'];
 
         const userPrompt = `- HSL：${colorObj.hsl} - RGB：${colorObj.rgb} - Hex：${colorObj.hex}`;
 

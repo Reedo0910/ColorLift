@@ -13,6 +13,7 @@
     "onboarding_instruction_1": "Click the top-left button to start color picking",
     "onboarding_instruction_1_mac": "Click the top-right button to start color picking",
     "onboarding_instruction_2": "Screen color picking shortcut:",
+    "prompt_text": "Please describe the characteristics and application scenarios of the following color. Input format: - HSL: [hsl value] - RGB: [rgb value] - Hex: [hex value] Requirements: 1. Description includes: - Basic hue name - Approximate or blended tones - Common application scenarios - Visual impression 2. Use English for the description 3. Limit the response to 200 characters 4. Do not include any color codes (HSL/RGB/Hex) 5. Do not include any formatting in your output, and provide the response in a single paragraph. Example: Input: - HSL: hsl(120, 2%, 16%) - RGB: rgb(40, 42, 40) - Hex: #282A28 Output: This is a deep iron gray, close to charcoal tones with an olive undertone. It conveys seriousness, professionalism, and mystery, commonly seen in ...",
     "setting_window_title": "Settings",
     "help_message_title": "Need Help?",
     "help_message_text": "Please refer to our [[readme_link_text]] for information on setting up the API key for the language model and more.",

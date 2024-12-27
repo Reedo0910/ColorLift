@@ -13,6 +13,7 @@
     "onboarding_instruction_1": "點擊左上角按鈕進入取色模式",
     "onboarding_instruction_1_mac": "點擊右上角按鈕進入取色模式",
     "onboarding_instruction_2": "螢幕取色快捷鍵：",
+    "prompt_text": "請描述以下顏色的特徵和應用場景。輸入格式：- HSL: [hsl值] - RGB: [rgb值] - Hex: [hex值] 要求：1.描述包括：- 基本色調名稱 - 近似或混合色調 - 常見應用場景 - 視覺印象 2.使用繁體中文進行描述 3.將回答限制在150字以內 4.不要在回答中包含任何顏色代碼（HSL/RGB/Hex）5.不要在輸出中包含任何格式，用單個段落提供回答。示例：輸入：- HSL: hsl(120, 2%, 16%) - RGB: rgb(40, 42, 40) - Hex: #282A28 輸出：這是一種深鐵灰色，接近炭灰色調，帶有橄欖色底色。它傳達出嚴肅、專業和神秘感，常見於……中。……",
     "setting_window_title": "設定",
     "help_message_title": "使用上遇到困難？",
     "help_message_text": "請參閱我們的[[readme_link_text]]以獲取有關語言模型 API 密鑰的設定等相關資訊。",
