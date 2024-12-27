@@ -2,7 +2,13 @@ import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
 export const packagerConfig = {
-  asar: { unpack: "**/node_modules/{sharp,@img}/**/*" },
+  asar:
+  {
+    unpack: [
+      "**/node_modules/{sharp,@img}/**/*",
+      "**/node_modules/screenshot-desktop/lib/win32/**/*"
+    ],
+  },
   icon: './src/assets/icons/AppIcon',
   appCategoryType: 'public.app-category.utilities'
 };
