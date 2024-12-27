@@ -53,6 +53,7 @@ instructionManager(true, 1);
 // Swap capture button position for macos
 if (isMac) captureButton.classList.add('mac');
 
+if (!isMac) document.body.classList.add('windows'); 
 
 function setTranslations(translations) {
     document.title = translations['app_name'];

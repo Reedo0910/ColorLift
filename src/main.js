@@ -216,7 +216,7 @@ app.on('ready', () => {
         } : {}),
         frame: false,
         fullscreenable: false,
-        backgroundMaterial: 'acrylic',
+        // backgroundMaterial: 'acrylic',
         alwaysOnTop: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload', 'preload.js'),
@@ -230,6 +230,10 @@ app.on('ready', () => {
             ],
         },
     });
+
+    if (!isMac) {
+        mainWindow.setBackgroundMaterial('acrylic');
+    }
 
     // mainWindow.setBackgroundColor('rgba(255, 255, 255, 0.8)');
 
@@ -462,7 +466,7 @@ function setTitleBarOverlay() {
     if (nativeTheme.shouldUseDarkColors) {
         mainWindow.setTitleBarOverlay({ color: '#3a3a3a', symbolColor: '#888888' });
     } else {
-        mainWindow.setTitleBarOverlay({ color: '#ebebeb', symbolColor: '#6f6f6f' });
+        mainWindow.setTitleBarOverlay({ color: '#f2f2f2', symbolColor: '#6f6f6f' });
     }
 }
 
