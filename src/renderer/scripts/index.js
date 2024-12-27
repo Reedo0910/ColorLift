@@ -33,6 +33,7 @@ const initTheme = window.electronAPI.getInitTheme();
 const initColorFormat = window.electronAPI.getInitColorFormat();
 const initColorPickShortcut = window.electronAPI.getInitColorPickShortcut();
 const isMac = window.electronAPI.isMacOS();
+const isAcrylicSupport = window.electronAPI.isAcrylicSupport();
 
 let colorItem = {
     hex: '',
@@ -50,10 +51,17 @@ let isInit = true;
 
 instructionManager(true, 1);
 
-// Swap capture button position for macos
-if (isMac) captureButton.classList.add('mac');
-
-if (!isMac) document.body.classList.add('windows'); 
+if (!isMac) {
+    // set different background opacity for windows
+    if (isAcrylicSupport) {
+        document.body.classList.add('acrylic');
+    } else {
+        document.body.classList.add('opaque');
+    }
+} else {
+    // Swap capture button position for macos
+    captureButton.classList.add('mac');
+}
 
 function setTranslations(translations) {
     document.title = translations['app_name'];
@@ -123,11 +131,11 @@ function getNextColorFormat() {
 
     currentColorDisplayFormat = nextFormat;
 
-    return { color: colorItem[nextFormat], colorFormat:nextFormat };
+    return { color: colorItem[nextFormat], colorFormat: nextFormat };
 }
 
 colorCodeConvertBtn.addEventListener('click', () => {
-    const {color, colorFormat}= getNextColorFormat();
+    const { color, colorFormat } = getNextColorFormat();
 
     colorCodeValue.textContent = color;
 

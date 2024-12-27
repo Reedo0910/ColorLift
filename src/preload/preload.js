@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 const additionalArguments = process.argv.filter(arg => arg.startsWith('{') && arg.endsWith('}'));
 
-let translations, colorPickShortcut, initTheme, isMac, colorFormat;
+let translations, colorPickShortcut, initTheme, isMac, colorFormat, isAcrylicSupport;
 
 additionalArguments.forEach(arg => {
     try {
@@ -17,6 +17,8 @@ additionalArguments.forEach(arg => {
             isMac = parsed.value;
         } else if (parsed.key === 'colorFormat') {
             colorFormat = parsed.value;
+        } else if (parsed.key === 'isAcrylicSupport') {
+            isAcrylicSupport = parsed.value;
         }
     } catch (error) {
         console.error('Error parsing additionalArguments:', error);
@@ -44,5 +46,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Clipboard APIs
     copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text),
     // Other var
-    isMacOS: () => isMac
+    isMacOS: () => isMac,
+    isAcrylicSupport: () => isAcrylicSupport
 });
