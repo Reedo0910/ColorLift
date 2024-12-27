@@ -136,13 +136,10 @@ If the automatic update process causes inconvenience, you can disable "Check for
 4. **Automatic updates?**
    Due to budget constraints, ColorLift does not utilize code signing. According to Electron's official limitations, unsigned applications cannot provide automatic update services on macOS. Currently, ColorLift checks for updates in the background when the app starts, but users need to manually download and install the update files. You can also disable app updates in the settings and manually check for updates in the About window, or directly download the latest version from the [GitHub Release Page](https://github.com/Reedo0910/ColorLift/releases).
 
-5. **Rendering issues on Windows/macOS?**
-   During the testing phase, it was observed that ColorLift might encounter window rendering issues on Windows or macOS. Specifically, when the system switches between dark and light themes, the window background may become transparent. Restarting the application can resolve this issue.
-
-6. **Color picking accuracy?**
+5. **Color picking accuracy?**
    The color picker retrieves the color value of a single pixel from a screenshot. While accurate for most scenarios, slight deviations may occur in extreme cases. This deviation is negligible for descriptions but not suitable for professional color measurement.
 
-7. **Requests for additional features/models/settings?**
+6. **Requests for additional features/models/settings?**
    To keep the application simple and user-friendly, additional complex features (e.g., region picking, color history) or support for new models will only be considered if they offer significant advantages over existing ones.
 
 ## Acknowledgments
