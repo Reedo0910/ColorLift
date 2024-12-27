@@ -82,12 +82,17 @@
 
 由于拾彩尚未启用代码签名（因为这是一个兴趣驱动的个人项目，并未支付 Apple 开发者账号年费），因此在 macOS 上首次运行时可能会触发系统的安全警告。您只需按照以下步骤设置即可正常使用：
 
-- Intel 芯片的 macOS：请参阅 Apple 官方文档：[打开来自未知开发者的 Mac App](https://support.apple.com/guide/mac-help/mh40616/mac)。
-- Apple M 系列芯片的 macOS：打开“终端”（按下`Command+Space`，搜索“终端”），然后输入以下命令并回车：
+- **Apple M 系列芯片的 macOS**：
 
-```bash
-sudo xattr -dr com.apple.quarantine /Applications/ColorLift.app
-```
+    打开“终端”（按下`Command+Space`，搜索“终端”），然后输入以下命令并回车：
+
+    ```bash
+    sudo xattr -dr com.apple.quarantine /Applications/ColorLift.app
+    ```
+
+- **Intel 芯片的 macOS**：
+
+    请参阅 Apple 官方文档：[打开来自未知开发者的 Mac App](https://support.apple.com/guide/mac-help/mh40616/mac)。
 
 ### 系统设置中显示拾彩已经获得了“录屏与系统录音”的权限，为什么仍然提示需要获取权限？（或为什么无法正常取色？）
 

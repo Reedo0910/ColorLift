@@ -84,12 +84,17 @@ Before using ColorLift, ensure you have an API Key from a supported large langua
 
 Since ColorLift has not yet enabled code signing (as this is a hobby-driven personal project and the annual fee for an Apple Developer account has not been paid), macOS may trigger a security warning the first time you run the app. Follow these steps to set it up for normal use:
 
-- **macOS with Intel chip**: Please refer to Apple's official documentation: [Open a Mac app from an unidentified developer](https://support.apple.com/guide/mac-help/mh40616/mac).
-- **macOS with Apple M-series chip**: Open "Terminal" (press `Command+Space`, search for "Terminal"), then enter the following command and press Enter:
+- **macOS with Apple M-series chip**:
 
-```bash
-sudo xattr -dr com.apple.quarantine /Applications/ColorLift.app
-```
+   Open "Terminal" (press `Command+Space`, search for "Terminal"), then enter the following command and press Enter:
+
+   ```bash
+   sudo xattr -dr com.apple.quarantine /Applications/ColorLift.app
+   ```
+
+- **macOS with Intel chip**:
+
+   Please refer to Apple's official documentation: [Open a Mac app from an unidentified developer](https://support.apple.com/guide/mac-help/mh40616/mac).
 
 ### Why Does System Settings Show That ColorLift Has "Screen Recording and System Audio" Permission, But It Still Prompts for Permission? (Or Why Can't I Pick Colors Properly?)
 
