@@ -49,7 +49,7 @@ const store = new Store({
         language: appLocale,
         colorPickShortcut: isMac ? 'Alt+C' : 'Alt+D',
         theme: 'system',
-        isGetUpdateOnStart: true,
+        isGetUpdateOnStart: false,
         colorFormat: 'hex' // hex, rgb, hsl
     },
 });
