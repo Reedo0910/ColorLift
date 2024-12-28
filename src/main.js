@@ -526,6 +526,7 @@ const checkForUpdates = async (isSilentUpdate = false) => {
                     translations['dialog_yes_option'] || 'Yes',
                     translations['dialog_no_option'] || 'No',
                 ],
+                cancelId: 1,
             });
 
             if (result === 0) {
@@ -554,6 +555,7 @@ const checkForUpdates = async (isSilentUpdate = false) => {
                 translations['dialog_close_option'] || 'Close',
             ],
             defaultId: 0,
+            cancelId: 1,
         });
 
         if (alterResult === 0) {
