@@ -226,7 +226,7 @@ app.on('ready', () => {
                 JSON.stringify({ key: 'colorPickShortcut', value: store.get('colorPickShortcut') }),
                 JSON.stringify({ key: 'initTheme', value: nativeTheme.shouldUseDarkColors ? 'dark' : 'light' }),
                 JSON.stringify({ key: 'isMac', value: isMac }),
-                JSON.stringify({ key: 'isAcrylicSupport', value: semver.gt(process.getSystemVersion(), '10.0.22621') && process.platform === 'win32' }),
+                JSON.stringify({ key: 'isAcrylicSupport', value: semver.gte(process.getSystemVersion(), '10.0.22621') && process.platform === 'win32' }),
                 JSON.stringify({ key: 'colorFormat', value: store.get('colorFormat') }),
             ],
         },
