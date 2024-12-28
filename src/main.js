@@ -517,7 +517,7 @@ const checkForUpdates = async (isSilentUpdate = false) => {
                 throw new Error('No suitable file found for the current platform or architecture.');
             }
 
-            const result = dialog.showMessageBoxSync(mainWindow, {
+            const result = dialog.showMessageBoxSync(((isMac || !mainWindow) ? null : mainWindow), {
                 type: 'info',
                 title: translations['update_available_dialog_title'] || 'Update Available',
                 message: t('update_available_dialog_message', { latestVersion }) ||
@@ -535,7 +535,7 @@ const checkForUpdates = async (isSilentUpdate = false) => {
         } else {
             if (isSilentUpdate) return;
 
-            dialog.showMessageBoxSync(mainWindow, {
+            dialog.showMessageBoxSync(((isMac || !mainWindow) ? null : mainWindow), {
                 type: 'info',
                 title: translations['no_update_dialog_title'] || 'No Updates Available',
                 message: translations['no_update_dialog_message'] || 'You are using the latest version.',
@@ -546,7 +546,7 @@ const checkForUpdates = async (isSilentUpdate = false) => {
 
         if (isSilentUpdate) return;
 
-        const alterResult = dialog.showMessageBoxSync(mainWindow, {
+        const alterResult = dialog.showMessageBoxSync(((isMac || !mainWindow) ? null : mainWindow), {
             type: 'error',
             title: translations['update_error_dialog_title'] || 'Update Error',
             message: translations['update_error_dialog_message'] || 'An error occurred while checking for updates.',
