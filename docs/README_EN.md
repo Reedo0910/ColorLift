@@ -23,7 +23,7 @@ You can download ColorLift's installation packages and portable archives for Win
 - 🔍 **Color Recognition Assistance**: Textual descriptions help users (especially those with color vision deficiencies) understand colors.
 - 🌈 **Contextual Color Descriptions**: Provides common use cases for colors, aiding in practical application.
 - 🌍 **Multi-language Support**: Currently supports English, Simplified Chinese, and Traditional Chinese. Contributions for additional languages or corrections are welcome.
-- 🤖 **Multi-Model Support**: API support for Anthropic, Cohere, iFlytek Spark, OpenAI, and Zhipu AI.
+- 🤖 **Multi-Model Support**: API support for Anthropic, Cohere, DeepSeek, iFlytek Spark, OpenAI, and Zhipu AI.
 - 💻 **Cross-Platform Compatibility**: Supports Windows and macOS.
 
 ## Interface Preview
@@ -46,6 +46,7 @@ ColorLift supports the following language models:
 
 - **Anthropic**: Claude 3.5 Series
 - **Cohere**: Command R Series
+- **DeepSeek**: DeepSeek (Chat) Series
 - **iFlytek Spark**: Lite, Pro, Max, 4.0 Ultra
 - **OpenAI**: GPT-4o Series
 - **Zhipu AI**: GLM-4 Series
@@ -64,6 +65,7 @@ Before using ColorLift, ensure you have an API Key from a supported large langua
 
 - **Anthropic**: [Get API Key](https://console.anthropic.com/dashboard) | [Pricing](https://www.anthropic.com/pricing#anthropic-api)
 - **Cohere**: [Get API Key](https://dashboard.cohere.com/api-keys) | [Pricing](https://cohere.ai/pricing)
+- **DeepSeek**: [Get API Key](https://platform.deepseek.com/api_keys) (Sidebar > API Keys > Create API Key) | [Pricing](https://api-docs.deepseek.com/quick_start/pricing)
 - **iFlytek Spark**: [Get API Key](https://console.xfyun.cn/services) (Obtain the API Password in the HTTP service interface authentication section under the specific model) | [Pricing](https://xinghuo.xfyun.cn/sparkapi?scr=price)
 - **OpenAI**: [Get API Key](https://platform.openai.com/api-keys) | [Pricing](https://openai.com/api/pricing/)
 - **Zhipu AI**: [Get API Key](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) (Account Settings > Project Management > API Keys) | [Pricing](https://open.bigmodel.cn/pricing)

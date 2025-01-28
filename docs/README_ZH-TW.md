@@ -23,7 +23,7 @@
 - 🔍 **顏色識別輔助**：通過文字描述幫助用戶（特別是色覺障礙者）理解顏色。
 - 🌈 **語境化顏色描述**：提供顏色的常見使用場景，幫助用戶更好地理解色彩在實際中的應用。
 - 🌍 **多語言支持**：目前支持英文、簡體中文和繁體中文，歡迎貢獻其他語言的翻譯或幫助勘誤。
-- 🤖 **多模型支持**：API 支持 Anthropic、Cohere、科大訊飛星火、OpenAI 和智譜 AI。
+- 🤖 **多模型支持**：API 支持 Anthropic、Cohere、DeepSeek、科大訊飛星火、OpenAI 和智譜 AI。
 - 💻 **跨平台兼容**：支持 Windows 和 macOS。
 
 ## 界面預覽
@@ -45,6 +45,7 @@
 
 - **Anthropic**: Claude 3.5 系列
 - **Cohere**: Command R 系列
+- **DeepSeek**: DeepSeek (Chat) 系列
 - **科大訊飛星火**: Lite、Pro、Max、4.0 Ultra
 - **OpenAI**: GPT-4o 系列
 - **智譜 AI**: GLM-4 系列
@@ -63,6 +64,7 @@
 
 - **Anthropic**: [獲取 API Key](https://console.anthropic.com/dashboard) | [資費說明](https://www.anthropic.com/pricing#anthropic-api)
 - **Cohere**: [獲取 API Key](https://dashboard.cohere.com/api-keys) | [資費說明](https://cohere.ai/pricing)
+- **DeepSeek**: [獲取 API Key](https://platform.deepseek.com/api_keys) （側邊欄 > API keys > 创建 API key）| [資費說明](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)
 - **科大訊飛星火 (iFlytek Spark)**: [獲取 API Key](https://console.xfyun.cn/services) （到控制台具體模型下獲取 http 服務接口認證資訊中的 APIPassword） | [資費說明](https://xinghuo.xfyun.cn/sparkapi?scr=price)
 - **OpenAI**: [獲取 API Key](https://platform.openai.com/api-keys) | [資費說明](https://openai.com/api/pricing/)
 - **智譜 AI (Zhipu AI)**: [獲取 API Key](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) （賬號設置 > 項目管理 > API keys）| [資費說明](https://open.bigmodel.cn/pricing)

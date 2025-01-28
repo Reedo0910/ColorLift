@@ -23,7 +23,7 @@
 - 🔍 **颜色识别辅助**：通过文字描述帮助用户（特别是色觉障碍者）理解颜色。
 - 🌈 **语境化颜色描述**：提供颜色的常见使用场景，帮助用户更好地理解色彩在实际中的应用。
 - 🌍 **多语言支持**：目前支持英文、简体中文和繁体中文，欢迎贡献其他语言的翻译或帮助纠错。
-- 🤖 **多模型支持**：API 支持 Anthropic、Cohere、科大讯飞星火、OpenAI 和智谱 AI。
+- 🤖 **多模型支持**：API 支持 Anthropic、Cohere、DeepSeek、科大讯飞星火、OpenAI 和智谱 AI。
 - 💻 **跨平台兼容**：支持 Windows 和 macOS。
 
 ## 界面预览
@@ -45,6 +45,7 @@
 
 - **Anthropic**: Claude 3.5 系列
 - **Cohere**: Command R 系列
+- **DeepSeek**: DeepSeek (Chat) 系列
 - **科大讯飞星火**: Lite、Pro、Max、4.0 Ultra
 - **OpenAI**: GPT-4o 系列
 - **智谱 AI**: GLM-4 系列
@@ -63,6 +64,7 @@
 
 - **Anthropic**: [获取 API Key](https://console.anthropic.com/dashboard) | [资费说明](https://www.anthropic.com/pricing#anthropic-api)
 - **Cohere**: [获取 API Key](https://dashboard.cohere.com/api-keys) | [资费说明](https://cohere.ai/pricing)
+- **DeepSeek**: [获取 API Key](https://platform.deepseek.com/api_keys)（侧边栏 > API keys > 创建 API key） | [资费说明](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)
 - **科大讯飞星火**: [获取 API Key](https://console.xfyun.cn/services) （到控制台具体模型下获取 http 服务接口认证信息中的 APIPassword） | [资费说明](https://xinghuo.xfyun.cn/sparkapi?scr=price)
 - **OpenAI**: [获取 API Key](https://platform.openai.com/api-keys) | [资费说明](https://openai.com/api/pricing/)
 - **智谱 AI**: [获取 API Key](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) （账号设置 > 项目管理 > API keys）| [资费说明](https://open.bigmodel.cn/pricing)
