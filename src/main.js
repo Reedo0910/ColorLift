@@ -41,6 +41,7 @@ const store = new Store({
         apiKeys: {
             'anthropic': '',
             'cohere': '',
+            'deepseek': '',
             'iflytek_spark': '',
             'openai': '',
             'zhipu_ai': ''

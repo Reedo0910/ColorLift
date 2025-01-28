@@ -40,6 +40,20 @@ export const LLMList = [
         ]
     },
     {
+        provider: 'DeepSeek',
+        id: 'deepseek',
+        authHeader: 'Authorization',
+        tokenPrefix: 'Bearer ',
+        apiUrl: 'https://api.deepseek.com/chat/completions',
+        locale: 'cn',
+        models: [
+            {
+                name: 'DeepSeek-V3',
+                id: 'deepseek-chat'
+            }
+        ]
+    },
+    {
         provider: 'iFlytek Spark',
         id: 'iflytek_spark',
         authHeader: 'Authorization',

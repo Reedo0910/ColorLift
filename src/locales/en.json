@@ -55,6 +55,7 @@
     "error_api": "The API returned an error:",
     "provider_anthropic": "Anthropic",
     "provider_cohere": "Cohere",
+    "provider_deepseek": "DeepSeek",
     "provider_iflytek_spark": "iFlytek Spark",
     "provider_openai": "OpenAI",
     "provider_zhipu_ai": "Zhipu AI",

@@ -55,6 +55,7 @@
     "error_api": "API 返回了一个错误：",
     "provider_anthropic": "Anthropic",
     "provider_cohere": "Cohere",
+    "provider_deepseek": "DeepSeek",
     "provider_iflytek_spark": "讯飞星火",
     "provider_openai": "OpenAI",
     "provider_zhipu_ai": "智谱AI",

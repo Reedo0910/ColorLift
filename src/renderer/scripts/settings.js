@@ -154,7 +154,7 @@ function initializeWithModelId(modelId) {
         populateModelDropdown(provider.id);
         modelSelect.value = modelId;
         apiKeyContainer.style.display = 'block';
-        apiKeyInput.value = apiKeys[provider.id];
+        apiKeyInput.value = apiKeys[provider.id] || '';
     }
 }
 
@@ -173,7 +173,7 @@ providerSelect.addEventListener('change', (event) => {
     // Display the API Key input box and load the current value
     if (selectedProviderId) {
         apiKeyContainer.style.display = 'block';
-        apiKeyInput.value = apiKeys[selectedProviderId];
+        apiKeyInput.value = apiKeys[selectedProviderId] || '';
     } else {
         apiKeyContainer.style.display = 'none';
         apiKeyInput.value = '';
@@ -194,7 +194,7 @@ populateThemeDropdown();
 
 // Load user settings
 window.electronAPI.getSettings().then((settings) => {
-    apiKeys = settings.apiKeys || { 'anthropic': '', 'cohere': '', 'iflytek_spark': '', 'openai': '', 'zhipu_ai': '' };
+    apiKeys = settings.apiKeys || { 'anthropic': '', 'cohere': '', 'deepseek': '', 'iflytek_spark': '', 'openai': '', 'zhipu_ai': '' };
     modelId = settings.modelId || '';
 
     if (modelId) {
