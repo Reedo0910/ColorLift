@@ -44,6 +44,7 @@ const store = new Store({
             'deepseek': '',
             'iflytek_spark': '',
             'openai': '',
+            'qwen': '',
             'zhipu_ai': ''
         },
         modelId: '',

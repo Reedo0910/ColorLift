@@ -58,6 +58,7 @@
     "provider_deepseek": "DeepSeek",
     "provider_iflytek_spark": "iFlytek Spark",
     "provider_openai": "OpenAI",
+    "provider_qwen": "Qwen",
     "provider_zhipu_ai": "Zhipu AI",
     "about_window_title": "About",
     "version_text": "Version",

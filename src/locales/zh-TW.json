@@ -58,6 +58,7 @@
     "provider_deepseek": "DeepSeek",
     "provider_iflytek_spark": "訊飛星火",
     "provider_openai": "OpenAI",
+    "provider_qwen": "通義千問",
     "provider_zhipu_ai": "智譜AI",
     "about_window_title": "關於",
     "version_text": "版本",

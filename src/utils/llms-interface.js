@@ -18,6 +18,10 @@ export const LLMList = [
             {
                 name: 'Claude 3.5 Sonnet',
                 id: 'claude-3-5-sonnet-latest'
+            },
+            {
+                name: 'Claude 3.7 Sonnet',
+                id: 'claude-3-7-sonnet-latest'
             }
         ]
     },
@@ -36,6 +40,10 @@ export const LLMList = [
             {
                 name: 'Command R+',
                 id: 'command-r-plus-08-2024'
+            },
+            {
+                name: 'Command A',
+                id: 'command-a-03-2025'
             }
         ]
     },
@@ -88,12 +96,46 @@ export const LLMList = [
         locale: 'en',
         models: [
             {
+                name: 'GPT-4.1 nano',
+                id: 'gpt-4.1-nano'
+            },
+            {
                 name: 'GPT-4o mini',
                 id: 'gpt-4o-mini'
             },
             {
+                name: 'GPT-4.1 mini',
+                id: 'gpt-4.1-mini'
+            },
+            {
                 name: 'GPT-4o',
                 id: 'gpt-4o'
+            },
+            {
+                name: 'GPT-4.1',
+                id: 'gpt-4.1'
+            }
+        ]
+    },
+    {
+        provider: 'Qwen',
+        id: 'qwen',
+        authHeader: 'Authorization',
+        tokenPrefix: 'Bearer ',
+        apiUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+        locale: 'cn',
+        models: [
+            {
+                name: 'Qwen Turbo',
+                id: 'qwen-turbo-latest'
+            },
+            {
+                name: 'Qwen Plus',
+                id: 'qwen-plus-latest'
+            },
+            {
+                name: 'Qwen Max',
+                id: 'qwen-max-latest'
             }
         ]
     },
@@ -106,16 +148,16 @@ export const LLMList = [
         locale: 'cn',
         models: [
             {
-                name: 'GLM-4-Flash',
-                id: 'glm-4-flash'
+                name: 'GLM-4-FlashX-250414',
+                id: 'glm-4-flash-250414'
             },
             {
                 name: 'GLM-4-AirX',
                 id: 'glm-4-airx'
             },
             {
-                name: 'GLM-4-0520',
-                id: 'glm-4-0520'
+                name: 'GLM-4-Air-250414',
+                id: 'glm-4-air-250414'
             },
             {
                 name: 'GLM-4-Plus',

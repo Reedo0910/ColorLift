@@ -194,7 +194,7 @@ populateThemeDropdown();
 
 // Load user settings
 window.electronAPI.getSettings().then((settings) => {
-    apiKeys = settings.apiKeys || { 'anthropic': '', 'cohere': '', 'deepseek': '', 'iflytek_spark': '', 'openai': '', 'zhipu_ai': '' };
+    apiKeys = settings.apiKeys || { 'anthropic': '', 'cohere': '', 'deepseek': '', 'iflytek_spark': '', 'openai': '', 'qwen': '', 'zhipu_ai': '' };
     modelId = settings.modelId || '';
 
     if (modelId) {
