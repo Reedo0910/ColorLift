@@ -166,7 +166,7 @@ export const LLMList = [
         ]
     }];
 
-export const LLMCommunicator = async (colorObj, modelId, apiKey, translations) => {
+export const LLMCommunicator = async (colorObj, modelId, apiKey, promptComponents, translations) => {
     try {
         const providerObj = findProviderByModelId(modelId);
         if (!providerObj) {
@@ -178,7 +178,33 @@ export const LLMCommunicator = async (colorObj, modelId, apiKey, translations) =
             return `||ERROR|| ${translations['error_invalid_api_url'] || 'Invalid API URL.'}`;
         }
 
-        const prompt = translations['prompt_text'];
+        let promptColorImpressionRequirementText = '';
+        let promptColorImpressionExampleText = '';
+
+        let promptColorScenarioRequirementText = '';
+        let promptColorScenarioExampleText = '';
+
+        const promptTemplate = translations['prompt_text'];
+
+        if (promptComponents.isShowColorImpression) {
+            promptColorImpressionRequirementText = translations['prompt_text_color_impression_requirement'];
+
+            promptColorImpressionExampleText = translations['prompt_text_color_impression_example'];
+        }
+
+        if (promptComponents.isShowColorScenario) {
+            promptColorScenarioRequirementText = translations['prompt_text_color_scenario_requirement'];
+
+            promptColorScenarioExampleText = translations['prompt_text_color_scenario_example'];
+        }
+
+        const promptText = promptTemplate
+            .replace('[[prompt_text_color_impression_requirement]]', promptColorImpressionRequirementText)
+            .replace('[[prompt_text_color_scenario_requirement]]', promptColorScenarioRequirementText)
+            .replace('[[prompt_text_color_impression_example]]', promptColorImpressionExampleText)
+            .replace('[[prompt_text_color_scenario_example]]', promptColorScenarioExampleText);
+
+        const prompt = promptText;
 
         const userPrompt = `- HSL：${colorObj.hsl} - RGB：${colorObj.rgb} - Hex：${colorObj.hex}`;
 

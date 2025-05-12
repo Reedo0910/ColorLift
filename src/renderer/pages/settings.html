@@ -360,6 +360,39 @@
                 </div>
 
                 <div class="text-input">
+                    <label id="text-component-label">
+                        <!-- 颜色描述包含： -->
+                    </label>
+                    <div class="input-wrapper">
+                        <div class="checkbox-group">
+                            <!-- 项目 1：始终启用，禁用 checkbox -->
+                            <label for="component-color-name">
+                                <input type="checkbox" id="component-color-name" checked disabled />
+                                <span id="component-color-name-label">
+                                    <!-- 名称及近似色调（必选） -->
+                                </span>
+                            </label>
+
+                            <!-- 项目 2：可选 -->
+                            <label for="component-visual-impression">
+                                <input type="checkbox" id="component-visual-impression" value="visualImpression" />
+                                <span id="component-visual-impression-label">
+                                    <!-- 视觉印象 -->
+                                </span>
+                            </label>
+
+                            <!-- 项目 3：可选 -->
+                            <label for="component-usage-scenario">
+                                <input type="checkbox" id="component-usage-scenario" value="usageScenario" />
+                                <span id="component-usage-scenario-label">
+                                    <!-- 应用场景 -->
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-input">
                     <label id="language-label" for="language-select">
                         <!-- 语言 -->
                     </label>

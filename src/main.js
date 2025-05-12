@@ -52,7 +52,11 @@ const store = new Store({
         colorPickShortcut: isMac ? 'Alt+C' : 'Alt+D',
         theme: 'system',
         isGetUpdateOnStart: false,
-        colorFormat: 'hex' // hex, rgb, hsl
+        colorFormat: 'hex', // hex, rgb, hsl
+        promptComponents: {
+            isShowColorImpression: true,
+            isShowColorScenario: true
+        }
     },
 });
 
@@ -581,7 +585,8 @@ ipcMain.handle('get-settings', () => {
         colorPickShortcut: store.get('colorPickShortcut'),
         theme: store.get('theme'),
         isGetUpdateOnStart: store.get('isGetUpdateOnStart'),
-        colorFormat: store.get('colorFormat')
+        colorFormat: store.get('colorFormat'),
+        promptComponents: store.get('promptComponents'),
     };
 });
 
@@ -594,6 +599,7 @@ ipcMain.on('save-settings', (event, settings) => {
     store.set('theme', settings.theme);
     store.set('isGetUpdateOnStart', settings.isGetUpdateOnStart);
     store.set('colorFormat', settings.colorFormat);
+    store.set('promptComponents', settings.promptComponents);
 
     nativeTheme.themeSource = settings.theme;
 
@@ -728,7 +734,9 @@ const captureColor = async () => {
             return mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_api_key_invalid']}`);
         }
 
-        const message = await LLMCommunicator(colorObj, currentModelId, currentApiKey, translations);
+        const currentPromptComponents = store.get('promptComponents');
+
+        const message = await LLMCommunicator(colorObj, currentModelId, currentApiKey, currentPromptComponents, translations);
 
         mainWindow.webContents.send('llm-response', message);
     } catch (error) {

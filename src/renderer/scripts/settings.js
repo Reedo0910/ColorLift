@@ -25,6 +25,14 @@ const themeSelect = document.getElementById('theme-select');
 const colorFormatSelectLabel = document.getElementById('color-format-label');
 const colorFormatSelect = document.getElementById('color-format-select');
 
+const textComponentsLabel = document.getElementById('text-component-label');
+const componentColorNameLabel = document.getElementById('component-color-name-label');
+const componentVisualImpressionLabel = document.getElementById('component-visual-impression-label');
+const componentUsageScenarioLabel = document.getElementById('component-usage-scenario-label');
+
+const componentVisualImpressionCheckbox = document.getElementById('component-visual-impression');
+const componentUsageScenarioCheckbox = document.getElementById('component-usage-scenario');
+
 const languageLabel = document.getElementById('language-label');
 const languageNote = document.getElementById('language-note');
 
@@ -75,6 +83,10 @@ apiKeyNote.textContent = translations['api_key_note'];
 modelLabel.textContent = translations['model_label'];
 modelDescription.textContent = translations['model_description'];
 colorFormatSelectLabel.textContent = translations['color_format_label'];
+textComponentsLabel.textContent = translations['text_component_label'];
+componentColorNameLabel.textContent = translations['text_component_base'];
+componentVisualImpressionLabel.textContent = translations['text_component_visual_impression'];
+componentUsageScenarioLabel.textContent = translations['text_component_usage_scenario'];
 themeSelectLabel.textContent = translations['theme_select_label'];
 languageLabel.textContent = translations['language_label'];
 languageNote.textContent = translations['language_note'];
@@ -202,6 +214,10 @@ window.electronAPI.getSettings().then((settings) => {
     }
 
     updateCheckCheckbox.checked = settings.isGetUpdateOnStart;
+
+    componentVisualImpressionCheckbox.checked = settings.promptComponents?.isShowColorImpression;
+    componentUsageScenarioCheckbox.checked = settings.promptComponents?.isShowColorScenario;
+
     themeSelect.value = settings.theme || 'system';
     languageSelect.value = settings.language || 'en';
     colorPickShortcutInput.value = getDisplayShortcut(settings.colorPickShortcut) || '';
@@ -234,7 +250,11 @@ settingsForm.addEventListener('submit', async (event) => {
         colorPickShortcut: getBackendShortcut(colorPickShortcutInput.value.trim()), // use electron key format
         theme: themeSelect.value,
         isGetUpdateOnStart: updateCheckCheckbox.checked,
-        colorFormat: colorFormatSelect.value
+        colorFormat: colorFormatSelect.value,
+        promptComponents: {
+            isShowColorImpression: componentVisualImpressionCheckbox.checked,
+            isShowColorScenario: componentUsageScenarioCheckbox.checked
+        },
     };
 
     window.electronAPI.saveSettings(settings);
