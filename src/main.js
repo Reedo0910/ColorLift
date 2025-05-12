@@ -38,6 +38,12 @@ const appLocale = getAppLocale();
 // Init electron-store
 const store = new Store({
     defaults: {
+        windowBounds: {
+            width: 345,
+            height: 480,
+            x: undefined,
+            y: undefined
+        },
         apiKeys: {
             'anthropic': '',
             'cohere': '',
@@ -210,9 +216,15 @@ nativeTheme.themeSource = savedTheme;
 
 app.on('ready', () => {
     // Create main window
+    const { width, height, x, y } = getSafeBounds();
+
     mainWindow = new BrowserWindow({
-        width: 345,
-        height: 480,
+        width,
+        height,
+        x,
+        y,
+        minHeight: 330,
+        minWidth: 325,
         // transparent: true,
         vibrancy: 'fullscreen-ui',
         titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
@@ -261,6 +273,10 @@ app.on('ready', () => {
     });
 
     mainWindow.on('close', (event) => {
+        // save mainwindow's size and position when app closes
+        const bounds = mainWindow.getBounds();
+        store.set('windowBounds', bounds);
+
         if (process.platform === 'darwin' || process.platform === 'linux') {
             app.quit(); // fully quit on macOS and Linux
         }
@@ -367,6 +383,31 @@ app.on('ready', () => {
     screen.on('display-removed', updateDisplayCount);
 
 });
+
+// Prevent Mainwindow being offscreen when loaded
+function getSafeBounds() {
+    const saved = store.get('windowBounds');
+    const { width, height } = saved;
+    let { x, y } = saved;
+
+    const displays = screen.getAllDisplays();
+    const inSomeDisplay = displays.some(d => {
+        const { bounds } = d;      // {x, y, width, height}
+        return x >= bounds.x &&
+            y >= bounds.y &&
+            x < bounds.x + bounds.width &&
+            y < bounds.y + bounds.height;
+    });
+
+    // fallback to screen center if the main window is completely offscreen
+    if (!inSomeDisplay) {
+        const primaryBounds = screen.getPrimaryDisplay().workArea;
+        x = primaryBounds.x + (primaryBounds.width - width) / 2;
+        y = primaryBounds.y + (primaryBounds.height - height) / 2;
+    }
+
+    return { x, y, width, height };
+}
 
 // if multiple screens in used
 async function updateDisplayCount() {
