@@ -121,13 +121,6 @@
             user-select: text;
         }
 
-        #mini-placeholder {
-            display: none;
-            width: 100%;
-            height: calc(100% - 152px);
-            min-height: 55px;
-        }
-
         #color-display {
             display: inline-block;
             width: 80px;
@@ -480,25 +473,14 @@
             opacity: 1;
         }
 
-        /* Hide the color preview circle when window height is below 330 px */
         @media (max-height: 329px) {
             #color-display {
-                display: none !important;
-            }
-
-            #mini-placeholder {
-                display: block !important;
+                width: 48px;
+                height: 48px;
             }
 
             .color-description-block {
                 height: 82px !important;
-            }
-        }
-
-        /* Hide the color-code block when window height is below 294 px */
-        @media (max-height: 293px) {
-            #color_code_value_block {
-                display: none !important;
             }
         }
     </style>
@@ -514,7 +496,6 @@
             </svg>
         </button>
         <div id="color-display"></div>
-        <div id="mini-placeholder"></div>
         <div class="color-code-value-block selectable" id="color_code_value_block">
             <p id="color-code-value">#FFFFFF</p>
             <button id="convert-btn" class="control-btn" title="颜色格式转换">

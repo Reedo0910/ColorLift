@@ -63,6 +63,40 @@ if (!isMac) {
     captureButton.classList.add('mac');
 }
 
+/* === colorDisplay animation controller start === */
+
+const sizeMaxPx = 80;   // width/height when window ≥ 330 px
+const sizeMinPx = 48;   // width/height when window ≤ 292 px
+const triggerTopPx = 330;  // start shrinking here
+const triggerBottomPx = 292;  // stop shrinking here
+
+/* adjust color display size */
+function resizeColorPreview() {
+    const winHeight = window.innerHeight;
+
+    /* outside the shrinking band -> snap to min / max */
+    if (winHeight >= triggerTopPx) {
+        colorDisplay.style.width = colorDisplay.style.height = `${sizeMaxPx}px`;
+        return;
+    }
+    if (winHeight <= triggerBottomPx) {
+        colorDisplay.style.width =
+            colorDisplay.style.height = `${sizeMinPx}px`;
+        return;
+    }
+
+    /* inside the band -> linear interpolation */
+    const ratio = (winHeight - triggerBottomPx) / (triggerTopPx - triggerBottomPx); // 0 - 1
+    const newSize = sizeMinPx + ratio * (sizeMaxPx - sizeMinPx);
+
+    colorDisplay.style.width = colorDisplay.style.height = `${newSize.toFixed(1)}px`;
+}
+
+resizeColorPreview();
+window.addEventListener('resize', resizeColorPreview);
+
+/* === colorDisplay animation controller end === */
+
 function setTranslations(translations) {
     document.title = translations['app_name'];
 
