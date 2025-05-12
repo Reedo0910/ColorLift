@@ -223,7 +223,7 @@ app.on('ready', () => {
         height,
         x,
         y,
-        minHeight: 330,
+        minHeight: 232,
         minWidth: 325,
         // transparent: true,
         vibrancy: 'fullscreen-ui',

@@ -121,6 +121,13 @@
             user-select: text;
         }
 
+        #mini-placeholder {
+            display: none;
+            width: 100%;
+            height: calc(100% - 152px);
+            min-height: 55px;
+        }
+
         #color-display {
             display: inline-block;
             width: 80px;
@@ -170,9 +177,13 @@
         }
 
         .color-description-block {
-            position: relative;
-            width: 100%;
-            height: calc(100% - 160px);
+            position: absolute;
+            left: 15px;
+            bottom: 28px;
+            width: calc(100% - 30px);
+            height: calc(100% - 225px);
+            min-height: 82px;
+            margin: 0 auto;
         }
 
         .color-description {
@@ -187,7 +198,6 @@
             width: calc(100% - 20px);
             max-width: 670px;
             overflow: auto;
-            box-sizing: border-box;
             -webkit-app-region: no-drag;
             z-index: 1;
         }
@@ -352,11 +362,13 @@
         }
 
         .control-panel {
-            position: relative;
-            width: 100%;
-            margin: 10px auto;
+            position: absolute;
+            left: 15px;
+            bottom: -12px;
+            width: calc(100% - 30px);
+            margin: 0 auto;
             padding: 0 5px;
-            max-width: 660px;
+            /* max-width: 660px; */
             height: 30px;
             display: flex;
             justify-content: space-between;
@@ -467,6 +479,28 @@
             background-color: var(--dropdown-menu-item-background-hover);
             opacity: 1;
         }
+
+        /* Hide the color preview circle when window height is below 330 px */
+        @media (max-height: 329px) {
+            #color-display {
+                display: none !important;
+            }
+
+            #mini-placeholder {
+                display: block !important;
+            }
+
+            .color-description-block {
+                height: 82px !important;
+            }
+        }
+
+        /* Hide the color-code block when window height is below 294 px */
+        @media (max-height: 293px) {
+            #color_code_value_block {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -480,6 +514,7 @@
             </svg>
         </button>
         <div id="color-display"></div>
+        <div id="mini-placeholder"></div>
         <div class="color-code-value-block selectable" id="color_code_value_block">
             <p id="color-code-value">#FFFFFF</p>
             <button id="convert-btn" class="control-btn" title="颜色格式转换">
