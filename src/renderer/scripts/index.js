@@ -32,6 +32,7 @@ const initTranslations = window.electronAPI.getInitTranslations();
 const initTheme = window.electronAPI.getInitTheme();
 const initColorFormat = window.electronAPI.getInitColorFormat();
 const initColorPickShortcut = window.electronAPI.getInitColorPickShortcut();
+const initLanguage = window.electronAPI.getInitLanguage();
 const isMac = window.electronAPI.isMacOS();
 const isAcrylicSupport = window.electronAPI.isAcrylicSupport();
 
@@ -62,6 +63,8 @@ if (!isMac) {
     // Swap capture button position for macos
     captureButton.classList.add('mac');
 }
+
+toggleLanguageClass(LLMResponse, initLanguage === 'en');
 
 /* === colorDisplay animation controller start === */
 
@@ -175,6 +178,18 @@ colorCodeConvertBtn.addEventListener('click', () => {
 
     currentColorDisplayFormat = colorFormat;
 })
+
+function toggleLanguageClass(element, isEnglish) {
+    if (element !== null) {
+        if (isEnglish) {
+            if (!element.classList.contains('en')) {
+                element.classList.add('en')
+            }
+        } else {
+            element.classList.remove('en')
+        }
+    }
+}
 
 function toggleVisibility(element, isVisible) {
     if (element !== null) {
@@ -307,11 +322,13 @@ window.electronAPI.onUpdateStatus((status) => {
     }
 });
 
-window.electronAPI.onSettingsUpdated((customeSettings) => {
-    currentColorDisplayFormat = customeSettings.colorFormat || initColorFormat;
+window.electronAPI.onSettingsUpdated((customSettings) => {
+    currentColorDisplayFormat = customSettings.colorFormat || initColorFormat;
 
-    setColorPickShortcut(customeSettings.colorPickShortcut);
-    setColorDisplay(customeSettings.currentTheme);
+    setColorPickShortcut(customSettings.colorPickShortcut);
+    setColorDisplay(customSettings.currentTheme);
+
+    toggleLanguageClass(LLMResponse, customSettings.language === 'en');
 
     LLMResponse.textContent = '';
 

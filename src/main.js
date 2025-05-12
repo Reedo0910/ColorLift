@@ -225,6 +225,9 @@ app.on('ready', () => {
         y,
         minHeight: 292,
         minWidth: 325,
+        maxHeight: 535,
+        maxWidth: 375,
+        maximizable: false,
         // transparent: true,
         vibrancy: 'fullscreen-ui',
         titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
@@ -246,6 +249,7 @@ app.on('ready', () => {
                 JSON.stringify({ key: 'isMac', value: isMac }),
                 JSON.stringify({ key: 'isAcrylicSupport', value: semver.gte(process.getSystemVersion(), '10.0.22621') && process.platform === 'win32' }),
                 JSON.stringify({ key: 'colorFormat', value: store.get('colorFormat') }),
+                JSON.stringify({ key: 'language', value: store.get('language') }),
             ],
         },
     });
@@ -649,7 +653,8 @@ ipcMain.on('save-settings', (event, settings) => {
         {
             'colorPickShortcut': settings.colorPickShortcut,
             'currentTheme': nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
-            'colorFormat': settings.colorFormat
+            'colorFormat': settings.colorFormat,
+            'language': settings.language
         });
 });
 

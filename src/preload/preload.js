@@ -2,13 +2,15 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 const additionalArguments = process.argv.filter(arg => arg.startsWith('{') && arg.endsWith('}'));
 
-let translations, colorPickShortcut, initTheme, isMac, colorFormat, isAcrylicSupport;
+let translations, language, colorPickShortcut, initTheme, isMac, colorFormat, isAcrylicSupport;
 
 additionalArguments.forEach(arg => {
     try {
         const parsed = JSON.parse(arg);
         if (parsed.key === 'translations') {
             translations = parsed.value;
+        } else if (parsed.key === 'language') {
+            language = parsed.value;
         } else if (parsed.key === 'colorPickShortcut') {
             colorPickShortcut = parsed.value;
         } else if (parsed.key === 'initTheme') {
@@ -40,6 +42,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getInitColorPickShortcut: () => colorPickShortcut,
     getInitTheme: () => initTheme,
     getInitColorFormat: () => colorFormat,
+    getInitLanguage: () => language,
     // Translations
     getInitTranslations: () => translations,
     onTranslationsUpdated: (callback) => ipcRenderer.on('translations-update', (_, translations) => callback(translations)),
