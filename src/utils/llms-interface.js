@@ -62,6 +62,32 @@ export const LLMList = [
         ]
     },
     {
+        provider: 'Google',
+        id: 'google',
+        authHeader: 'Authorization',
+        tokenPrefix: 'Bearer ',
+        apiUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+        locale: 'en',
+        models: [
+            {
+                name: 'Gemini 2.0 Flash-Lite',
+                id: 'gemini-2.0-flash-lite'
+            },
+            {
+                name: 'Gemini 2.0 Flash',
+                id: 'gemini-2.0-flash'
+            },
+            {
+                name: 'Gemini 2.5 Flash (Preview)',
+                id: 'gemini-2.5-flash-preview-04-17'
+            },
+            {
+                name: 'Gemini 2.5 Pro (Preview)',
+                id: 'gemini-2.5-pro-preview-05-06'
+            },
+        ]
+    },
+    {
         provider: 'iFlytek Spark',
         id: 'iflytek_spark',
         authHeader: 'Authorization',
@@ -367,6 +393,6 @@ async function handleResponse(response, providerObj, translations, customReqType
         }
     } else {
         console.error('API error:', data);
-        return `||ERROR|| ${translations['error_api']} (Code: ${response.status}) ${data.message?.content || data.error?.message || data.message || 'Unknown error'}`;
+        return `||ERROR|| ${translations['error_api']} (Code: ${response.status}) ${data.message?.content || data.error?.message || data.message || data[0]?.error?.message || 'Unknown error'}`;
     }
 }

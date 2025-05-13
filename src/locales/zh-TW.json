@@ -74,6 +74,7 @@
     "provider_anthropic": "Anthropic",
     "provider_cohere": "Cohere",
     "provider_deepseek": "DeepSeek",
+    "provider_google": "Google",
     "provider_iflytek_spark": "訊飛星火",
     "provider_openai": "OpenAI",
     "provider_qwen": "通義千問",

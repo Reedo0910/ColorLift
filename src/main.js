@@ -48,6 +48,7 @@ const store = new Store({
             'anthropic': '',
             'cohere': '',
             'deepseek': '',
+            'google': '',
             'iflytek_spark': '',
             'openai': '',
             'qwen': '',
