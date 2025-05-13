@@ -164,16 +164,64 @@ export const LLMList = [
                 id: 'glm-4-plus'
             }
         ]
-    }];
+    },
+    {
+        provider: 'Custom',
+        id: 'custom',
+        models: []
+    }
+];
 
-export const LLMCommunicator = async (colorObj, modelId, apiKey, promptComponents, translations) => {
+export const ReqTypeList = [
+    {
+        name: 'OpenAI',
+        id: 'custom_openai',
+        authHeader: 'Authorization',
+        tokenPrefix: 'Bearer '
+    },
+    {
+        name: 'Anthropic',
+        id: 'custom_anthropic',
+        authHeader: 'x-api-key',
+        tokenPrefix: '',
+        additionalHeader: 'anthropic-version',
+        additionalValue: '2023-06-01',
+    },
+    {
+        name: 'Cohere',
+        id: 'custom_cohere',
+        authHeader: 'Authorization',
+        tokenPrefix: 'bearer '
+    },
+];
+
+export const LLMCommunicator = async (colorObj, modelId, apiKey, promptComponents, translations, customReqTypeId = '', customEndpoint = '') => {
     try {
         const providerObj = findProviderByModelId(modelId);
         if (!providerObj) {
             return `||ERROR|| ${translations['error_invalid_model_id'] || 'Invalid model ID.'}`;
         }
 
-        const { apiUrl, authHeader, tokenPrefix, additionalHeader, additionalValue } = providerObj;
+        let { apiUrl, authHeader, tokenPrefix, additionalHeader, additionalValue } = providerObj;
+
+        if (providerObj.id === 'custom') {
+            if (!isValidHttpUrl(customEndpoint)) {
+                return `||ERROR|| ${translations['error_invalid_custom_endpoint'] || 'Invalid custom endpoint URL.'}`;
+            }
+
+            apiUrl = customEndpoint;
+
+            const myCustomReqTypeId = customReqTypeId ? customReqTypeId : 'custom_openai';
+
+            const reqTypeObj = findReqTypeById(myCustomReqTypeId);
+
+            if (!reqTypeObj) {
+                return `||ERROR|| ${translations['error_invalid_request_type'] || 'Invalid request type.'}`;
+            }
+
+            ({ authHeader, tokenPrefix, additionalHeader, additionalValue } = reqTypeObj);
+        }
+
         if (!apiUrl) {
             return `||ERROR|| ${translations['error_invalid_api_url'] || 'Invalid API URL.'}`;
         }
@@ -208,7 +256,9 @@ export const LLMCommunicator = async (colorObj, modelId, apiKey, promptComponent
 
         const userPrompt = `- HSL：${colorObj.hsl} - RGB：${colorObj.rgb} - Hex：${colorObj.hex}`;
 
-        const bodyObject = buildRequestBody(providerObj, modelId, userPrompt, prompt);
+        const myModelId = modelId.startsWith('custom@') ? modelId.slice(7) : modelId;
+
+        const bodyObject = buildRequestBody(providerObj, myModelId, userPrompt, prompt, customReqTypeId);
 
         const headers = buildHeaders(authHeader, tokenPrefix, apiKey, additionalHeader, additionalValue);
 
@@ -218,7 +268,7 @@ export const LLMCommunicator = async (colorObj, modelId, apiKey, promptComponent
             body: JSON.stringify(bodyObject),
         });
 
-        return await handleResponse(response, providerObj, translations);
+        return await handleResponse(response, providerObj, translations, customReqTypeId);
 
     } catch (error) {
         console.error('Unexpected error:', error);
@@ -226,8 +276,10 @@ export const LLMCommunicator = async (colorObj, modelId, apiKey, promptComponent
     }
 };
 
-function buildRequestBody(providerObj, modelId, userPrompt, systemPrompt) {
-    if (providerObj.id === 'anthropic') {
+function buildRequestBody(providerObj, modelId, userPrompt, systemPrompt, customReqTypeId) {
+    if (providerObj.id === 'anthropic' ||
+        (providerObj.id === 'custom' && customReqTypeId === 'custom_anthropic')
+    ) {
         return {
             model: modelId,
             system: systemPrompt,
@@ -252,7 +304,35 @@ function buildHeaders(authHeader, tokenPrefix, apiKey, additionalHeader, additio
     };
 }
 
-async function handleResponse(response, providerObj, translations) {
+function findProviderByModelId(modelId) {
+    // Special case: if modelId starts with "custom@", return the "custom" provider
+    if (modelId.startsWith('custom@')) {
+        const customModelId = modelId.slice(7); // "custom@".length === 7
+        if (customModelId === '') return undefined; // custom model ID is empty
+
+        return LLMList.find(provider => provider.id === 'custom');
+    }
+
+    // Otherwise, find the provider that contains the modelId
+    return LLMList.find(provider =>
+        provider.models.some(model => model.id === modelId)
+    );
+}
+
+function findReqTypeById(reqTypeId) {
+    return ReqTypeList.find(type => type.id === reqTypeId);
+}
+
+function isValidHttpUrl(urlString) {
+    try {
+        const url = new URL(urlString);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (e) {
+        return false;
+    }
+}
+
+async function handleResponse(response, providerObj, translations, customReqTypeId) {
     let data;
     try {
         data = await response.json();
@@ -262,22 +342,31 @@ async function handleResponse(response, providerObj, translations) {
     }
 
     if (response.ok) {
+        const fallback = `||ERROR|| ${translations['error_no_response']}`;
         switch (providerObj.id) {
             case 'cohere':
-                return data.message?.content?.[0]?.text || `||ERROR|| ${translations['error_no_response']}`;
+                return data.message?.content?.[0]?.text || fallback;
+
             case 'anthropic':
-                return data.content?.[0]?.text || `||ERROR|| ${translations['error_no_response']}`;
+                return data.content?.[0]?.text || fallback;
+
+            case 'custom':
+                switch (customReqTypeId) {
+                    case 'custom_cohere':
+                        return data.message?.content?.[0]?.text || fallback;
+
+                    case 'custom_anthropic':
+                        return data.content?.[0]?.text || fallback;
+
+                    default:
+                        return data.choices?.[0]?.message?.content || fallback;
+                }
+
             default:
-                return data.choices?.[0]?.message?.content || `||ERROR|| ${translations['error_no_response']}`;
+                return data.choices?.[0]?.message?.content || fallback;
         }
     } else {
         console.error('API error:', data);
         return `||ERROR|| ${translations['error_api']} (Code: ${response.status}) ${data.message?.content || data.error?.message || data.message || 'Unknown error'}`;
     }
-}
-
-function findProviderByModelId(modelId) {
-    return LLMList.find(provider =>
-        provider.models.some(model => model.id === modelId)
-    );
 }

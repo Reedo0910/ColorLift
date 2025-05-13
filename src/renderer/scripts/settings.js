@@ -19,6 +19,21 @@ const apiKeyNote = document.getElementById('api-key-note');
 const modelLabel = document.getElementById('model-label');
 const modelDescription = document.getElementById('model-description');
 
+const customReqTypeContainer = document.getElementById('custom-req-type-container');
+const customReqTypeLabel = document.getElementById('custom-req-type-label');
+const customReqTypeSelect = document.getElementById('custom-req-type-select');
+const customReqTypeDescription = document.getElementById('custom-req-type-description');
+
+const customEndpointContainer = document.getElementById('custom-endpoint-container');
+const customEndpointLabel = document.getElementById('custom-endpoint-label');
+const customEndpointInput = document.getElementById('custom-endpoint-input');
+const customEndpointDescription = document.getElementById('custom-endpoint-description');
+
+const customModelIdContainer = document.getElementById('custom-model-id-container');
+const customModelIdLabel = document.getElementById('custom-model-id-label');
+const customModelIdInput = document.getElementById('custom-model-id-input');
+const customModelIdInputDescription = document.getElementById('custom-model-id-description');
+
 const themeSelectLabel = document.getElementById('theme-label');
 const themeSelect = document.getElementById('theme-select');
 
@@ -52,15 +67,16 @@ const colorPickShortcutInput = document.getElementById('color-pick-shortcut-inpu
 
 const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
 
-let apiKeys, modelId;
+let apiKeys, modelId, customReqTypeId, customEndpoint, customModelId;
 
 let isPasswordVisible = false; // 密钥是否可见
 
-const myCurrentLanguage = '';
-const myCurrentColorPickShortcut = '';
+let myCurrentLanguage = '';
+let myCurrentColorPickShortcut = '';
 
 const translations = window.electronAPI.getInitTranslations();
 const LLMList = window.electronAPI.getInitLLMList();
+const ReqTypeList = window.electronAPI.getInitReqTypeList();
 const isMac = window.electronAPI.isMacOS();
 
 document.title = translations['setting_window_title'];
@@ -82,6 +98,13 @@ apiKeyInput.placeholder = translations['api_key_placeholder'];
 apiKeyNote.textContent = translations['api_key_note'];
 modelLabel.textContent = translations['model_label'];
 modelDescription.textContent = translations['model_description'];
+customReqTypeLabel.textContent = translations['custom_req_type_label'];
+customReqTypeDescription.textContent = translations['custom_req_type_description']
+customEndpointLabel.textContent = translations['custom_endpoint_label'];
+customEndpointDescription.textContent = translations['custom_endpoint_description']
+customModelIdLabel.textContent = translations['custom_model_id_label'];
+customModelIdInput.placeholder = translations['custom_model_id_placeholder'];
+customModelIdInputDescription.textContent = translations['custom_model_id_description'];
 colorFormatSelectLabel.textContent = translations['color_format_label'];
 textComponentsLabel.textContent = translations['text_component_label'];
 componentColorNameLabel.textContent = translations['text_component_base'];
@@ -100,8 +123,17 @@ closeBtn.textContent = translations['close_button'];
 // Fill the Provider dropdown menu
 function populateProviderDropdown(selectedProviderId = '') {
 
-    providerSelect.innerHTML = `<option value="">--${translations['provider_select_placeholder']}--</option>`;
-    LLMList.forEach(provider => {
+    providerSelect.innerHTML = `<option value="">--${translations['provider_select_placeholder']}--</option><hr>`;
+
+    const total = LLMList.length;
+
+    LLMList.forEach((provider, index) => {
+        // add hr before 'custom' item
+        if (index === total - 1) {
+            const separator = document.createElement('hr');
+            providerSelect.appendChild(separator);
+        }
+
         const option = document.createElement('option');
         option.value = provider.id;
         option.textContent = translations[`provider_${provider.id}`] || provider.provider;
@@ -114,20 +146,55 @@ function populateProviderDropdown(selectedProviderId = '') {
 
 // Fill the Model dropdown menu
 function populateModelDropdown(providerId) {
+    modelContainer.style.display = 'none';
+
+    customReqTypeContainer.style.display = 'none';
+    customEndpointContainer.style.display = 'none';
+    customModelIdContainer.style.display = 'none';
+
+    if (providerId === 'custom') {
+        customReqTypeContainer.style.display = 'block';
+        populateReqTypeDropdown(customReqTypeId);
+
+        customEndpointContainer.style.display = 'block';
+        customEndpointInput.value = customEndpoint || '';
+
+        customModelIdContainer.style.display = 'block';
+        customModelIdInput.value = modelId.startsWith('custom@') ? modelId.slice(7) : (customModelId ?? '');
+
+        return;
+    }
+
     const provider = LLMList.find(item => item.id === providerId);
 
-    modelSelect.innerHTML = `<option value="">--${translations['model_select_placeholder']}--</option>`;
+    modelSelect.innerHTML = `<option value="">--${translations['model_select_placeholder']}--</option><hr>`;
     if (provider) {
         provider.models.forEach(model => {
             const option = document.createElement('option');
             option.value = model.id;
             option.textContent = model.name;
+            if (model.id === modelId) {
+                option.selected = true;
+            }
             modelSelect.appendChild(option);
         });
         modelContainer.style.display = 'block';
-    } else {
-        modelContainer.style.display = 'none';
     }
+}
+
+function populateReqTypeDropdown(selectedReqTypeId = '') {
+
+    customReqTypeSelect.innerHTML = `<option value="" disabled>--${translations['custom_req_type_select_placeholder']}--</option><hr>`;
+
+    ReqTypeList.forEach(type => {
+        const option = document.createElement('option');
+        option.value = type.id;
+        option.textContent = translations[`req_type_${type.id}`] || type.name;
+        if (type.id === selectedReqTypeId) {
+            option.selected = true;
+        }
+        customReqTypeSelect.appendChild(option);
+    });
 }
 
 function populateThemeDropdown() {
@@ -157,6 +224,17 @@ function populateThemeDropdown() {
 
 // Initialize Provider and Model options based on the Model ID
 function initializeWithModelId(modelId) {
+    apiKeyContainer.style.display = 'none';
+    apiKeyInput.value = '';
+
+    if (modelId.startsWith('custom@')) {
+        populateProviderDropdown('custom');
+        populateModelDropdown('custom');
+        apiKeyContainer.style.display = 'block';
+        apiKeyInput.value = apiKeys['custom'] || '';
+
+        return;
+    }
 
     const provider = LLMList.find(provider =>
         provider.models.some(model => model.id === modelId)
@@ -182,10 +260,23 @@ providerSelect.addEventListener('change', (event) => {
         }
     }
 
+    // For 'custom' provider, select the first available req type in the list by default
+    if (selectedProviderId === 'custom' && customReqTypeId === '') {
+        if (customReqTypeSelect && customReqTypeSelect.options.length >= 2) {
+            customReqTypeSelect.selectedIndex = 1;
+        }
+    }
+
     // Display the API Key input box and load the current value
     if (selectedProviderId) {
         apiKeyContainer.style.display = 'block';
         apiKeyInput.value = apiKeys[selectedProviderId] || '';
+
+        if (selectedProviderId === 'custom') {
+            customModelIdInput.value = modelId.startsWith('custom@') ? modelId.slice(7) : (customModelId ?? '');
+        } else {
+            customModelIdInput.value = customModelId ?? '';
+        }
     } else {
         apiKeyContainer.style.display = 'none';
         apiKeyInput.value = '';
@@ -206,8 +297,12 @@ populateThemeDropdown();
 
 // Load user settings
 window.electronAPI.getSettings().then((settings) => {
-    apiKeys = settings.apiKeys || { 'anthropic': '', 'cohere': '', 'deepseek': '', 'iflytek_spark': '', 'openai': '', 'qwen': '', 'zhipu_ai': '' };
+    apiKeys = settings.apiKeys || { 'anthropic': '', 'cohere': '', 'deepseek': '', 'iflytek_spark': '', 'openai': '', 'qwen': '', 'zhipu_ai': '', custom: '' };
     modelId = settings.modelId || '';
+
+    customReqTypeId = settings.customReqTypeId;
+    customEndpoint = settings.customEndpoint;
+    customModelId = settings.customModelId;
 
     if (modelId) {
         initializeWithModelId(modelId);
@@ -243,9 +338,28 @@ settingsForm.addEventListener('submit', async (event) => {
         }
     }
 
+    const selectedProviderId = providerSelect.value;
+    let myModelId = '';
+    let myCustomReqTypeId = '';
+
+    if (selectedProviderId === 'custom' && customModelIdInput) {
+        myModelId = `custom@${customModelIdInput.value.trim()}`;
+    } else if (modelSelect && modelSelect.value) {
+        myModelId = modelSelect.value;
+    }
+
+    if (selectedProviderId === 'custom') {
+        myCustomReqTypeId = customReqTypeSelect.value;
+    } else {
+        myCustomReqTypeId = customReqTypeId ?? '';
+    }
+
     const settings = {
         apiKeys: apiKeys,
-        modelId: modelSelect.value,
+        modelId: myModelId,
+        customReqTypeId: myCustomReqTypeId,
+        customEndpoint: customEndpointInput.value.trim() || (customEndpoint ?? ''),
+        customModelId: customModelIdInput.value.trim() || (customModelId ?? ''),
         language: languageSelect.value,
         colorPickShortcut: getBackendShortcut(colorPickShortcutInput.value.trim()), // use electron key format
         theme: themeSelect.value,

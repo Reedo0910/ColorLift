@@ -6,7 +6,7 @@ import screenshot from 'screenshot-desktop';
 import { getAverageColor } from 'fast-average-color-node';
 import { cropOnePixel, getApiKeyForModel, getAppLocale } from './utils/utils.js'
 import { setLanguage, getLanguage, getResourceBundle, t } from './utils/i18n.js';
-import { LLMCommunicator, LLMList } from './utils/llms-interface.js';
+import { LLMCommunicator, LLMList, ReqTypeList } from './utils/llms-interface.js';
 import electronSquirrelStartup from 'electron-squirrel-startup';
 import semver from 'semver';
 import convert from 'color-convert';
@@ -51,9 +51,13 @@ const store = new Store({
             'iflytek_spark': '',
             'openai': '',
             'qwen': '',
-            'zhipu_ai': ''
+            'zhipu_ai': '',
+            'custom': ''
         },
         modelId: '',
+        customReqTypeId: '',
+        customEndpoint: '',
+        customModelId: '', // for persistent settings storage use only
         language: appLocale,
         colorPickShortcut: isMac ? 'Alt+C' : 'Alt+D',
         theme: 'system',
@@ -450,6 +454,8 @@ function openAboutWindow() {
 
         aboutWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'about.html'));
 
+        // aboutWindow.webContents.openDevTools(); // Open DevTools for about
+
         aboutWindow.once('ready-to-show', () => {
             aboutWindow.show();
         });
@@ -485,10 +491,13 @@ function openSettingsWindow() {
                 additionalArguments: [
                     JSON.stringify({ key: 'translations', value: translations }),
                     JSON.stringify({ key: 'LLMList', value: LLMList }),
+                    JSON.stringify({ key: 'ReqTypeList', value: ReqTypeList }),
                     JSON.stringify({ key: 'isMac', value: isMac }),
                 ],
             },
         });
+
+        // settingsWindow.webContents.openDevTools(); // Open DevTools for settings
 
         settingsWindow.loadFile(path.join(__dirname, 'renderer', 'pages', 'settings.html'));
 
@@ -626,6 +635,9 @@ ipcMain.handle('get-settings', () => {
     return {
         apiKeys: store.get('apiKeys'),
         modelId: store.get('modelId'),
+        customReqTypeId: store.get('customReqTypeId'),
+        customEndpoint: store.get('customEndpoint'),
+        customModelId: store.get('customModelId'),
         language: store.get('language'),
         colorPickShortcut: store.get('colorPickShortcut'),
         theme: store.get('theme'),
@@ -639,6 +651,9 @@ ipcMain.handle('get-settings', () => {
 ipcMain.on('save-settings', (event, settings) => {
     store.set('apiKeys', settings.apiKeys);
     store.set('modelId', settings.modelId);
+    store.set('customReqTypeId', settings.customReqTypeId);
+    store.set('customEndpoint', settings.customEndpoint);
+    store.set('customModelId', settings.customModelId);
     store.set('language', settings.language);
     store.set('colorPickShortcut', settings.colorPickShortcut);
     store.set('theme', settings.theme);
@@ -770,7 +785,8 @@ const captureColor = async () => {
         mainWindow.webContents.send('update-status', 'inactive');
 
         const currentModelId = store.get('modelId');
-        if (!currentModelId) {
+        if (!currentModelId ||
+            (currentModelId.startsWith('custom@') && currentModelId.slice(7) === '')) {
             return mainWindow.webContents.send('llm-response', `||ERROR|| ${translations['error_model_invalid']}`);
         }
 
@@ -782,7 +798,7 @@ const captureColor = async () => {
 
         const currentPromptComponents = store.get('promptComponents');
 
-        const message = await LLMCommunicator(colorObj, currentModelId, currentApiKey, currentPromptComponents, translations);
+        const message = await LLMCommunicator(colorObj, currentModelId, currentApiKey, currentPromptComponents, translations, store.get('customReqTypeId'), store.get('customEndpoint'));
 
         mainWindow.webContents.send('llm-response', message);
     } catch (error) {

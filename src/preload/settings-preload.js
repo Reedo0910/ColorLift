@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 const additionalArguments = process.argv.filter(arg => arg.startsWith('{') && arg.endsWith('}'));
 
-let translations, LLMList, isMac;
+let translations, LLMList, ReqTypeList, isMac;
 
 additionalArguments.forEach(arg => {
     try {
@@ -11,6 +11,8 @@ additionalArguments.forEach(arg => {
             translations = parsed.value;
         } else if (parsed.key === 'LLMList') {
             LLMList = parsed.value;
+        } else if (parsed.key === 'ReqTypeList') {
+            ReqTypeList = parsed.value;
         } else if (parsed.key === 'isMac') {
             isMac = parsed.value;
         }
@@ -24,6 +26,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     saveSettings: (settings) => ipcRenderer.send('save-settings', settings),
     getInitTranslations: () => translations,
     getInitLLMList: () => LLMList,
+    getInitReqTypeList: () => ReqTypeList,
     setLanguage: (lang) => ipcRenderer.send('set-language', lang),
     setColorPickShortcut: (shortcut) => ipcRenderer.invoke('set-color-pick-shortcut', shortcut),
     // Other var

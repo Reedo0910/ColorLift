@@ -309,6 +309,32 @@
                     </div>
                 </div>
 
+                <div class="text-input" id="custom-req-type-container" style="display: none;">
+                    <label id="custom-req-type-label" for="custom-req-type-select">
+                        <!-- 当前使用的自定义请求格式 -->
+                    </label>
+                    <div class="input-wrapper">
+                        <select id="custom-req-type-select">
+                            <option value="">--选择请求格式--</option>
+                        </select>
+                        <div class="description" id="custom-req-type-description">
+                        <!-- 请参考您的模型服务提供商的文档填写以下字段。如不确定请求格式，请使用默认的“OpenAI 格式”。 -->
+                    </div>
+                    </div>
+                </div>
+
+                <div class="text-input" id="custom-endpoint-container" style="display: none;">
+                    <label id="custom-endpoint-label" for="custom-endpoint-input">
+                        <!-- 当前使用的自定义请求地址 -->
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="custom-endpoint-input" placeholder="https://" autocomplete="off" spellcheck="false" type="url" />
+                        <div class="description" id="custom-endpoint-description">
+                            <!-- 例如： https://your-custom-endpoint.com/v1/chat/completions -->
+                        </div>
+                    </div>
+                </div>
+
                 <div class="text-input" id="api-key-container" style="display: none;">
                     <div class="api-input-label-block">
                         <label id="api-key-label" for="api-key-input">
@@ -324,10 +350,21 @@
                         </button>
                     </div>
                     <div class="input-wrapper">
-                        <input type="password" id="api-key-input" autocomplete="off" spellcheck="false"
-                            autocorrect="off" placeholder="请输入你的 API 密钥" />
+                        <input type="password" id="api-key-input" autocomplete="off" spellcheck="false" autocorrect="off" placeholder="请输入你的 API 密钥" />
                         <div class="description" id="api-key-note">
                             <!-- 您输入的 API 密钥将仅存储在本地设备中，并不会上传到任何服务器或外部系统。请确保妥善保存您的 API 密钥。 -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-input" id="custom-model-id-container" style="display: none;">
+                    <label id="custom-model-id-label" for="custom-model-id-input">
+                        <!-- 自定义模型 ID -->
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" id="custom-model-id-input" placeholder="e.g. gpt-4o-mini" autocomplete="off" spellcheck="false" />
+                        <div class="description" id="custom-model-id-description">
+                            <!-- 拾彩尚未提供对推理模型的支持。请填写模型 ID（如 gpt-4o-mini），而非模型名称（如 GPT-4o mini） -->
                         </div>
                     </div>
                 </div>

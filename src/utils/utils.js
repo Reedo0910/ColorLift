@@ -22,6 +22,11 @@ export async function cropOnePixel(imageBuffer, x, y) {
 }
 
 export function getApiKeyForModel(modelId, LLMList, apiKeys) {
+    // Custom Model ID
+    if (modelId.startsWith('custom@')) {
+        return apiKeys['custom'] || null;
+    }
+
     // Find corresponding Provider by modelId
     const provider = LLMList.find(provider =>
         provider.models.some(model => model.id === modelId)
