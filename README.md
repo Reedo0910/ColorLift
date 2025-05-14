@@ -1,21 +1,23 @@
 ![ColorLift icon](docs/images/icon.png)
 
-# 拾彩
-
-> 通过 AI 生成的颜色文字描述，帮助用户（特别是色觉障碍者）理解屏幕上的颜色及其应用场景。
-
-![应用界面](docs/images/promote_zh-CN.png)
-
-拾彩（ColorLift）是一款免费的跨平台辅助工具，支持 Windows 和 macOS。本项目致力于通过直观的文字描述，帮助用户更好地理解和应用色彩。*以及提供一个十分赏心悦目的用户界面。*
-
 ## 🌐 Translations Available
 
 - [English](docs/README_EN.md)
 - [繁體中文](docs/README_ZH-TW.md)
 
+&nbsp;
+
+# 拾彩
+
+> 通过 AI 生成的颜色文字描述，帮助用户（特别是色觉障碍者）理解屏幕上的颜色及其应用场景。
+
+![应用界面](docs/images/promote_zh-CN-cover2.png)
+
+**拾彩**（ColorLift）是一款免费的跨平台辅助工具，支持 Windows 和 macOS。本项目致力于通过直观的文字描述，帮助用户更好地理解和应用色彩。*以及提供一个十分赏心悦目的用户界面。*
+
 ## 下载
 
-可以通过 [GitHub Release 页面](https://github.com/Reedo0910/ColorLift/releases) 下载拾彩的 Windows 和 macOS 安装包与便携版压缩包。
+可以通过 **[GitHub Release 页面](https://github.com/Reedo0910/ColorLift/releases)** 下载拾彩的 Windows 和 macOS 安装包与便携版压缩包。
 
 ## 特点
 
@@ -23,16 +25,26 @@
 - 🔍 **颜色识别辅助**：通过文字描述帮助用户（特别是色觉障碍者）理解颜色。
 - 🌈 **语境化颜色描述**：提供颜色的常见使用场景，帮助用户更好地理解色彩在实际中的应用。
 - 🌍 **多语言支持**：目前支持英文、简体中文和繁体中文，欢迎贡献其他语言的翻译或帮助纠错。
-- 🤖 **多模型支持**：API 支持 Anthropic、Cohere、DeepSeek、科大讯飞星火、OpenAI 和智谱 AI。
+- 🤖 **多模型支持**：API 支持 Anthropic (Claude)、Cohere、Google (Gemini)、DeepSeek、科大讯飞星火、通义千问（Qwen）、OpenAI (GPT) 和智谱 AI 的快速配置。支持自定义 API 与模型。
 - 💻 **跨平台兼容**：支持 Windows 和 macOS。
 
 ## 界面预览
+
+![应用界面](docs/images/promote_zh-CN-cover.png)
+
+**支持自定义颜色描述的构成（如：颜色名称与近似色调、视觉印象、应用场景）。**
+
+&nbsp;
 
 ![应用界面2](docs/images/promote_zh-CN_2.png)
 
 **支持在 HEX、RGB 和 HSL 颜色格式之间切换。**
 
-*（演示中使用的语言模型为 Claude 3.5 Sonnet）*
+&nbsp;
+
+![应用界面3](docs/images/promote_zh-CN.png)
+
+**支持亮色/深色主题切换。**
 
 ## 系统要求
 
@@ -41,14 +53,18 @@
 
 ## 支持的 LLM 列表
 
-拾彩支持以下语言模型：
+拾彩支持以下语言模型的快速配置：
 
-- **Anthropic**: Claude 3.5 系列
-- **Cohere**: Command R 系列
-- **DeepSeek**: DeepSeek (Chat) 系列
+- **Anthropic**: Claude 3.7 Sonnet 与 Claude 3.5 系列
+- **Cohere**: Command A 与 Command R 系列 
+- **DeepSeek**: DeepSeek V3
+- **Google**: Gemini 2.0 系列 与 Gemini 2.5 (Preview) 系列
 - **科大讯飞星火**: Lite、Pro、Max、4.0 Ultra
-- **OpenAI**: GPT-4o 系列
+- **通义千问**: Qwen 系列（商业版）
+- **OpenAI**: GPT-4o 系列 与 GPT-4.1 系列
 - **智谱 AI**: GLM-4 系列
+
+**此外，拾彩还支持自定义语言模型接口，用户可以自由接入自己的语言模型 API 和指定的模型版本。**
 
 *由于底层架构和训练数据的差异，不同语言模型生成的文本质量可能会有所不同。*
 
@@ -60,12 +76,16 @@
 
 ## 使用前准备
 
-使用拾彩前，请确保拥有所需大语言模型（LLM）提供商的 API Key。以下是支持的厂商及其获取 API Key 的链接 （需要注册相关的开发者账号）：
+使用拾彩前，请确保拥有所需大语言模型（LLM）提供商的 API Key。以下是支持快速配置的厂商及其获取 API Key 的链接 （需要注册相关的账号）：
+
+> 🚩（截至2025年5月14日）除 OpenAI 和 Anthropic 外，其余平台的 API 均提供免费额度（注册后可见）
 
 - **Anthropic**: [获取 API Key](https://console.anthropic.com/dashboard) | [资费说明](https://www.anthropic.com/pricing#anthropic-api)
 - **Cohere**: [获取 API Key](https://dashboard.cohere.com/api-keys) | [资费说明](https://cohere.ai/pricing)
 - **DeepSeek**: [获取 API Key](https://platform.deepseek.com/api_keys)（侧边栏 > API keys > 创建 API key） | [资费说明](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)
+- **Google**: [获取 API Key](https://aistudio.google.com/apikey) | [资费说明](https://ai.google.dev/gemini-api/docs/pricing)
 - **科大讯飞星火**: [获取 API Key](https://console.xfyun.cn/services) （到控制台具体模型下获取 http 服务接口认证信息中的 APIPassword） | [资费说明](https://xinghuo.xfyun.cn/sparkapi?scr=price)
+- **通义千问**: [获取 API Key](https://help.aliyun.com/zh/model-studio/first-api-call-to-qwen) | [资费说明](https://help.aliyun.com/zh/model-studio/models)
 - **OpenAI**: [获取 API Key](https://platform.openai.com/api-keys) | [资费说明](https://openai.com/api/pricing/)
 - **智谱 AI**: [获取 API Key](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) （账号设置 > 项目管理 > API keys）| [资费说明](https://open.bigmodel.cn/pricing)
 
@@ -104,7 +124,7 @@
 
 其他 macOS 版本的步骤细节和界面表述可能会有些许不同。
 
-### 为什么安装更新那么繁琐？
+### 为什么安装更新的过程不那么友好？
 
 这是由于拾彩目前未启用代码签名，故每次安装（更新）后，macOS 会将其视为一个全新的程序，无法识别拾彩先前获得的权限。
 
@@ -135,19 +155,41 @@
 
     拾彩不支持在手机系统上运行。但您可以透过诸如macOS上的「[iPhone 镜像](https://support.apple.com/120421)」等投屏类应用，实现从桌面端对手机屏幕取色。
 
-4. **关于应用自动更新**
+4. **我应该选择哪个语言模型和版本？**
+
+    考虑到不同用户的使用习惯和偏好，拾彩提供了多个语言模型的快速配置选项。经过测试，其实绝大多数模型都可以很好地满足拾彩本身的运行需求。
+
+    下面是我个人的一些主观使用经验，仅供对语言模型不太熟悉的用户参考：
+
+    - 如果只是简单了解颜色名称与色调（只勾选了默认的“名称及近似色调（必选）”）：
+        - 可以选用参数较小的模型，比如 **GPT-4.1 nano**、**Qwen Turbo** 等；
+        - 这类模型生成速度较快，成本也更低，适合需要频繁取色的场景。
+
+    - 如果希望了解更丰富的颜色应用（勾选了“视觉印象”和“应用场景”）：
+        - 推荐使用参数较大的模型，比如 **Claude 3.5 Sonnet**、**Qwen Max**；
+        - 这类模型效果更准确，建议更有参考价值，但频繁使用的话额度消耗会相对更快。
+
+    - **如果还是拿不定主意的话，可以先从它们开始：**
+        - 从性价比角度出发，日常使用推荐：**Gemini 2.0 Flash** 或 **Qwen Plus**
+        - 如果想追求最佳生成效果，推荐使用 **Claude 3.5 Sonnet**
+
+    当然，模型的表现可能会随着时间变化和根据具体内容而有所差异，建议根据实际需求自行选择和调整。
+
+5. **关于应用自动更新**
 
     由于经费原因，拾彩未启用代码签名。根据 Electron 官方限制，未签名的应用无法在 macOS 上提供自动更新服务。目前拾彩会在启动app时在后台检查更新，但需要用户手动下载更新文件并安装。您也可以在设置中禁用应用更新，并在关于窗口手动检查更新，或直接通过 [GitHub Release 页面](https://github.com/Reedo0910/ColorLift/releases) 下载最新的版本。
 
-5. **关于取色精确度**
+6. **关于取色精确度**
 
     由于本应用的取色原理为获取屏幕的截屏上的单个像素点色值，浏览器网页测试基本与实际色值吻合，但不排除在某些极端情况下，取色结果与实际颜色会产生有丝微偏移。该偏移对色彩描述的影响可忽略不计，但不推荐将拾彩作为专业数码测色计使用。
 
-6. **关于更多的 功能 / 语言模型 / 设置项支持**
+7. **关于更多的 功能 / 语言模型 / 设置项支持**
 
-    我想让该应用功能和设置尽可能精简。在保持应用简单易用的原则上，暂不打算添加例如区域取色、保存取色历史等的其他复杂功能，或是其他语言模型的支持（除非某个模型相比现今应用支持的所有模型都具有非常显著优势）。
+    我想让该应用功能和设置尽可能精简。在保持应用简单易用的原则上，暂不打算添加例如区域取色、保存取色历史等的其他复杂功能。
+
+    由于个人精力有限，拾彩暂时无法覆盖所有主流语言模型，也可能无法及时支持最新模型版本的快速配置。用户可根据自身需求，通过自定义配置接入所需的语言模型 API 与模型版本。
     
-    因为本人精力所限，本项目将维持在可用的基础上提供基本的 BUG 修复、已有的模型版本更新与安全支持。
+    本项目将维持在可用的基础上提供基本的 BUG 修复与安全支持。
 
 ## 鸣谢
 
